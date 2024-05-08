@@ -4,7 +4,9 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule.register({ driver: 'orm' }));
+  const app = await NestFactory.create(
+    AppModule.register({ driver: 'orm', type: 'postgres' }),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('聊天系統 API 文件')

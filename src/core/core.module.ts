@@ -7,13 +7,12 @@ export class CoreModule {
       options.driver === 'orm'
         ? [
             TypeOrmModule.forRoot({
-              type: 'postgres',
-              host: process.env.POSTGRES_HOST,
-              port: +process.env.POSTGRES_PORT,
-              username: process.env.POSTGRES_USERNAME,
-              password: process.env.POSTGRES_PASS,
+              type: options.type,
+              host: process.env.DATABASE_HOST,
+              port: +process.env.DATABASE_PORT,
+              username: process.env.DATABASE_USERNAME,
+              password: process.env.DATABASE_PASS,
               autoLoadEntities: true,
-              synchronize: true,
             }),
           ]
         : [];
