@@ -13,6 +13,7 @@ export class CoreModule {
               username: process.env.DATABASE_USERNAME,
               password: process.env.DATABASE_PASS,
               autoLoadEntities: true,
+              synchronize: false,
             }),
           ]
         : [];

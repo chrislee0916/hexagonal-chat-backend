@@ -6,7 +6,7 @@ export class UserEntity {
   id: number;
 
   @Column()
-  // @Index('email_idx', { unique: true })
+  @Index({ unique: true })
   email: string;
 
   @Column()
