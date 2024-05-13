@@ -8,12 +8,17 @@ async function bootstrap() {
     AppModule.register({ driver: 'orm', type: 'postgres' }),
   );
 
+  const serverUrl =
+    process.env.APP_DEBUG === 'true'
+      ? `http://${process.env.APP_HOST}:${process.env.APP_PORT}`
+      : `https://${process.env.APP_HOST}`;
+
   const config = new DocumentBuilder()
     .setTitle('聊天系統 API 文件')
     .setDescription('API 僅供參考')
     .setVersion('1.0')
     .addBearerAuth()
-    .addServer(`http://${process.env.APP_HOST}:${process.env.APP_PORT}`)
+    .addServer(serverUrl)
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
