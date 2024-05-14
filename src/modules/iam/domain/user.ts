@@ -6,5 +6,5 @@ export class User {
     public password: string,
   ) {}
 
-  signedUp() {}
+  // signedUp() {}
 }
