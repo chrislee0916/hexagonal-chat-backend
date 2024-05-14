@@ -7,7 +7,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { ErrorResponse } from '../interfaces/response.interface';
+import { ErrorDetailResponseDto, ErrorResponseDto } from '../dtos/response.dto';
 import * as dayjs from 'dayjs';
 import { ErrorMsg } from '../enums/err-msg.enum';
 
@@ -23,18 +23,18 @@ export class HttpExceptionFilter implements ExceptionFilter {
         ? exception.getStatus()
         : HttpStatus.INTERNAL_SERVER_ERROR;
 
-    const exccptionResponse =
+    const exceptionResponse =
       typeof exception.getResponse == 'function'
         ? exception.getResponse()
         : ErrorMsg.ERR_CORE_UNKNOWN_ERROR;
 
-    const detail =
-      typeof exccptionResponse === 'string'
-        ? { message: exccptionResponse }
-        : (exccptionResponse as object);
+    const detail: ErrorDetailResponseDto =
+      typeof exceptionResponse === 'string'
+        ? { message: exceptionResponse }
+        : (exceptionResponse as ErrorDetailResponseDto);
 
     const now = dayjs();
-    const res: ErrorResponse = {
+    const res: ErrorResponseDto = {
       success: false,
       path: url,
       detail,

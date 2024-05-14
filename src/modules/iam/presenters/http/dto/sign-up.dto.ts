@@ -7,19 +7,19 @@ export class SignUpDto {
     example: 'example@gmail.com',
   })
   @IsString()
-  email: string;
+  readonly email: string;
 
   @ApiProperty({
     description: '密碼',
     example: 'password',
   })
   @IsString()
-  password: string;
+  readonly password: string;
 
   @ApiProperty({
     description: '確認密碼',
     example: 'password',
   })
   @IsString()
-  password_confirmed: string;
+  readonly password_confirmed: string;
 }

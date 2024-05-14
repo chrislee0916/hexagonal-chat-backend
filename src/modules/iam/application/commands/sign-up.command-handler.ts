@@ -7,10 +7,10 @@ import {
   Logger,
 } from '@nestjs/common';
 import { UserFactory } from '../../domain/factories/user.factory';
-import { UserSignedUpEvent } from '../../domain/events/user-signed-up.event';
 import { CreateUserRepository } from '../ports/create-user.repository';
 import { HashingService } from '../ports/hashing.service';
-import { ErrorMsg } from 'src/common/enums/err-msg.enum';
+import { ErrorMsg } from '../../../../common/enums/err-msg.enum';
+import { SignUpResponseDto } from '../../presenters/http/dto/sign-up.response.dto';
 
 @CommandHandler(SignUpCommand)
 export class SignUpCommandHandler implements ICommandHandler<SignUpCommand> {
@@ -18,12 +18,12 @@ export class SignUpCommandHandler implements ICommandHandler<SignUpCommand> {
 
   constructor(
     private readonly userFactory: UserFactory,
-    private readonly eventBus: EventBus,
+    // private readonly eventBus: EventBus,
     private readonly userRepository: CreateUserRepository,
     private readonly hashingService: HashingService,
   ) {}
 
-  async execute(command: SignUpCommand) {
+  async execute(command: SignUpCommand): Promise<SignUpResponseDto> {
     this.logger.debug(
       `Processing "${SignUpCommand.name}": ${JSON.stringify(command)}`,
     );
@@ -31,8 +31,8 @@ export class SignUpCommandHandler implements ICommandHandler<SignUpCommand> {
     const user = this.userFactory.create(command.email, hashedPassword);
     // this.eventBus.publish(new UserSignedUpEvent(user));
     try {
-      await this.userRepository.save(user);
-      return user;
+      const { id, email } = await this.userRepository.save(user);
+      return { id, email };
     } catch (err) {
       if (err.code === '23505') {
         throw new ConflictException(ErrorMsg.ERR_AUTH_SIGNUP_USER_CONFLICT);
