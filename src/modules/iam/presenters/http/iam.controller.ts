@@ -4,10 +4,14 @@ import {
   ApiBody,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiExtraModels,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
+  ApiUnauthorizedResponse,
   PartialType,
+  getSchemaPath,
+  refs,
 } from '@nestjs/swagger';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
@@ -20,8 +24,8 @@ import {
   SignUpResponseDto,
   SuccessSignUpResponseDto,
 } from './dto/sign-up.response.dto';
-import { SignInQuery } from '../../application/queries/sign-in.query';
-import { SuccessSignInResponseDto } from './dto/sign-in.response.dto';
+import { SignInCommand } from '../../application/commands/sign-in.command';
+import { ErrorSignInNotExistResponseDto, ErrorSignInPasswordResponseDto, SuccessSignInResponseDto } from './dto/sign-in.response.dto';
 
 @ApiTags('IAM - 身分識別與存取管理')
 @Controller('iam')
@@ -58,6 +62,10 @@ export class IamController {
   @ApiOkResponse({
     type: SuccessSignInResponseDto
   })
+  @ApiExtraModels(ErrorSignInNotExistResponseDto, ErrorSignInPasswordResponseDto)
+  @ApiUnauthorizedResponse({
+    schema: { anyOf: refs(ErrorSignInNotExistResponseDto, ErrorSignInPasswordResponseDto) },
+  })
   @ApiBody({
     type: SignInDto
   })
@@ -65,7 +73,7 @@ export class IamController {
   @Post('sign-in')
   signIn(@Body() signInDto: SignInDto) {
     return this.iamService.signIn(
-      new SignInQuery(
+      new SignInCommand(
         signInDto.email,
         signInDto.password,
       )

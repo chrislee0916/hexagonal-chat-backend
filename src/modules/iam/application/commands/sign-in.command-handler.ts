@@ -1,5 +1,5 @@
-import { IQueryHandler, QueryHandler } from "@nestjs/cqrs";
-import { SignInQuery } from "./sign-in.query";
+import { ICommandHandler, CommandHandler } from "@nestjs/cqrs";
+import { SignInCommand } from "./sign-in.command";
 import { Inject, Logger, UnauthorizedException } from "@nestjs/common";
 import { FindUserRepository } from "../ports/find-user.repository";
 import { HashingService } from "../ports/hashing.service";
@@ -14,9 +14,9 @@ import { randomUUID } from "crypto";
 import { RefreshTokenIdsStorage } from "../ports/refresh-token-ids.storage";
 
 
-@QueryHandler(SignInQuery)
-export class SignInQueryHandler implements IQueryHandler {
-  private readonly logger = new Logger(SignInQueryHandler.name);
+@CommandHandler(SignInCommand)
+export class SignInCommandHandler implements ICommandHandler {
+  private readonly logger = new Logger(SignInCommandHandler.name);
 
   constructor(
     private readonly userRepository: FindUserRepository,
@@ -27,11 +27,11 @@ export class SignInQueryHandler implements IQueryHandler {
     private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
   ) { }
 
-  async execute(query: SignInQuery): Promise<SignInResponseDto> {
+  async execute(command: SignInCommand): Promise<SignInResponseDto> {
     this.logger.debug(
-      `Processing "${SignInQuery.name}": ${JSON.stringify(query)}`,
+      `Processing "${SignInCommand.name}": ${JSON.stringify(command)}`,
     );
-    const { email, password } = query;
+    const { email, password } = command;
     const user = await this.userRepository.findByEmail(email);
     const isEqual = await this.hashingService.compare(password, user.password);
     if (!isEqual) {
