@@ -4,6 +4,8 @@ export enum ErrorMsg {
   // Auth 登入相關
 
   ERR_AUTH_SIGNUP_USER_CONFLICT = '11002 已註冊使用者',
+  ERR_AUTH_SIGNIN_NOT_EXIST = '11003 尚未註冊使用者',
+  ERR_AUTH_SIGNIN_PASSWORD = '11004 密碼錯誤',
   ERR_AUTH_SIGNUP_PASSWORD_CONFIRMED = '11005 確認密碼錯誤',
 
   // User 相關錯誤

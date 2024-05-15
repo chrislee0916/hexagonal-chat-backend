@@ -4,6 +4,7 @@ import {
   ApiBody,
   ApiConflictResponse,
   ApiCreatedResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiTags,
   PartialType,
@@ -12,18 +13,20 @@ import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { IamService } from '../../application/iam.service';
 import { SignUpCommand } from '../../application/commands/sign-up.command';
-import { PasswordConfirmedPipe } from '../../../../common/pipes/password-confirmed.pipe';
+import { PasswordConfirmedPipe } from '../../domain/pipes/password-confirmed.pipe';
 import {
   ErrorSignUpConflictResponseDto,
   ErrorSignUpPassConfirmedResponseDto,
   SignUpResponseDto,
   SuccessSignUpResponseDto,
 } from './dto/sign-up.response.dto';
+import { SignInQuery } from '../../application/queries/sign-in.query';
+import { SuccessSignInResponseDto } from './dto/sign-in.response.dto';
 
 @ApiTags('IAM - 身分識別與存取管理')
 @Controller('iam')
 export class IamController {
-  constructor(private readonly iamService: IamService) {}
+  constructor(private readonly iamService: IamService) { }
 
   @ApiOperation({
     summary: '註冊使用者',
@@ -49,9 +52,23 @@ export class IamController {
     );
   }
 
+  @ApiOperation({
+    summary: '登入使用者'
+  })
+  @ApiOkResponse({
+    type: SuccessSignInResponseDto
+  })
+  @ApiBody({
+    type: SignInDto
+  })
   @HttpCode(HttpStatus.OK)
   @Post('sign-in')
   signIn(@Body() signInDto: SignInDto) {
-    return signInDto;
+    return this.iamService.signIn(
+      new SignInQuery(
+        signInDto.email,
+        signInDto.password,
+      )
+    )
   }
 }
