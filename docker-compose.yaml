@@ -6,6 +6,7 @@ services:
     image: postgres
     ports:
       - "${DATABASE_PORT}:5432"
+    restart: always
     environment:
       - POSTGRES_PASSWORD
       - DATABASE_NAME
@@ -13,6 +14,13 @@ services:
       - DATABASE_PASS
     volumes:
       - ./docker/scripts/init-write-db.sh:/docker-entrypoint-initdb.d/init-write-db.sh
+  refresh-token-ids-storage:
+    container_name: refresh-token-ids-storage
+    image: redis
+    restart: always
+    ports:
+      - "${REDIS_PORT}:6379"
+    
   # read-db:
   #   image: mongo
   #   ports:

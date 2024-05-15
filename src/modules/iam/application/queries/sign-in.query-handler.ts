@@ -5,11 +5,13 @@ import { FindUserRepository } from "../ports/find-user.repository";
 import { HashingService } from "../ports/hashing.service";
 import { ErrorMsg } from "src/common/enums/err-msg.enum";
 import { JwtService } from "@nestjs/jwt";
-import jwtConfig from "../../infrastructure/config/jwt.config";
+import jwtConfig from "../../domain/config/jwt.config";
 import { ConfigType } from "@nestjs/config";
 import { User } from "../../domain/user";
 import { ActiveUserData } from "../../domain/interfaces/active-user-data.interface";
 import { SignInResponseDto } from "../../presenters/http/dto/sign-in.response.dto";
+import { randomUUID } from "crypto";
+import { RefreshTokenIdsStorage } from "../ports/refresh-token-ids.storage";
 
 
 @QueryHandler(SignInQuery)
@@ -22,6 +24,7 @@ export class SignInQueryHandler implements IQueryHandler {
     private readonly jwtService: JwtService,
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
+    private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
   ) { }
 
   async execute(query: SignInQuery): Promise<SignInResponseDto> {
@@ -53,14 +56,22 @@ export class SignInQueryHandler implements IQueryHandler {
   }
 
   private async generateTokens(user: User): Promise<SignInResponseDto> {
+    const refreshTokenId = randomUUID();
+
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken<Partial<ActiveUserData>>(
         user.id,
         this.jwtConfiguration.accessTokenTtl,
         { email: user.email }
       ),
-      this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl)
+      // TODO: 應該使用強型別
+      this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl, {
+        refreshTokenId
+      })
     ]);
+
+    await this.refreshTokenIdsStorage.insert(user.id, refreshTokenId);
+
     return {
       accessToken,
       refreshToken
