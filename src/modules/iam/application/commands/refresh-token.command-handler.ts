@@ -12,6 +12,7 @@ import { randomUUID } from "crypto";
 import { User } from "../../domain/user";
 import { SignInResponseDto } from "../../presenters/http/dto/sign-in.response.dto";
 import { ErrorMsg } from "src/common/enums/err-msg.enum";
+import { RefreshTokenResponseDto } from "../../presenters/http/dto/refresh-token.response.dto";
 
 
 @CommandHandler(RefreshTokenCommand)
@@ -27,7 +28,7 @@ export class RefreshTokenCommandHandler implements ICommandHandler {
     private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
   ) { }
 
-  async execute(command: RefreshTokenCommand): Promise<any> {
+  async execute(command: RefreshTokenCommand): Promise<RefreshTokenResponseDto> {
     this.logger.debug(
       `Processing "${RefreshTokenCommand.name}": ${JSON.stringify(command)}`,
     );

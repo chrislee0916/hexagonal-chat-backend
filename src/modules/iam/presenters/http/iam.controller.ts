@@ -28,6 +28,7 @@ import { SignInCommand } from '../../application/commands/sign-in.command';
 import { ErrorSignInNotExistResponseDto, ErrorSignInPasswordResponseDto, SignInResponseDto, SuccessSignInResponseDto } from './dto/sign-in.response.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RefreshTokenCommand } from '../../application/commands/refresh-token.command';
+import { ErrorRefreshTokenInvalidResponseDto, RefreshTokenResponseDto, SuccessRefreshTokenResponseDto } from './dto/refresh-token.response.dto';
 
 @ApiTags('IAM - 身分識別與存取管理')
 @Controller('iam')
@@ -88,9 +89,15 @@ export class IamController {
   @ApiBody({
     type: RefreshTokenDto,
   })
+  @ApiOkResponse({
+    type: SuccessRefreshTokenResponseDto
+  })
+  @ApiUnauthorizedResponse({
+    type: ErrorRefreshTokenInvalidResponseDto
+  })
   @HttpCode(HttpStatus.OK)
   @Post('refresh-token')
-  refreshTokens(@Body() refreshTokenDto: RefreshTokenDto) {
+  refreshTokens(@Body() refreshTokenDto: RefreshTokenDto): Promise<RefreshTokenResponseDto> {
     return this.iamService.refreshToken(
       new RefreshTokenCommand(
         refreshTokenDto.refreshToken,

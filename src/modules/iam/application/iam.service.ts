@@ -5,6 +5,7 @@ import { SignUpResponseDto } from '../presenters/http/dto/sign-up.response.dto';
 import { SignInCommand } from './commands/sign-in.command';
 import { SignInResponseDto } from '../presenters/http/dto/sign-in.response.dto';
 import { RefreshTokenCommand } from './commands/refresh-token.command';
+import { RefreshTokenResponseDto } from '../presenters/http/dto/refresh-token.response.dto';
 
 @Injectable()
 export class IamService {
@@ -21,7 +22,7 @@ export class IamService {
     return this.commandBus.execute(signInCommand);
   }
 
-  async refreshToken(refreshToken: RefreshTokenCommand) {
+  async refreshToken(refreshToken: RefreshTokenCommand): Promise<RefreshTokenResponseDto> {
     return this.commandBus.execute(refreshToken)
   }
 }
