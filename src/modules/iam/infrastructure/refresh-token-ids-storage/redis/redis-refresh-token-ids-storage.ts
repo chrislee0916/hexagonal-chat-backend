@@ -17,9 +17,6 @@ export class RedisRefreshTokenIdsStorage implements RefreshTokenIdsStorage, OnAp
 
   async validate(userId: number, tokenId: string): Promise<boolean> {
     const storedId = await this.redisClient.get(this.getKey(userId));
-    if (storedId !== tokenId) {
-      throw new Error('Invalidated refresh token');
-    }
     return storedId === tokenId
   }
 

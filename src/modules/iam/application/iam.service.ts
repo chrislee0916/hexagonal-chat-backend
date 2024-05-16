@@ -3,6 +3,8 @@ import { SignUpCommand } from './commands/sign-up.command';
 import { CommandBus } from '@nestjs/cqrs';
 import { SignUpResponseDto } from '../presenters/http/dto/sign-up.response.dto';
 import { SignInCommand } from './commands/sign-in.command';
+import { SignInResponseDto } from '../presenters/http/dto/sign-in.response.dto';
+import { RefreshTokenCommand } from './commands/refresh-token.command';
 
 @Injectable()
 export class IamService {
@@ -15,7 +17,11 @@ export class IamService {
     return this.commandBus.execute(signUpCommand);
   }
 
-  async signIn(signInCommand: SignInCommand) {
+  async signIn(signInCommand: SignInCommand): Promise<SignInResponseDto> {
     return this.commandBus.execute(signInCommand);
+  }
+
+  async refreshToken(refreshToken: RefreshTokenCommand) {
+    return this.commandBus.execute(refreshToken)
   }
 }

@@ -14,8 +14,16 @@ export class OrmFindUserRepository implements FindUserRepository {
     private readonly userRepository: Repository<UserEntity>
   ) { }
 
-  async findByEmail(email: string): Promise<User> {
+  async findOneByEmail(email: string): Promise<User> {
     const userEntity = await this.userRepository.findOneBy({ email });
+    if (!userEntity) {
+      throw new UnauthorizedException(ErrorMsg.ERR_AUTH_SIGNIN_NOT_EXIST)
+    }
+    return UserMapper.toDomain(userEntity);
+  }
+
+  async findOneById(id: number): Promise<User> {
+    const userEntity = await this.userRepository.findOneBy({ id });
     if (!userEntity) {
       throw new UnauthorizedException(ErrorMsg.ERR_AUTH_SIGNIN_NOT_EXIST)
     }

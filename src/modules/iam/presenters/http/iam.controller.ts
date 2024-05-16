@@ -25,7 +25,9 @@ import {
   SuccessSignUpResponseDto,
 } from './dto/sign-up.response.dto';
 import { SignInCommand } from '../../application/commands/sign-in.command';
-import { ErrorSignInNotExistResponseDto, ErrorSignInPasswordResponseDto, SuccessSignInResponseDto } from './dto/sign-in.response.dto';
+import { ErrorSignInNotExistResponseDto, ErrorSignInPasswordResponseDto, SignInResponseDto, SuccessSignInResponseDto } from './dto/sign-in.response.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { RefreshTokenCommand } from '../../application/commands/refresh-token.command';
 
 @ApiTags('IAM - 身分識別與存取管理')
 @Controller('iam')
@@ -71,11 +73,27 @@ export class IamController {
   })
   @HttpCode(HttpStatus.OK)
   @Post('sign-in')
-  signIn(@Body() signInDto: SignInDto) {
+  signIn(@Body() signInDto: SignInDto): Promise<SignInResponseDto> {
     return this.iamService.signIn(
       new SignInCommand(
         signInDto.email,
         signInDto.password,
+      )
+    )
+  }
+
+  @ApiOperation({
+    summary: '刷新令牌'
+  })
+  @ApiBody({
+    type: RefreshTokenDto,
+  })
+  @HttpCode(HttpStatus.OK)
+  @Post('refresh-token')
+  refreshTokens(@Body() refreshTokenDto: RefreshTokenDto) {
+    return this.iamService.refreshToken(
+      new RefreshTokenCommand(
+        refreshTokenDto.refreshToken,
       )
     )
   }

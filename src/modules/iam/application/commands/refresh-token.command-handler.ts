@@ -1,22 +1,22 @@
-import { ICommandHandler, CommandHandler } from "@nestjs/cqrs";
-import { SignInCommand } from "./sign-in.command";
+import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
+import { RefreshTokenCommand } from "./refresh-token.command";
 import { Inject, Logger, UnauthorizedException } from "@nestjs/common";
 import { FindUserRepository } from "../ports/find-user.repository";
 import { HashingService } from "../ports/hashing.service";
-import { ErrorMsg } from "src/common/enums/err-msg.enum";
 import { JwtService } from "@nestjs/jwt";
 import jwtConfig from "../../domain/config/jwt.config";
 import { ConfigType } from "@nestjs/config";
-import { User } from "../../domain/user";
-import { ActiveUserData } from "../../domain/interfaces/active-user-data.interface";
-import { SignInResponseDto } from "../../presenters/http/dto/sign-in.response.dto";
-import { randomUUID } from "crypto";
 import { RefreshTokenIdsStorage } from "../ports/refresh-token-ids.storage";
+import { ActiveUserData } from "../../domain/interfaces/active-user-data.interface";
+import { randomUUID } from "crypto";
+import { User } from "../../domain/user";
+import { SignInResponseDto } from "../../presenters/http/dto/sign-in.response.dto";
+import { ErrorMsg } from "src/common/enums/err-msg.enum";
 
 
-@CommandHandler(SignInCommand)
-export class SignInCommandHandler implements ICommandHandler {
-  private readonly logger = new Logger(SignInCommandHandler.name);
+@CommandHandler(RefreshTokenCommand)
+export class RefreshTokenCommandHandler implements ICommandHandler {
+  private readonly logger = new Logger(RefreshTokenCommandHandler.name);
 
   constructor(
     private readonly userRepository: FindUserRepository,
@@ -27,18 +27,37 @@ export class SignInCommandHandler implements ICommandHandler {
     private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
   ) { }
 
-  async execute(command: SignInCommand): Promise<SignInResponseDto> {
+  async execute(command: RefreshTokenCommand): Promise<any> {
     this.logger.debug(
-      `Processing "${SignInCommand.name}": ${JSON.stringify(command)}`,
+      `Processing "${RefreshTokenCommand.name}": ${JSON.stringify(command)}`,
     );
-    const { email, password } = command;
-    const user = await this.userRepository.findOneByEmail(email);
-    const isEqual = await this.hashingService.compare(password, user.password);
-    if (!isEqual) {
-      throw new UnauthorizedException(ErrorMsg.ERR_AUTH_SIGNIN_PASSWORD);
+    try {
+      const { sub, refreshTokenId } = await this.jwtService.verifyAsync<
+        Pick<ActiveUserData, 'sub'> & { refreshTokenId: string }
+      >(command.refreshToken, {
+        secret: this.jwtConfiguration.secret,
+        audience: this.jwtConfiguration.audience,
+        issuer: this.jwtConfiguration.issuer,
+      });
+
+      const user = await this.userRepository.findOneById(sub);
+
+      const isValid = await this.refreshTokenIdsStorage.validate(
+        user.id,
+        refreshTokenId,
+      )
+      if (!isValid) {
+        throw new UnauthorizedException(ErrorMsg.ERR_AUTH_REFRESH_TOKEN_INVALID);
+      }
+      await this.refreshTokenIdsStorage.invalidate(user.id);
+
+      return this.generateTokens(user);
+    } catch (err) {
+      // TODO: 應該做額外處理，例如： 紀錄log、通知用戶
+      throw new UnauthorizedException(ErrorMsg.ERR_AUTH_REFRESH_TOKEN_INVALID)
     }
-    return this.generateTokens(user);
   }
+
 
   private async signToken<T>(userId: number, expiresIn: number, payload?: T) {
     return this.jwtService.signAsync(
