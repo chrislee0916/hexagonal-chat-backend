@@ -2,7 +2,6 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HashingService } from '../../ports/hashing.service';
 import { FindUserRepository } from '../../ports/find-user.repository';
 import { JwtService } from '@nestjs/jwt';
-import jwtConfig from 'src/modules/iam/domain/config/jwt.config';
 import { RefreshTokenIdsStorage } from '../../ports/refresh-token-ids.storage';
 import { SignInCommand } from '../impl/sign-in.command';
 import { User } from 'src/modules/iam/domain/user';
@@ -63,10 +62,6 @@ describe('RefreshTokenCommandHandler', () => {
         {
           provide: JwtService,
           useValue: createMockJwtService(),
-        },
-        {
-          provide: jwtConfig.KEY,
-          useValue: jwtConfig.asProvider(),
         },
         {
           provide: RefreshTokenIdsStorage,

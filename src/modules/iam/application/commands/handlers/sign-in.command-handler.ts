@@ -7,11 +7,10 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
 import { randomUUID } from 'crypto';
 import { RefreshTokenIdsStorage } from '../../ports/refresh-token-ids.storage';
-import jwtConfig from 'src/modules/iam/domain/config/jwt.config';
 import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 import { SignInResponseDto } from 'src/modules/iam/presenters/http/dto/sign-in.response.dto';
 import { User } from 'src/modules/iam/domain/user';
-import { ActiveUserData } from 'src/modules/iam/domain/interfaces/active-user-data.interface';
+import { ActiveUserData } from 'src/common/interfaces/active-user-data.interface';
 
 @CommandHandler(SignInCommand)
 export class SignInCommandHandler implements ICommandHandler {
@@ -21,8 +20,6 @@ export class SignInCommandHandler implements ICommandHandler {
     private readonly userRepository: FindUserRepository,
     private readonly hashingService: HashingService,
     private readonly jwtService: JwtService,
-    @Inject(jwtConfig.KEY)
-    private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
     private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
   ) {}
 
@@ -46,9 +43,9 @@ export class SignInCommandHandler implements ICommandHandler {
         ...payload,
       },
       {
-        audience: this.jwtConfiguration.audience,
-        issuer: this.jwtConfiguration.issuer,
-        secret: this.jwtConfiguration.secret,
+        secret: process.env.JWT_SECRET,
+        audience: process.env.JWT_TOKEN_AUDIENCE,
+        issuer: process.env.JWT_TOKEN_ISSUER,
         expiresIn,
       },
     );
@@ -60,11 +57,11 @@ export class SignInCommandHandler implements ICommandHandler {
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken<Partial<ActiveUserData>>(
         user.id,
-        this.jwtConfiguration.accessTokenTtl,
+        +process.env.JWT_ACCESS_TOKEN_TTL,
         { email: user.email },
       ),
       // TODO: 應該使用強型別
-      this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl, {
+      this.signToken(user.id, +process.env.JWT_REFRESH_TOKEN_TTL, {
         refreshTokenId,
       }),
     ]);

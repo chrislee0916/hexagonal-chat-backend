@@ -17,7 +17,7 @@ import { SignUpDto } from './dto/sign-up.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { IamService } from '../../application/iam.service';
 import { SignUpCommand } from '../../application/commands/impl/sign-up.command';
-import { PasswordConfirmedPipe } from '../../domain/pipes/password-confirmed.pipe';
+import { PasswordConfirmedPipe } from 'src/common/pipes/password-confirmed.pipe';
 import {
   ErrorSignUpConflictResponseDto,
   ErrorSignUpPassConfirmedResponseDto,

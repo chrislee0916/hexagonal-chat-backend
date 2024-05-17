@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { IamController } from './iam.controller';
 import { IamService } from '../../application/iam.service';
-import { PasswordConfirmedPipe } from '../../domain/pipes/password-confirmed.pipe';
+import { PasswordConfirmedPipe } from '../../../../common/pipes/password-confirmed.pipe';
 import { SignUpDto } from './dto/sign-up.dto';
 import { SignUpResponseDto } from './dto/sign-up.response.dto';
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
