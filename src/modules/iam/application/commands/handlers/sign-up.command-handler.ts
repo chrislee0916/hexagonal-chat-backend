@@ -1,16 +1,11 @@
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
-import { SignUpCommand } from './sign-up.command';
-import {
-  ConflictException,
-  HttpException,
-  InternalServerErrorException,
-  Logger,
-} from '@nestjs/common';
-import { UserFactory } from '../../domain/factories/user.factory';
-import { CreateUserRepository } from '../ports/create-user.repository';
-import { HashingService } from '../ports/hashing.service';
-import { ErrorMsg } from '../../../../common/enums/err-msg.enum';
-import { SignUpResponseDto } from '../../presenters/http/dto/sign-up.response.dto';
+import { SignUpCommand } from '../impl/sign-up.command';
+import { ConflictException, Logger } from '@nestjs/common';
+import { CreateUserRepository } from '../../ports/create-user.repository';
+import { HashingService } from '../../ports/hashing.service';
+import { UserFactory } from 'src/modules/iam/domain/factories/user.factory';
+import { SignUpResponseDto } from 'src/modules/iam/presenters/http/dto/sign-up.response.dto';
+import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 
 @CommandHandler(SignUpCommand)
 export class SignUpCommandHandler implements ICommandHandler<SignUpCommand> {

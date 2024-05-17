@@ -25,10 +25,10 @@ import * as Joi from '@hapi/joi';
         DATABASE_NAME: Joi.string().required(),
         DATABASE_USERNAME: Joi.string().required(),
         DATABASE_PASS: Joi.string().required(),
-        // token-storage
+        // * token-storage
         REDIS_HOST: Joi.string().required(),
         REDIS_PORT: Joi.number().required(),
-        // JWT
+        // * JWT
         JWT_SECRET: Joi.string().required(),
         JWT_TOKEN_AUDIENCE: Joi.string().required(),
         JWT_TOKEN_ISSUER: Joi.string().required(),

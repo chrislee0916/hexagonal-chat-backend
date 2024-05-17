@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SignUpCommandHandler } from './sign-up.command-handler';
-import { UserFactory } from '../../domain/factories/user.factory';
-import { CreateUserRepository } from '../ports/create-user.repository';
-import { HashingService } from '../ports/hashing.service';
-import { SignUpCommand } from './sign-up.command';
-import { User } from '../../domain/user';
-import { SignUpResponseDto } from '../../presenters/http/dto/sign-up.response.dto';
+import { CreateUserRepository } from '../../ports/create-user.repository';
+import { HashingService } from '../../ports/hashing.service';
+import { SignUpCommand } from '../impl/sign-up.command';
 import { ConflictException } from '@nestjs/common';
-import { ErrorMsg } from '../../../../common/enums/err-msg.enum';
+import { UserFactory } from 'src/modules/iam/domain/factories/user.factory';
+import { User } from 'src/modules/iam/domain/user';
+import { ErrorMsg } from 'src/common/enums/err-msg.enum';
+import { SignUpResponseDto } from 'src/modules/iam/presenters/http/dto/sign-up.response.dto';
 
 type MockUserFactory = Partial<Record<keyof UserFactory, jest.Mock>>;
 const createMockUserFactory = (): MockUserFactory => ({
@@ -22,7 +22,7 @@ const createMockCreateUserRepository = (): MockCreateUserRepository => ({
 });
 
 type MockHashingService = Partial<Record<keyof HashingService, jest.Mock>>;
-const createHashingService = (): MockHashingService => ({
+const createMockHashingService = (): MockHashingService => ({
   hash: jest.fn(),
   compare: jest.fn(),
 });
@@ -47,7 +47,7 @@ describe('SignUpCommandHandler', () => {
         },
         {
           provide: HashingService,
-          useValue: createHashingService(),
+          useValue: createMockHashingService(),
         },
       ],
     }).compile();

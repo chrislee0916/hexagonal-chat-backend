@@ -4,8 +4,8 @@ import {
   Injectable,
   PipeTransform,
 } from '@nestjs/common';
+import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 import { SignUpDto } from 'src/modules/iam/presenters/http/dto/sign-up.dto';
-import { ErrorMsg } from '../../../../common/enums/err-msg.enum';
 
 @Injectable()
 export class PasswordConfirmedPipe implements PipeTransform {

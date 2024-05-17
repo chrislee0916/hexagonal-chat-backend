@@ -1,10 +1,9 @@
-import { ConflictException } from '@nestjs/common';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   ErrorDetailResponseDto,
   ErrorResponseDto,
   SuccessResponseDto,
-} from '../../../../../common/dtos/response.dto';
+} from 'src/common/dtos/response.dto';
 
 // * 成功註冊返回結果
 export class SignUpResponseDto {
