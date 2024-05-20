@@ -14,6 +14,12 @@ export class SignUpResponseDto {
   readonly id: number;
 
   @ApiProperty({
+    description: '使用者名稱',
+    example: 'chris',
+  })
+  readonly name: string;
+
+  @ApiProperty({
     description: '電子信箱',
     example: 'example@gmail.com',
   })

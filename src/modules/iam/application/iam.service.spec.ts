@@ -42,11 +42,13 @@ describe('IamService', () => {
     describe('when user does not exist', () => {
       it('should return the user object', async () => {
         const signUpCommand: SignUpCommand = {
+          name: 'chris',
           email: 'example@gmail.com',
           password: 'password',
         };
         const expectRes: SignUpResponseDto = {
           id: 1,
+          name: 'chris',
           email: 'example@gmail.com',
         };
 
@@ -59,6 +61,7 @@ describe('IamService', () => {
     describe('otherwise', () => {
       it('should throw the conflict exception', async () => {
         const signUpCommand: SignUpCommand = {
+          name: 'chris',
           email: 'example@gmail.com',
           password: 'password',
         };

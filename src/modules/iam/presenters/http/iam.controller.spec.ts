@@ -59,12 +59,14 @@ describe('IamController', () => {
     describe('when user does not exist', () => {
       it('should return the user object', async () => {
         const signUpDto: SignUpDto = {
+          name: 'chris',
           email: 'example@gmail.com',
           password: 'password',
           password_confirmed: 'password',
         };
         const expectRes: SignUpResponseDto = {
           id: 1,
+          name: 'chris',
           email: signUpDto.email,
         };
         passwordConfirmedPipe.transform.mockReturnValue(signUpDto);
@@ -77,6 +79,7 @@ describe('IamController', () => {
     describe('otherwise', () => {
       it('should throw the conflict exception', async () => {
         const signUpDto: SignUpDto = {
+          name: 'chris',
           email: 'exmaple@gmail.com',
           password: 'password',
           password_confirmed: 'password',

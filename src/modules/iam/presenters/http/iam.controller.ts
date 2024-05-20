@@ -64,7 +64,7 @@ export class IamController {
     @Body(new PasswordConfirmedPipe()) signUpDto: SignUpDto,
   ): Promise<SignUpResponseDto> {
     return this.iamService.signUp(
-      new SignUpCommand(signUpDto.email, signUpDto.password),
+      new SignUpCommand(signUpDto.name, signUpDto.email, signUpDto.password),
     );
   }
 

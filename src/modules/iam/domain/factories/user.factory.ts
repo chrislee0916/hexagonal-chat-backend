@@ -1,8 +1,8 @@
 import { User } from '../user';
 
 export class UserFactory {
-  create(email: string, password: string) {
-    const user = new User(email, password);
+  create(name: string, email: string, password: string) {
+    const user = new User(name, email, password);
     return user;
   }
 }

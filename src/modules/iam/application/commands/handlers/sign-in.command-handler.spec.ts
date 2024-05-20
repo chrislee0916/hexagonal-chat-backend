@@ -90,6 +90,7 @@ describe('SignInCommandHandler', () => {
         };
         const expectedUser: User = {
           id: 1,
+          name: 'chris',
           email: signInCommand.email,
           password:
             '$2b$10$.cfl0sfK7uwPmURAKJUwNOuY.2zAJy90.QQntEy5GzcJN9gjkDKHW',
@@ -135,6 +136,7 @@ describe('SignInCommandHandler', () => {
         };
         const expectedUser: User = {
           id: 1,
+          name: 'chris',
           email: signInCommand.email,
           password:
             '$2b$10$.cfl0sfK7uwPmURAKJUwNOuY.2zAJy90.QQntEy5GzcJN9gjkDKHW',

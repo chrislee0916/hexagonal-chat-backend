@@ -23,11 +23,15 @@ export class SignUpCommandHandler implements ICommandHandler<SignUpCommand> {
       `Processing "${SignUpCommand.name}": ${JSON.stringify(command)}`,
     );
     const hashedPassword = await this.hashingService.hash(command.password);
-    const user = this.userFactory.create(command.email, hashedPassword);
+    const user = this.userFactory.create(
+      command.name,
+      command.email,
+      hashedPassword,
+    );
     // this.eventBus.publish(new UserSignedUpEvent(user));
     try {
-      const { id, email } = await this.userRepository.save(user);
-      return { id, email };
+      const { id, name, email } = await this.userRepository.save(user);
+      return { id, name, email };
     } catch (err) {
       if (err.code === '23505') {
         throw new ConflictException(ErrorMsg.ERR_AUTH_SIGNUP_USER_CONFLICT);

@@ -97,6 +97,7 @@ describe('RefreshTokenCommandHandler', () => {
         };
         const expectUser: User = {
           id: expectTokenData.sub,
+          name: 'chris',
           email: 'example@gmail.com',
           password:
             '$2b$10$.cfl0sfK7uwPmURAKJUwNOuY.2zAJy90.QQntEy5GzcJN9gjkDKHW',

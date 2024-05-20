@@ -3,6 +3,13 @@ import { IsString } from 'class-validator';
 
 export class SignUpDto {
   @ApiProperty({
+    description: '使用者名稱',
+    example: 'chris',
+  })
+  @IsString()
+  readonly name: string;
+
+  @ApiProperty({
     description: '電子信箱',
     example: 'example@gmail.com',
   })

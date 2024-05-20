@@ -68,26 +68,31 @@ describe('SignUpCommandHandler', () => {
     describe('when user does not exist', () => {
       it('should return the user object', async () => {
         const signUpCommand: SignUpCommand = {
+          name: 'chris',
           email: 'example@gmail.com',
           password: 'password',
         };
         const expectedUser: User = {
           id: 1,
+          name: 'chris',
           email: 'example@gmail.com',
           password:
             '$2b$10$.cfl0sfK7uwPmURAKJUwNOuY.2zAJy90.QQntEy5GzcJN9gjkDKHW',
         };
         const expectRes: SignUpResponseDto = {
           id: expectedUser.id,
+          name: expectedUser.name,
           email: expectedUser.email,
         };
         hashingService.hash.mockReturnValue(expectedUser.password);
         userFactory.create.mockReturnValue({
           email: expectedUser.email,
+          name: expectedUser.name,
           passowrd: expectedUser.password,
         });
         createUserRepository.save.mockReturnValue({
           id: expectedUser.id,
+          name: expectedUser.name,
           email: expectedUser.email,
           password: expectedUser.password,
         });
@@ -100,11 +105,13 @@ describe('SignUpCommandHandler', () => {
     describe('otherwise', () => {
       it('should throw the conflict exception', async () => {
         const signUpCommand: SignUpCommand = {
+          name: 'chris',
           email: 'example@gmail.com',
           password: 'password',
         };
         const expectedUser: User = {
           id: 1,
+          name: 'chris',
           email: 'example@gmail.com',
           password:
             '$2b$10$.cfl0sfK7uwPmURAKJUwNOuY.2zAJy90.QQntEy5GzcJN9gjkDKHW',
