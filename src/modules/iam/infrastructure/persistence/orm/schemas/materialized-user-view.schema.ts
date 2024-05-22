@@ -16,6 +16,9 @@ export class MaterializedUserView {
     index: true,
   })
   email: string;
+
+  @Prop()
+  password: string;
 }
 
 export const MaterializedUserViewSchema =

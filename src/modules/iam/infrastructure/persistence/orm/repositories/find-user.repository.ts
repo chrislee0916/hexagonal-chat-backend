@@ -1,32 +1,41 @@
-import { InjectRepository } from "@nestjs/typeorm";
-import { FindUserRepository } from "src/modules/iam/application/ports/find-user.repository";
-import { User } from "src/modules/iam/domain/user";
-import { UserEntity } from "../entities/user.entity";
-import { Repository } from "typeorm";
-import { UnauthorizedException } from "@nestjs/common";
-import { ErrorMsg } from "src/common/enums/err-msg.enum";
-import { UserMapper } from "../mappers/user.mapper";
+import { InjectRepository } from '@nestjs/typeorm';
+import { FindUserRepository } from 'src/modules/iam/application/ports/find-user.repository';
+import { User } from 'src/modules/iam/domain/user';
+import { UserEntity } from '../entities/user.entity';
+import { Repository } from 'typeorm';
+import { UnauthorizedException } from '@nestjs/common';
+import { ErrorMsg } from 'src/common/enums/err-msg.enum';
+import { UserMapper } from '../mappers/user.mapper';
+import { InjectModel } from '@nestjs/mongoose';
+import { MaterializedUserView } from '../schemas/materialized-user-view.schema';
+import { Model } from 'mongoose';
+import { UserReadModel } from 'src/modules/iam/domain/read-models/user.read-model';
 
 export class OrmFindUserRepository implements FindUserRepository {
-
   constructor(
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>
-  ) { }
+    // @InjectRepository(UserEntity)
+    // private readonly userRepository: Repository<UserEntity>
+    @InjectModel(MaterializedUserView.name)
+    private readonly userModel: Model<MaterializedUserView>,
+  ) {}
 
-  async findOneByEmail(email: string): Promise<User> {
-    const userEntity = await this.userRepository.findOneBy({ email });
-    if (!userEntity) {
-      throw new UnauthorizedException(ErrorMsg.ERR_AUTH_SIGNIN_NOT_EXIST)
+  async findOneByEmail(email: string): Promise<UserReadModel> {
+    // const userEntity = await this.userRepository.findOneBy({ email });
+    const user = await this.userModel.findOne({ email }).exec();
+    if (!user) {
+      throw new UnauthorizedException(ErrorMsg.ERR_AUTH_SIGNIN_NOT_EXIST);
     }
-    return UserMapper.toDomain(userEntity);
+    return user;
+    // return UserMapper.toDomain(user);
   }
 
-  async findOneById(id: number): Promise<User> {
-    const userEntity = await this.userRepository.findOneBy({ id });
-    if (!userEntity) {
-      throw new UnauthorizedException(ErrorMsg.ERR_AUTH_SIGNIN_NOT_EXIST)
+  async findOneById(id: number): Promise<UserReadModel> {
+    // const userEntity = await this.userRepository.findOneBy({ id });
+    const user = await this.userModel.findOne({ id });
+    if (!user) {
+      throw new UnauthorizedException(ErrorMsg.ERR_AUTH_SIGNIN_NOT_EXIST);
     }
-    return UserMapper.toDomain(userEntity);
+    return user;
+    // return UserMapper.toDomain(user);
   }
 }

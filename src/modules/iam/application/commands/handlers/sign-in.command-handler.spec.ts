@@ -21,11 +21,6 @@ const createMockFindUserRepository = (): MockFindUserRepository => ({
   findOneById: jest.fn(),
 });
 
-type MockJwtService = Partial<Record<keyof JwtService, jest.Mock>>;
-const createMockJwtService = (): MockJwtService => ({
-  signAsync: jest.fn(),
-});
-
 type MockRefreshTokenIdsStorage = Record<
   keyof RefreshTokenIdsStorage,
   jest.Mock
@@ -42,7 +37,6 @@ describe('SignInCommandHandler', () => {
   let signInCommandHandler: SignInCommandHandler;
   let findUserRepository: MockFindUserRepository;
   let hashingService: MockHashingService;
-  let jwtService: MockJwtService;
   let refreshTokenIdsStorage: MockRefreshTokenIdsStorage;
 
   beforeEach(async () => {
@@ -58,10 +52,6 @@ describe('SignInCommandHandler', () => {
           useValue: createMockHashingService(),
         },
         {
-          provide: JwtService,
-          useValue: createMockJwtService(),
-        },
-        {
           provide: RefreshTokenIdsStorage,
           useValue: createMockRefreshTokenIdsStorage(),
         },
@@ -72,7 +62,6 @@ describe('SignInCommandHandler', () => {
       module.get<SignInCommandHandler>(SignInCommandHandler);
     findUserRepository = module.get<MockFindUserRepository>(FindUserRepository);
     hashingService = module.get<MockHashingService>(HashingService);
-    jwtService = module.get<MockJwtService>(JwtService);
     refreshTokenIdsStorage = module.get<MockRefreshTokenIdsStorage>(
       RefreshTokenIdsStorage,
     );
@@ -106,8 +95,6 @@ describe('SignInCommandHandler', () => {
 
         findUserRepository.findOneByEmail.mockReturnValue(expectedUser);
         hashingService.compare.mockReturnValue(true);
-        jwtService.signAsync.mockReturnValue(expectRes.accessToken);
-        refreshTokenIdsStorage.insert.mockReturnValue(null);
         refreshTokenIdsStorage.generateTokens.mockReturnValue({
           accessToken: expectRes.accessToken,
           refreshToken: expectRes.refreshToken,

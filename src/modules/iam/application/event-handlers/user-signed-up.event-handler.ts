@@ -19,6 +19,7 @@ export class UserSignedUpEventHandler
       id: event.user.id,
       name: event.user.name,
       email: event.user.email,
+      password: event.user.password,
     });
   }
 }

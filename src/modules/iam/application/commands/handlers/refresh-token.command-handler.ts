@@ -19,7 +19,6 @@ export class RefreshTokenCommandHandler implements ICommandHandler {
 
   constructor(
     private readonly userRepository: FindUserRepository,
-    private readonly hashingService: HashingService,
     private readonly jwtService: JwtService,
     private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
   ) {}
