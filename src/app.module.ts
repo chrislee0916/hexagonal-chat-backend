@@ -25,6 +25,10 @@ import * as Joi from '@hapi/joi';
         DATABASE_NAME: Joi.string().required(),
         DATABASE_USERNAME: Joi.string().required(),
         DATABASE_PASS: Joi.string().required(),
+        // * read-db
+        MONGODB_HOST: Joi.string().required(),
+        MONGODB_PORT: Joi.number().required(),
+        MONGODB_NAME: Joi.string().required(),
         // * token-storage
         REDIS_HOST: Joi.string().required(),
         REDIS_PORT: Joi.number().required(),

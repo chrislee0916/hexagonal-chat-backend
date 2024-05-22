@@ -33,44 +33,12 @@ export class SignInCommandHandler implements ICommandHandler {
     if (!isEqual) {
       throw new UnauthorizedException(ErrorMsg.ERR_AUTH_SIGNIN_PASSWORD);
     }
-    return this.generateTokens(user);
-  }
-
-  private async signToken<T>(userId: number, expiresIn: number, payload?: T) {
-    return this.jwtService.signAsync(
-      {
-        sub: userId,
-        ...payload,
-      },
-      {
-        secret: process.env.JWT_SECRET,
-        audience: process.env.JWT_TOKEN_AUDIENCE,
-        issuer: process.env.JWT_TOKEN_ISSUER,
-        expiresIn,
-      },
-    );
-  }
-
-  private async generateTokens(user: User): Promise<SignInResponseDto> {
-    const refreshTokenId = randomUUID();
-
-    const [accessToken, refreshToken] = await Promise.all([
-      this.signToken<Partial<ActiveUserData>>(
-        user.id,
-        +process.env.JWT_ACCESS_TOKEN_TTL,
-        { email: user.email },
-      ),
-      // TODO: 應該使用強型別
-      this.signToken(user.id, +process.env.JWT_REFRESH_TOKEN_TTL, {
-        refreshTokenId,
-      }),
-    ]);
-
-    await this.refreshTokenIdsStorage.insert(user.id, refreshTokenId);
-
+    const tokens = await this.refreshTokenIdsStorage.generateTokens(user);
     return {
-      accessToken,
-      refreshToken,
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      ...tokens,
     };
   }
 }

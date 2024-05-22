@@ -45,55 +45,13 @@ export class RefreshTokenCommandHandler implements ICommandHandler {
         user.id,
         refreshTokenId,
       );
-      if (!isValid) {
-        throw new UnauthorizedException(
-          ErrorMsg.ERR_AUTH_REFRESH_TOKEN_INVALID,
-        );
-      }
+      if (!isValid) throw new Error();
       await this.refreshTokenIdsStorage.invalidate(user.id);
 
-      return this.generateTokens(user);
+      return this.refreshTokenIdsStorage.generateTokens(user);
     } catch (err) {
       // TODO: 應該做額外處理，例如： 紀錄log、通知用戶
       throw new UnauthorizedException(ErrorMsg.ERR_AUTH_REFRESH_TOKEN_INVALID);
     }
-  }
-
-  private async signToken<T>(userId: number, expiresIn: number, payload?: T) {
-    return this.jwtService.signAsync(
-      {
-        sub: userId,
-        ...payload,
-      },
-      {
-        secret: process.env.JWT_SECRET,
-        audience: process.env.JWT_TOKEN_AUDIENCE,
-        issuer: process.env.JWT_TOKEN_ISSUER,
-        expiresIn,
-      },
-    );
-  }
-
-  private async generateTokens(user: User): Promise<SignInResponseDto> {
-    const refreshTokenId = randomUUID();
-
-    const [accessToken, refreshToken] = await Promise.all([
-      this.signToken<Partial<ActiveUserData>>(
-        user.id,
-        +process.env.JWT_ACCESS_TOKEN_TTL,
-        { email: user.email },
-      ),
-      // TODO: 應該使用強型別
-      this.signToken(user.id, +process.env.JWT_REFRESH_TOKEN_TTL, {
-        refreshTokenId,
-      }),
-    ]);
-
-    await this.refreshTokenIdsStorage.insert(user.id, refreshTokenId);
-
-    return {
-      accessToken,
-      refreshToken,
-    };
   }
 }

@@ -35,6 +35,7 @@ const createMockRefreshTokenIdsStorage = (): MockRefreshTokenIdsStorage => ({
   insert: jest.fn(),
   validate: jest.fn(),
   invalidate: jest.fn(),
+  generateTokens: jest.fn(),
 });
 
 describe('SignInCommandHandler', () => {
@@ -88,7 +89,7 @@ describe('SignInCommandHandler', () => {
           email: 'example@gmail.com',
           password: 'password',
         };
-        const expectedUser: User = {
+        const expectedUser = {
           id: 1,
           name: 'chris',
           email: signInCommand.email,
@@ -96,6 +97,9 @@ describe('SignInCommandHandler', () => {
             '$2b$10$.cfl0sfK7uwPmURAKJUwNOuY.2zAJy90.QQntEy5GzcJN9gjkDKHW',
         };
         const expectRes: SignInResponseDto = {
+          id: expectedUser.id,
+          name: expectedUser.name,
+          email: expectedUser.email,
           accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp',
           refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp',
         };
@@ -104,6 +108,10 @@ describe('SignInCommandHandler', () => {
         hashingService.compare.mockReturnValue(true);
         jwtService.signAsync.mockReturnValue(expectRes.accessToken);
         refreshTokenIdsStorage.insert.mockReturnValue(null);
+        refreshTokenIdsStorage.generateTokens.mockReturnValue({
+          accessToken: expectRes.accessToken,
+          refreshToken: expectRes.refreshToken,
+        });
 
         const actual = await signInCommandHandler.execute(signInCommand);
         expect(actual).toEqual(expectRes);
@@ -134,7 +142,7 @@ describe('SignInCommandHandler', () => {
           email: 'example@gmail.com',
           password: 'password',
         };
-        const expectedUser: User = {
+        const expectedUser = {
           id: 1,
           name: 'chris',
           email: signInCommand.email,

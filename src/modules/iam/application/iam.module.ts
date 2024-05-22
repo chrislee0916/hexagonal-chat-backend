@@ -5,6 +5,7 @@ import { SignUpCommandHandler } from './commands/handlers/sign-up.command-handle
 import { UserFactory } from '../domain/factories/user.factory';
 import { SignInCommandHandler } from './commands/handlers/sign-in.command-handler';
 import { RefreshTokenCommandHandler } from './commands/handlers/refresh-token.command-handler';
+import { UserSignedUpEventHandler } from './event-handlers/user-signed-up.event-handler';
 
 @Module({
   controllers: [IamController],
@@ -14,6 +15,7 @@ import { RefreshTokenCommandHandler } from './commands/handlers/refresh-token.co
     SignInCommandHandler,
     RefreshTokenCommandHandler,
     UserFactory,
+    UserSignedUpEventHandler,
   ],
 })
 export class IamModule {

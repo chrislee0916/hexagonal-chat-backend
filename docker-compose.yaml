@@ -20,13 +20,14 @@ services:
     restart: always
     ports:
       - "${REDIS_PORT}:6379"
-    
-  # read-db:
-  #   image: mongo
-  #   ports:
-  #     - 27017:27017
-  #   environment:
-  #     - MONGODB_DATABASE="vf-read-db"
+
+  read-db:
+    container_name: read-db
+    image: mongo
+    ports:
+      - 27017:27017
+    environment:
+      - MONGODB_DATABASE="vf-read-db"
 
   # event-store:
   #   image: mongo:6.0.4

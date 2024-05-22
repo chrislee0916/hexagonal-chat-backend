@@ -38,6 +38,7 @@ const createMockRefreshTokenIdsStorage = (): MockRefreshTokenIdsStorage => ({
   insert: jest.fn(),
   validate: jest.fn(),
   invalidate: jest.fn(),
+  generateTokens: jest.fn(),
 });
 
 describe('RefreshTokenCommandHandler', () => {
@@ -95,7 +96,7 @@ describe('RefreshTokenCommandHandler', () => {
           sub: 1,
           refreshTokenId: '7e7e2222-fa6b-4a9b-9776-17a111460b44',
         };
-        const expectUser: User = {
+        const expectUser: Partial<User> = {
           id: expectTokenData.sub,
           name: 'chris',
           email: 'example@gmail.com',
@@ -112,7 +113,7 @@ describe('RefreshTokenCommandHandler', () => {
         refreshTokenIdsStorage.validate.mockReturnValue(true);
         refreshTokenIdsStorage.invalidate.mockReturnValue(null);
         jwtService.signAsync.mockReturnValue(expectRes.accessToken);
-
+        refreshTokenIdsStorage.generateTokens.mockReturnValue(expectRes);
         const actual =
           await refreshTokenCommandHandler.execute(refreshTokenCommand);
         expect(actual).toEqual(expectRes);

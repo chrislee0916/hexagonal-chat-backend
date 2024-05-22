@@ -106,6 +106,9 @@ describe('IamController', () => {
           password: 'password',
         };
         const expectRes: SignInResponseDto = {
+          id: 1,
+          name: 'name',
+          email: signInDto.email,
           accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp',
           refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp',
         };

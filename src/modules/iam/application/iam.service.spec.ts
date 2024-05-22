@@ -87,6 +87,9 @@ describe('IamService', () => {
           password: 'password',
         };
         const expectRes: SignInResponseDto = {
+          id: 1,
+          name: 'name',
+          email: signInCommand.email,
           accessToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp',
           refreshToken: 'eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp',
         };

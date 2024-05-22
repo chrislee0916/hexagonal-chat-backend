@@ -8,6 +8,24 @@ import {
 // * 成功登入返回結果
 export class SignInResponseDto {
   @ApiProperty({
+    description: '使用者id',
+    example: 1,
+  })
+  readonly id: number;
+
+  @ApiProperty({
+    description: '使用者電子信箱',
+    example: 'example@gmail.com',
+  })
+  readonly email: string;
+
+  @ApiProperty({
+    description: '使用者名稱',
+    example: 'name',
+  })
+  readonly name: string;
+
+  @ApiProperty({
     description: '存取令牌',
     example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp...',
   })

@@ -1,4 +1,9 @@
-import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
+import {
+  CommandHandler,
+  EventBus,
+  EventPublisher,
+  ICommandHandler,
+} from '@nestjs/cqrs';
 import { SignUpCommand } from '../impl/sign-up.command';
 import { ConflictException, Logger } from '@nestjs/common';
 import { CreateUserRepository } from '../../ports/create-user.repository';
@@ -6,6 +11,7 @@ import { HashingService } from '../../ports/hashing.service';
 import { UserFactory } from 'src/modules/iam/domain/factories/user.factory';
 import { SignUpResponseDto } from 'src/modules/iam/presenters/http/dto/sign-up.response.dto';
 import { ErrorMsg } from 'src/common/enums/err-msg.enum';
+import { UserSignedUpEvent } from 'src/modules/iam/domain/events/user-signed-up.event';
 
 @CommandHandler(SignUpCommand)
 export class SignUpCommandHandler implements ICommandHandler<SignUpCommand> {
@@ -16,6 +22,7 @@ export class SignUpCommandHandler implements ICommandHandler<SignUpCommand> {
     // private readonly eventBus: EventBus,
     private readonly userRepository: CreateUserRepository,
     private readonly hashingService: HashingService,
+    private eventPublisher: EventPublisher,
   ) {}
 
   async execute(command: SignUpCommand): Promise<SignUpResponseDto> {
@@ -23,14 +30,17 @@ export class SignUpCommandHandler implements ICommandHandler<SignUpCommand> {
       `Processing "${SignUpCommand.name}": ${JSON.stringify(command)}`,
     );
     const hashedPassword = await this.hashingService.hash(command.password);
-    const user = this.userFactory.create(
+    let user = this.userFactory.create(
       command.name,
       command.email,
       hashedPassword,
     );
-    // this.eventBus.publish(new UserSignedUpEvent(user));
     try {
       const { id, name, email } = await this.userRepository.save(user);
+      user.id = id;
+      user.signedUp();
+      this.eventPublisher.mergeObjectContext(user);
+      user.commit();
       return { id, name, email };
     } catch (err) {
       if (err.code === '23505') {

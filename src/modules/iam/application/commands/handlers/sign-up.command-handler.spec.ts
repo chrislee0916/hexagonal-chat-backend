@@ -8,6 +8,7 @@ import { UserFactory } from 'src/modules/iam/domain/factories/user.factory';
 import { User } from 'src/modules/iam/domain/user';
 import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 import { SignUpResponseDto } from 'src/modules/iam/presenters/http/dto/sign-up.response.dto';
+import { EventPublisher } from '@nestjs/cqrs';
 
 type MockUserFactory = Partial<Record<keyof UserFactory, jest.Mock>>;
 const createMockUserFactory = (): MockUserFactory => ({
@@ -27,11 +28,22 @@ const createMockHashingService = (): MockHashingService => ({
   compare: jest.fn(),
 });
 
+type MockEventPublisher = Partial<Record<keyof EventPublisher, jest.Mock>>;
+const createMockEventPublisher = (): MockEventPublisher => ({
+  mergeObjectContext: jest.fn(),
+});
+
+type MockUser = Partial<Record<keyof User, jest.Mock>>;
+const createMockUser = (): MockUser => ({
+  signedUp: jest.fn(),
+});
+
 describe('SignUpCommandHandler', () => {
   let signUpCommandHandler: SignUpCommandHandler;
   let userFactory: MockUserFactory;
   let createUserRepository: MockCreateUserRepository;
   let hashingService: MockHashingService;
+  let eventPublisher: MockEventPublisher;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -49,6 +61,10 @@ describe('SignUpCommandHandler', () => {
           provide: HashingService,
           useValue: createMockHashingService(),
         },
+        {
+          provide: EventPublisher,
+          useValue: createMockEventPublisher(),
+        },
       ],
     }).compile();
 
@@ -58,6 +74,7 @@ describe('SignUpCommandHandler', () => {
     createUserRepository =
       module.get<MockCreateUserRepository>(CreateUserRepository);
     hashingService = module.get<MockHashingService>(HashingService);
+    eventPublisher = module.get<MockEventPublisher>(EventPublisher);
   });
 
   it('should be defined', () => {
@@ -72,23 +89,32 @@ describe('SignUpCommandHandler', () => {
           email: 'example@gmail.com',
           password: 'password',
         };
-        const expectedUser: User = {
+        const expectedUser: Partial<User> = {
           id: 1,
           name: 'chris',
           email: 'example@gmail.com',
           password:
             '$2b$10$.cfl0sfK7uwPmURAKJUwNOuY.2zAJy90.QQntEy5GzcJN9gjkDKHW',
+          signedUp(): void {
+            return;
+          },
+          commit(): void {
+            return;
+          },
         };
         const expectRes: SignUpResponseDto = {
           id: expectedUser.id,
           name: expectedUser.name,
           email: expectedUser.email,
         };
+
         hashingService.hash.mockReturnValue(expectedUser.password);
         userFactory.create.mockReturnValue({
           email: expectedUser.email,
           name: expectedUser.name,
           passowrd: expectedUser.password,
+          signedUp: expectedUser.signedUp,
+          commit: expectedUser.commit,
         });
         createUserRepository.save.mockReturnValue({
           id: expectedUser.id,
@@ -109,18 +135,28 @@ describe('SignUpCommandHandler', () => {
           email: 'example@gmail.com',
           password: 'password',
         };
-        const expectedUser: User = {
+        const expectedUser: Partial<User> = {
           id: 1,
           name: 'chris',
           email: 'example@gmail.com',
           password:
             '$2b$10$.cfl0sfK7uwPmURAKJUwNOuY.2zAJy90.QQntEy5GzcJN9gjkDKHW',
+          signedUp(): void {
+            return;
+          },
+          commit(): void {
+            return;
+          },
         };
 
         hashingService.hash.mockReturnValue(expectedUser.password);
         userFactory.create.mockReturnValue({
+          id: expectedUser.id,
+          name: expectedUser.name,
           email: expectedUser.email,
           passowrd: expectedUser.password,
+          signedUp: expectedUser.signedUp,
+          commit: expectedUser.commit,
         });
         createUserRepository.save.mockReturnValue(
           new ConflictException(ErrorMsg.ERR_AUTH_SIGNUP_USER_CONFLICT),
