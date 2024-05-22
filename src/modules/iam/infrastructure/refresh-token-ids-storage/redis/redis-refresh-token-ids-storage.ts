@@ -5,7 +5,7 @@ import { InjectRedis } from '@liaoliaots/nestjs-redis';
 import { JwtService } from '@nestjs/jwt';
 import { User } from 'src/modules/iam/domain/user';
 import { randomUUID } from 'crypto';
-import { ActiveUserData } from 'src/common/interfaces/active-user-data.interface';
+import { ActiveUserData } from 'src/modules/iam/domain/interfaces/active-user-data.interface';
 import { Tokens } from 'src/modules/iam/domain/interfaces/tokens.interface';
 
 export class RedisRefreshTokenIdsStorage

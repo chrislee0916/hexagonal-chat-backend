@@ -8,7 +8,7 @@ import { ConfigType } from '@nestjs/config';
 import { RefreshTokenIdsStorage } from '../../ports/refresh-token-ids.storage';
 import { randomUUID } from 'crypto';
 import { ErrorMsg } from 'src/common/enums/err-msg.enum';
-import { ActiveUserData } from 'src/common/interfaces/active-user-data.interface';
+import { ActiveUserData } from 'src/modules/iam/domain/interfaces/active-user-data.interface';
 import { SignInResponseDto } from 'src/modules/iam/presenters/http/dto/sign-in.response.dto';
 import { RefreshTokenResponseDto } from 'src/modules/iam/presenters/http/dto/refresh-token.response.dto';
 import { User } from 'src/modules/iam/domain/user';

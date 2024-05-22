@@ -30,18 +30,15 @@ export class SignUpCommandHandler implements ICommandHandler<SignUpCommand> {
       `Processing "${SignUpCommand.name}": ${JSON.stringify(command)}`,
     );
     const hashedPassword = await this.hashingService.hash(command.password);
-    let user = this.userFactory.create(
-      command.name,
-      command.email,
-      hashedPassword,
-    );
+
     try {
-      const { id, name, email } = await this.userRepository.save(user);
-      user.id = id;
+      let user = await this.userRepository.save(
+        this.userFactory.create(command.name, command.email, hashedPassword),
+      );
       user.signedUp();
       this.eventPublisher.mergeObjectContext(user);
       user.commit();
-      return { id, name, email };
+      return { id: user.id, name: user.name, email: user.name };
     } catch (err) {
       if (err.code === '23505') {
         throw new ConflictException(ErrorMsg.ERR_AUTH_SIGNUP_USER_CONFLICT);

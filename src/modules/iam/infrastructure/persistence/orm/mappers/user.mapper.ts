@@ -6,6 +6,9 @@ export class UserMapper {
     const { name, email, password } = userEntity;
     const userModel = new User(name, email, password);
     userModel.id = userEntity.id;
+    userModel.createdAt = userEntity.createdAt;
+    userModel.updatedAt = userEntity.updatedAt;
+    userModel.deletedAt = userEntity.deletedAt;
     return userModel;
   }
 
@@ -14,6 +17,9 @@ export class UserMapper {
     entity.name = user.name;
     entity.email = user.email;
     entity.password = user.password;
+    entity.createdAt = user.createdAt;
+    entity.updatedAt = user.updatedAt;
+    entity.deletedAt = user.deletedAt;
     return entity;
   }
 }

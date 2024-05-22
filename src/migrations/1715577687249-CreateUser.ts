@@ -7,7 +7,10 @@ export class CreateUser1715577687249 implements MigrationInterface {
               "id" SERIAL PRIMARY KEY,
               "name" VARCHAR NOT NULL,
               "email" VARCHAR NOT NULL UNIQUE,
-              "password" VARCHAR NOT NULL
+              "password" VARCHAR NOT NULL,
+              "created_at" timestamp with time zone DEFAULT now(),
+              "updated_at" timestamp with time zone DEFAULT now(),
+              "deleted_at" timestamp with time zone DEFAULT NULL
             )
         `);
   }

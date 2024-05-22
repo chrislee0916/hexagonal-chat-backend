@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-@Schema()
+@Schema({
+  timestamps: true,
+})
 export class MaterializedUserView {
   @Prop({
     unique: true,
@@ -19,6 +21,12 @@ export class MaterializedUserView {
 
   @Prop()
   password: string;
+
+  @Prop()
+  createdAt: Date;
+
+  @Prop()
+  updatedAt: Date;
 }
 
 export const MaterializedUserViewSchema =

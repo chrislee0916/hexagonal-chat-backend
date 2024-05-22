@@ -10,7 +10,7 @@ import { RefreshTokenIdsStorage } from '../../ports/refresh-token-ids.storage';
 import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 import { SignInResponseDto } from 'src/modules/iam/presenters/http/dto/sign-in.response.dto';
 import { User } from 'src/modules/iam/domain/user';
-import { ActiveUserData } from 'src/common/interfaces/active-user-data.interface';
+import { ActiveUserData } from 'src/modules/iam/domain/interfaces/active-user-data.interface';
 
 @CommandHandler(SignInCommand)
 export class SignInCommandHandler implements ICommandHandler {
