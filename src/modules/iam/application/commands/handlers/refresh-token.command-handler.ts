@@ -9,8 +9,8 @@ import { RefreshTokenIdsStorage } from '../../ports/refresh-token-ids.storage';
 import { randomUUID } from 'crypto';
 import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 import { ActiveUserData } from 'src/modules/iam/domain/interfaces/active-user-data.interface';
-import { SignInResponseDto } from 'src/modules/iam/presenters/http/dto/sign-in.response.dto';
-import { RefreshTokenResponseDto } from 'src/modules/iam/presenters/http/dto/refresh-token.response.dto';
+import { SignInResponseDto } from 'src/modules/iam/presenters/http/dto/response/sign-in.response.dto';
+import { RefreshTokenResponseDto } from 'src/modules/iam/presenters/http/dto/response/refresh-token.response.dto';
 import { User } from 'src/modules/iam/domain/user';
 
 @CommandHandler(RefreshTokenCommand)
@@ -39,6 +39,7 @@ export class RefreshTokenCommandHandler implements ICommandHandler {
       });
 
       const user = await this.userRepository.findOneById(sub);
+      if (!user) throw new Error();
 
       const isValid = await this.refreshTokenIdsStorage.validate(
         user.id,

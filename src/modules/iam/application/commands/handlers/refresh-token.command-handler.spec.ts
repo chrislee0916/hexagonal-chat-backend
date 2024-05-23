@@ -5,11 +5,11 @@ import { JwtService } from '@nestjs/jwt';
 import { RefreshTokenIdsStorage } from '../../ports/refresh-token-ids.storage';
 import { SignInCommand } from '../impl/sign-in.command';
 import { User } from 'src/modules/iam/domain/user';
-import { SignInResponseDto } from 'src/modules/iam/presenters/http/dto/sign-in.response.dto';
+import { SignInResponseDto } from 'src/modules/iam/presenters/http/dto/response/sign-in.response.dto';
 import { UnauthorizedException } from '@nestjs/common';
 import { RefreshTokenCommandHandler } from './refresh-token.command-handler';
 import { RefreshTokenCommand } from '../impl/refresh-token.command';
-import { RefreshTokenResponseDto } from 'src/modules/iam/presenters/http/dto/refresh-token.response.dto';
+import { RefreshTokenResponseDto } from 'src/modules/iam/presenters/http/dto/response/refresh-token.response.dto';
 
 type MockHashingService = Partial<Record<keyof HashingService, jest.Mock>>;
 const createMockHashingService = (): MockHashingService => ({

@@ -10,6 +10,7 @@ export class SuccessResponseDto {
 
   @ApiProperty({
     description: '返回資料',
+    example: null,
   })
   readonly data: any;
 

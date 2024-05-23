@@ -15,7 +15,6 @@ export class OrmUpsertMaterializedUserRepository
   ) {}
 
   async upsert(user: UserReadModel): Promise<void> {
-    console.log('user: ', user);
     await this.userModel.findOneAndUpdate({ id: user.id }, user, {
       upsert: true,
     });

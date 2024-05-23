@@ -41,6 +41,7 @@ export class SignInResponseDto {
 export class SuccessSignInResponseDto extends SuccessResponseDto {
   @ApiProperty({
     type: SignInResponseDto,
+    example: SignInResponseDto,
   })
   readonly data: SignInResponseDto;
 }

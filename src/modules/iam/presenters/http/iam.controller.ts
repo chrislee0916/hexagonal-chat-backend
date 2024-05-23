@@ -1,4 +1,12 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+} from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBody,
@@ -13,8 +21,8 @@ import {
   getSchemaPath,
   refs,
 } from '@nestjs/swagger';
-import { SignUpDto } from './dto/sign-up.dto';
-import { SignInDto } from './dto/sign-in.dto';
+import { SignUpDto } from './dto/request/sign-up.dto';
+import { SignInDto } from './dto/request/sign-in.dto';
 import { IamService } from '../../application/iam.service';
 import { SignUpCommand } from '../../application/commands/impl/sign-up.command';
 import { PasswordConfirmedPipe } from 'src/common/pipes/password-confirmed.pipe';
@@ -23,23 +31,31 @@ import {
   ErrorSignUpPassConfirmedResponseDto,
   SignUpResponseDto,
   SuccessSignUpResponseDto,
-} from './dto/sign-up.response.dto';
+} from './dto/response/sign-up.response.dto';
 import { SignInCommand } from '../../application/commands/impl/sign-in.command';
 import {
   ErrorSignInNotExistResponseDto,
   ErrorSignInPasswordResponseDto,
   SignInResponseDto,
   SuccessSignInResponseDto,
-} from './dto/sign-in.response.dto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
+} from './dto/response/sign-in.response.dto';
+import { RefreshTokenDto } from './dto/request/refresh-token.dto';
 import { RefreshTokenCommand } from '../../application/commands/impl/refresh-token.command';
 import {
   ErrorRefreshTokenInvalidResponseDto,
   RefreshTokenResponseDto,
   SuccessRefreshTokenResponseDto,
-} from './dto/refresh-token.response.dto';
+} from './dto/response/refresh-token.response.dto';
+import { ActiveUser } from 'src/common/decorators/active-user.decorator';
+import { ActiveUserData } from '../../domain/interfaces/active-user-data.interface';
+import { Auth } from 'src/common/decorators/auth.decorator';
+import { AuthType } from 'src/common/enums/auth-type.enum';
+import { AskFriendCommand } from '../../application/commands/impl/add-friend.command';
+import { SuccessResponseDto } from 'src/common/dtos/response.dto';
+import { ObjectIdPipe } from 'src/common/pipes/object-id.pipe';
 
 @ApiTags('IAM - 身分識別與存取管理')
+@Auth(AuthType.None)
 @Controller('iam')
 export class IamController {
   constructor(private readonly iamService: IamService) {}
@@ -117,5 +133,20 @@ export class IamController {
     return this.iamService.refreshToken(
       new RefreshTokenCommand(refreshTokenDto.refreshToken),
     );
+  }
+
+  @ApiOperation({
+    summary: '新增好友',
+  })
+  @ApiOkResponse({
+    type: SuccessResponseDto,
+  })
+  @Auth(AuthType.Bearer)
+  @Get('ask-friend/:friendId')
+  askFriend(
+    @ActiveUser() user: ActiveUserData,
+    @Param('friendId') friendId: number,
+  ) {
+    return this.iamService.askFriend(new AskFriendCommand(user.sub, friendId));
   }
 }

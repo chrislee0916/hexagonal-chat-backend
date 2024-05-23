@@ -6,6 +6,8 @@ import { UserFactory } from '../domain/factories/user.factory';
 import { SignInCommandHandler } from './commands/handlers/sign-in.command-handler';
 import { RefreshTokenCommandHandler } from './commands/handlers/refresh-token.command-handler';
 import { UserSignedUpEventHandler } from './event-handlers/user-signed-up.event-handler';
+import { UserAskedFriendEventHandler } from './event-handlers/user-asked-friend.events';
+import { AskFriendCommandHandler } from './commands/handlers/add-friend.command-handler';
 
 @Module({
   controllers: [IamController],
@@ -14,8 +16,10 @@ import { UserSignedUpEventHandler } from './event-handlers/user-signed-up.event-
     SignUpCommandHandler,
     SignInCommandHandler,
     RefreshTokenCommandHandler,
+    AskFriendCommandHandler,
     UserFactory,
     UserSignedUpEventHandler,
+    UserAskedFriendEventHandler,
   ],
 })
 export class IamModule {

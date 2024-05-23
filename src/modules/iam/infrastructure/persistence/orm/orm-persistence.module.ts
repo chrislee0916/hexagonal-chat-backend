@@ -12,10 +12,11 @@ import {
 } from './schemas/materialized-user-view.schema';
 import { UpsertMaterializedUserRepository } from 'src/modules/iam/application/ports/upsert-materialized-user.repository';
 import { OrmUpsertMaterializedUserRepository } from './repositories/upsert-materialized-user.respository';
+import { UserFriendEntity } from './entities/user-friend.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([UserEntity]),
+    TypeOrmModule.forFeature([UserEntity, UserFriendEntity]),
     MongooseModule.forFeature([
       {
         name: MaterializedUserView.name,

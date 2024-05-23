@@ -2,19 +2,27 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { IamController } from './iam.controller';
 import { IamService } from '../../application/iam.service';
 import { PasswordConfirmedPipe } from '../../../../common/pipes/password-confirmed.pipe';
-import { SignUpDto } from './dto/sign-up.dto';
-import { SignUpResponseDto } from './dto/sign-up.response.dto';
-import { ConflictException, UnauthorizedException } from '@nestjs/common';
-import { SignInDto } from './dto/sign-in.dto';
-import { SignInResponseDto } from './dto/sign-in.response.dto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { RefreshTokenResponseDto } from './dto/refresh-token.response.dto';
+import { SignUpDto } from './dto/request/sign-up.dto';
+import { SignUpResponseDto } from './dto/response/sign-up.response.dto';
+import {
+  ConflictException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { SignInDto } from './dto/request/sign-in.dto';
+import { SignInResponseDto } from './dto/response/sign-in.response.dto';
+import { RefreshTokenDto } from './dto/request/refresh-token.dto';
+import { RefreshTokenResponseDto } from './dto/response/refresh-token.response.dto';
+import { ActiveUserData } from '../../domain/interfaces/active-user-data.interface';
+import { SuccessResponseDto } from 'src/common/dtos/response.dto';
+import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 
 type MockIamService = Partial<Record<keyof IamService, jest.Mock>>;
 const createMockIamService = (): MockIamService => ({
   signUp: jest.fn(),
   signIn: jest.fn(),
   refreshToken: jest.fn(),
+  askFriend: jest.fn(),
 });
 
 type MockPasswordConfirmedPipe = Partial<
@@ -186,6 +194,40 @@ describe('IamController', () => {
         } catch (err) {
           expect(err).toBeInstanceOf(UnauthorizedException);
           expect(err.message).toEqual('11006 無效刷新令牌');
+        }
+      });
+    });
+  });
+
+  describe('askFriend', () => {
+    describe('when token valid and friendObjId exists', () => {
+      it('should return null', async () => {
+        const user: ActiveUserData = {
+          sub: 1,
+          email: 'example@gmail.com',
+        };
+        const friendObjId = '664d8aca7a09ab118133307a';
+        iamService.askFriend.mockReturnValue(null);
+        const actual = await controller.askFriend(user, friendObjId);
+        expect(actual).toEqual(null);
+      });
+    });
+
+    describe('when friendObjId is not exists', () => {
+      it('should throw not found exception', async () => {
+        const user: ActiveUserData = {
+          sub: 1,
+          email: 'example@gmail.com',
+        };
+        const friendObjId = '664d8aca7a09ab118133307a';
+        iamService.askFriend.mockRejectedValue(
+          new NotFoundException('11007 找不到使用者'),
+        );
+        try {
+          const actual = await controller.askFriend(user, friendObjId);
+        } catch (err) {
+          expect(err).toBeInstanceOf(NotFoundException);
+          expect(err.message).toEqual('11007 找不到使用者');
         }
       });
     });

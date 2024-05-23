@@ -8,7 +8,7 @@ import { ConfigType } from '@nestjs/config';
 import { randomUUID } from 'crypto';
 import { RefreshTokenIdsStorage } from '../../ports/refresh-token-ids.storage';
 import { ErrorMsg } from 'src/common/enums/err-msg.enum';
-import { SignInResponseDto } from 'src/modules/iam/presenters/http/dto/sign-in.response.dto';
+import { SignInResponseDto } from 'src/modules/iam/presenters/http/dto/response/sign-in.response.dto';
 import { User } from 'src/modules/iam/domain/user';
 import { ActiveUserData } from 'src/modules/iam/domain/interfaces/active-user-data.interface';
 
@@ -28,6 +28,9 @@ export class SignInCommandHandler implements ICommandHandler {
     );
     const { email, password } = command;
     const user = await this.userRepository.findOneByEmail(email);
+    if (!user) {
+      throw new UnauthorizedException(ErrorMsg.ERR_AUTH_SIGNIN_NOT_EXIST);
+    }
     const isEqual = await this.hashingService.compare(password, user.password);
     if (!isEqual) {
       throw new UnauthorizedException(ErrorMsg.ERR_AUTH_SIGNIN_PASSWORD);

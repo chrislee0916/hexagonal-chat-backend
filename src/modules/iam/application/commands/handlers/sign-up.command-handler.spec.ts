@@ -7,7 +7,7 @@ import { ConflictException } from '@nestjs/common';
 import { UserFactory } from 'src/modules/iam/domain/factories/user.factory';
 import { User } from 'src/modules/iam/domain/user';
 import { ErrorMsg } from 'src/common/enums/err-msg.enum';
-import { SignUpResponseDto } from 'src/modules/iam/presenters/http/dto/sign-up.response.dto';
+import { SignUpResponseDto } from 'src/modules/iam/presenters/http/dto/response/sign-up.response.dto';
 import { EventPublisher } from '@nestjs/cqrs';
 
 type MockUserFactory = Partial<Record<keyof UserFactory, jest.Mock>>;

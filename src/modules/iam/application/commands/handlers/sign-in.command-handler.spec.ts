@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { RefreshTokenIdsStorage } from '../../ports/refresh-token-ids.storage';
 import { SignInCommand } from '../impl/sign-in.command';
 import { User } from 'src/modules/iam/domain/user';
-import { SignInResponseDto } from 'src/modules/iam/presenters/http/dto/sign-in.response.dto';
+import { SignInResponseDto } from 'src/modules/iam/presenters/http/dto/response/sign-in.response.dto';
 import { UnauthorizedException } from '@nestjs/common';
 
 type MockHashingService = Partial<Record<keyof HashingService, jest.Mock>>;

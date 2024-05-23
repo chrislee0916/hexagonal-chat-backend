@@ -9,9 +9,10 @@ import { ConflictException, Logger } from '@nestjs/common';
 import { CreateUserRepository } from '../../ports/create-user.repository';
 import { HashingService } from '../../ports/hashing.service';
 import { UserFactory } from 'src/modules/iam/domain/factories/user.factory';
-import { SignUpResponseDto } from 'src/modules/iam/presenters/http/dto/sign-up.response.dto';
+import { SignUpResponseDto } from 'src/modules/iam/presenters/http/dto/response/sign-up.response.dto';
 import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 import { UserSignedUpEvent } from 'src/modules/iam/domain/events/user-signed-up.event';
+import { User } from 'src/modules/iam/domain/user';
 
 @CommandHandler(SignUpCommand)
 export class SignUpCommandHandler implements ICommandHandler<SignUpCommand> {
@@ -38,7 +39,7 @@ export class SignUpCommandHandler implements ICommandHandler<SignUpCommand> {
       user.signedUp();
       this.eventPublisher.mergeObjectContext(user);
       user.commit();
-      return { id: user.id, name: user.name, email: user.name };
+      return { id: user.id, name: user.name, email: user.email };
     } catch (err) {
       if (err.code === '23505') {
         throw new ConflictException(ErrorMsg.ERR_AUTH_SIGNUP_USER_CONFLICT);

@@ -7,6 +7,7 @@ import { User } from 'src/modules/iam/domain/user';
 import { randomUUID } from 'crypto';
 import { ActiveUserData } from 'src/modules/iam/domain/interfaces/active-user-data.interface';
 import { Tokens } from 'src/modules/iam/domain/interfaces/tokens.interface';
+import { UserReadModel } from 'src/modules/iam/domain/read-models/user.read-model';
 
 export class RedisRefreshTokenIdsStorage
   implements RefreshTokenIdsStorage, OnApplicationShutdown
@@ -37,7 +38,7 @@ export class RedisRefreshTokenIdsStorage
     return `user-${userId}`;
   }
 
-  async generateTokens(user: User): Promise<Tokens> {
+  async generateTokens(user: UserReadModel): Promise<Tokens> {
     const refreshTokenId = randomUUID();
 
     const [accessToken, refreshToken] = await Promise.all([

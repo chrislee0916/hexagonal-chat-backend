@@ -29,6 +29,7 @@ export class SignUpResponseDto {
 export class SuccessSignUpResponseDto extends SuccessResponseDto {
   @ApiProperty({
     type: SignUpResponseDto,
+    example: SignUpResponseDto,
   })
   readonly data: SignUpResponseDto;
 }

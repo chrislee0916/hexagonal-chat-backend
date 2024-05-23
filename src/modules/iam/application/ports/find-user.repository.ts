@@ -4,4 +4,5 @@ import { User } from '../../domain/user';
 export abstract class FindUserRepository {
   abstract findOneByEmail(email: string): Promise<UserReadModel>;
   abstract findOneById(id: number): Promise<UserReadModel>;
+  abstract findOneByObjectId(id: string): Promise<UserReadModel>;
 }

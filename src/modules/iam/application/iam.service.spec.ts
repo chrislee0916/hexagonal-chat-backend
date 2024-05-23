@@ -4,11 +4,11 @@ import { CommandBus } from '@nestjs/cqrs';
 import { SignUpCommand } from './commands/impl/sign-up.command';
 import { User } from '../domain/user';
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
-import { SignUpResponseDto } from '../presenters/http/dto/sign-up.response.dto';
+import { SignUpResponseDto } from '../presenters/http/dto/response/sign-up.response.dto';
 import { SignInCommand } from './commands/impl/sign-in.command';
-import { SignInResponseDto } from '../presenters/http/dto/sign-in.response.dto';
+import { SignInResponseDto } from '../presenters/http/dto/response/sign-in.response.dto';
 import { RefreshTokenCommand } from './commands/impl/refresh-token.command';
-import { RefreshTokenResponseDto } from '../presenters/http/dto/refresh-token.response.dto';
+import { RefreshTokenResponseDto } from '../presenters/http/dto/response/refresh-token.response.dto';
 
 type MockCommandBus<T = any> = Partial<Record<keyof CommandBus<T>, jest.Mock>>;
 const createMockCommandBus = <T = any>(): MockCommandBus<T> => ({

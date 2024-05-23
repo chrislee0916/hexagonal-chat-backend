@@ -23,6 +23,7 @@ export class RefreshTokenResponseDto {
 export class SuccessRefreshTokenResponseDto extends SuccessResponseDto {
   @ApiProperty({
     type: RefreshTokenResponseDto,
+    example: RefreshTokenResponseDto,
   })
   readonly data: RefreshTokenResponseDto;
 }
