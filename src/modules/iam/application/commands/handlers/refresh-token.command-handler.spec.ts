@@ -21,6 +21,7 @@ type MockFindUserRepository = Record<keyof FindUserRepository, jest.Mock>;
 const createMockFindUserRepository = (): MockFindUserRepository => ({
   findOneByEmail: jest.fn(),
   findOneById: jest.fn(),
+  findOneByObjectId: jest.fn(),
 });
 
 type MockJwtService = Partial<Record<keyof JwtService, jest.Mock>>;

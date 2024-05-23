@@ -3,12 +3,17 @@ import { IamService } from './iam.service';
 import { CommandBus } from '@nestjs/cqrs';
 import { SignUpCommand } from './commands/impl/sign-up.command';
 import { User } from '../domain/user';
-import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { SignUpResponseDto } from '../presenters/http/dto/response/sign-up.response.dto';
 import { SignInCommand } from './commands/impl/sign-in.command';
 import { SignInResponseDto } from '../presenters/http/dto/response/sign-in.response.dto';
 import { RefreshTokenCommand } from './commands/impl/refresh-token.command';
 import { RefreshTokenResponseDto } from '../presenters/http/dto/response/refresh-token.response.dto';
+import { AskFriendCommand } from './commands/impl/add-friend.command';
 
 type MockCommandBus<T = any> = Partial<Record<keyof CommandBus<T>, jest.Mock>>;
 const createMockCommandBus = <T = any>(): MockCommandBus<T> => ({
@@ -167,6 +172,77 @@ describe('IamService', () => {
         } catch (err) {
           expect(err).toBeInstanceOf(UnauthorizedException);
           expect(err.message).toEqual('11006 無效刷新令牌');
+        }
+      });
+    });
+  });
+
+  describe('askFriend', () => {
+    describe('when token valid and friendId exists', () => {
+      it('should return null', async () => {
+        const askFriendCommand: AskFriendCommand = {
+          userId: 1,
+          friendId: 2,
+        };
+        commandBus.execute.mockReturnValue(null);
+        const actual = await service.askFriend(askFriendCommand);
+        expect(actual).toEqual(null);
+      });
+    });
+
+    describe('when the friendId or user does not exist', () => {
+      it('should throw not found exception', async () => {
+        const askFriendCommand: AskFriendCommand = {
+          userId: 1,
+          friendId: 2,
+        };
+        commandBus.execute.mockRejectedValue(
+          new NotFoundException('11007 找不到使用者'),
+        );
+
+        try {
+          const actual = await service.askFriend(askFriendCommand);
+        } catch (err) {
+          expect(err).toBeInstanceOf(NotFoundException);
+          expect(err.message).toEqual('11007 找不到使用者');
+        }
+      });
+    });
+
+    describe('when the they are already friend', () => {
+      it('should throw conflict exception', async () => {
+        const askFriendCommand: AskFriendCommand = {
+          userId: 1,
+          friendId: 2,
+        };
+        commandBus.execute.mockRejectedValue(
+          new ConflictException('11009 該使用者已經是好友'),
+        );
+
+        try {
+          const actual = await service.askFriend(askFriendCommand);
+        } catch (err) {
+          expect(err).toBeInstanceOf(ConflictException);
+          expect(err.message).toEqual('11009 該使用者已經是好友');
+        }
+      });
+    });
+
+    describe('when already asked friend before', () => {
+      it('should throw conflict exception', async () => {
+        const askFriendCommand: AskFriendCommand = {
+          userId: 1,
+          friendId: 2,
+        };
+        commandBus.execute.mockRejectedValue(
+          new ConflictException('11008 已送出好友邀請'),
+        );
+
+        try {
+          const actual = await service.askFriend(askFriendCommand);
+        } catch (err) {
+          expect(err).toBeInstanceOf(ConflictException);
+          expect(err.message).toEqual('11008 已送出好友邀請');
         }
       });
     });

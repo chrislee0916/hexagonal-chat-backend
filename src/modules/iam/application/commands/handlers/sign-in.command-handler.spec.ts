@@ -19,6 +19,7 @@ type MockFindUserRepository = Record<keyof FindUserRepository, jest.Mock>;
 const createMockFindUserRepository = (): MockFindUserRepository => ({
   findOneByEmail: jest.fn(),
   findOneById: jest.fn(),
+  findOneByObjectId: jest.fn(),
 });
 
 type MockRefreshTokenIdsStorage = Record<

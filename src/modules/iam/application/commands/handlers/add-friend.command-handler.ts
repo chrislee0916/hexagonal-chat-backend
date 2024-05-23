@@ -41,7 +41,6 @@ export class AskFriendCommandHandler implements ICommandHandler {
     }
     // * 送出好友邀請
     await this.createUserRepository.askFriend(userId, friendId);
-
     // * 送出邀請後通知對方消息
     const user = new User();
     user.id = userId;

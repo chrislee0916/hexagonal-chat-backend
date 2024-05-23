@@ -200,34 +200,72 @@ describe('IamController', () => {
   });
 
   describe('askFriend', () => {
-    describe('when token valid and friendObjId exists', () => {
+    describe('when token valid and friendId exists', () => {
       it('should return null', async () => {
         const user: ActiveUserData = {
           sub: 1,
           email: 'example@gmail.com',
         };
-        const friendObjId = '664d8aca7a09ab118133307a';
+        const friendId = 2;
         iamService.askFriend.mockReturnValue(null);
-        const actual = await controller.askFriend(user, friendObjId);
+        const actual = await controller.askFriend(user, friendId);
         expect(actual).toEqual(null);
       });
     });
 
-    describe('when friendObjId is not exists', () => {
+    describe('when the friendId or user does not exist', () => {
       it('should throw not found exception', async () => {
         const user: ActiveUserData = {
           sub: 1,
           email: 'example@gmail.com',
         };
-        const friendObjId = '664d8aca7a09ab118133307a';
+        const friendId = 2;
         iamService.askFriend.mockRejectedValue(
           new NotFoundException('11007 找不到使用者'),
         );
         try {
-          const actual = await controller.askFriend(user, friendObjId);
+          const actual = await controller.askFriend(user, friendId);
         } catch (err) {
           expect(err).toBeInstanceOf(NotFoundException);
           expect(err.message).toEqual('11007 找不到使用者');
+        }
+      });
+    });
+
+    describe('when the they are already friend', () => {
+      it('should throw conflict exception', async () => {
+        const user: ActiveUserData = {
+          sub: 1,
+          email: 'example@gmail.com',
+        };
+        const friendId = 2;
+        iamService.askFriend.mockRejectedValue(
+          new ConflictException('11009 該使用者已經是好友'),
+        );
+        try {
+          const actual = await controller.askFriend(user, friendId);
+        } catch (err) {
+          expect(err).toBeInstanceOf(ConflictException);
+          expect(err.message).toEqual('11009 該使用者已經是好友');
+        }
+      });
+    });
+
+    describe('when already asked friend before', () => {
+      it('should throw conflict exception', async () => {
+        const user: ActiveUserData = {
+          sub: 1,
+          email: 'example@gmail.com',
+        };
+        const friendId = 2;
+        iamService.askFriend.mockRejectedValue(
+          new ConflictException('11008 已送出好友邀請'),
+        );
+        try {
+          const actual = await controller.askFriend(user, friendId);
+        } catch (err) {
+          expect(err).toBeInstanceOf(ConflictException);
+          expect(err.message).toEqual('11008 已送出好友邀請');
         }
       });
     });

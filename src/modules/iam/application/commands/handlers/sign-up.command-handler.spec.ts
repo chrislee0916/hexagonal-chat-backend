@@ -89,12 +89,16 @@ describe('SignUpCommandHandler', () => {
           email: 'example@gmail.com',
           password: 'password',
         };
+        const now = new Date();
         const expectedUser: Partial<User> = {
           id: 1,
           name: 'chris',
           email: 'example@gmail.com',
           password:
             '$2b$10$.cfl0sfK7uwPmURAKJUwNOuY.2zAJy90.QQntEy5GzcJN9gjkDKHW',
+          createdAt: now,
+          updatedAt: now,
+          deletedAt: null,
           signedUp(): void {
             return;
           },
@@ -113,14 +117,17 @@ describe('SignUpCommandHandler', () => {
           email: expectedUser.email,
           name: expectedUser.name,
           passowrd: expectedUser.password,
-          signedUp: expectedUser.signedUp,
-          commit: expectedUser.commit,
         });
         createUserRepository.save.mockReturnValue({
           id: expectedUser.id,
           name: expectedUser.name,
           email: expectedUser.email,
           password: expectedUser.password,
+          signedUp: expectedUser.signedUp,
+          commit: expectedUser.commit,
+          createdAt: expectedUser.createdAt,
+          updatedAt: expectedUser.updatedAt,
+          deletedAt: expectedUser.deletedAt,
         });
 
         const actual = await signUpCommandHandler.execute(signUpCommand);
@@ -135,12 +142,16 @@ describe('SignUpCommandHandler', () => {
           email: 'example@gmail.com',
           password: 'password',
         };
+        const now = new Date();
         const expectedUser: Partial<User> = {
           id: 1,
           name: 'chris',
           email: 'example@gmail.com',
           password:
             '$2b$10$.cfl0sfK7uwPmURAKJUwNOuY.2zAJy90.QQntEy5GzcJN9gjkDKHW',
+          createdAt: now,
+          updatedAt: now,
+          deletedAt: null,
           signedUp(): void {
             return;
           },
@@ -151,14 +162,16 @@ describe('SignUpCommandHandler', () => {
 
         hashingService.hash.mockReturnValue(expectedUser.password);
         userFactory.create.mockReturnValue({
-          id: expectedUser.id,
           name: expectedUser.name,
           email: expectedUser.email,
           passowrd: expectedUser.password,
+          createdAt: expectedUser.createdAt,
+          updatedAt: expectedUser.updatedAt,
+          deletedAt: expectedUser.deletedAt,
           signedUp: expectedUser.signedUp,
           commit: expectedUser.commit,
         });
-        createUserRepository.save.mockReturnValue(
+        createUserRepository.save.mockRejectedValue(
           new ConflictException(ErrorMsg.ERR_AUTH_SIGNUP_USER_CONFLICT),
         );
         try {
