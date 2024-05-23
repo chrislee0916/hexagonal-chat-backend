@@ -6,7 +6,7 @@ import { SignInCommand } from './commands/impl/sign-in.command';
 import { SignInResponseDto } from '../presenters/http/dto/response/sign-in.response.dto';
 import { RefreshTokenCommand } from './commands/impl/refresh-token.command';
 import { RefreshTokenResponseDto } from '../presenters/http/dto/response/refresh-token.response.dto';
-import { AskFriendCommand } from './commands/impl/add-friend.command';
+import { AskFriendCommand } from './commands/impl/ask-friend.command';
 import { SuccessResponseDto } from 'src/common/dtos/response.dto';
 
 @Injectable()

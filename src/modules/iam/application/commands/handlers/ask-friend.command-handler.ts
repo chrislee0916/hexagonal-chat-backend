@@ -1,6 +1,6 @@
 import { ConflictException, Logger, NotFoundException } from '@nestjs/common';
 import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
-import { AskFriendCommand } from '../impl/add-friend.command';
+import { AskFriendCommand } from '../impl/ask-friend.command';
 import { FindUserRepository } from '../../ports/find-user.repository';
 import { CreateUserRepository } from '../../ports/create-user.repository';
 import { ErrorMsg } from 'src/common/enums/err-msg.enum';

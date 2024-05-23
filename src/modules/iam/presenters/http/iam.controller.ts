@@ -50,7 +50,7 @@ import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { ActiveUserData } from '../../domain/interfaces/active-user-data.interface';
 import { Auth } from 'src/common/decorators/auth.decorator';
 import { AuthType } from 'src/common/enums/auth-type.enum';
-import { AskFriendCommand } from '../../application/commands/impl/add-friend.command';
+import { AskFriendCommand } from '../../application/commands/impl/ask-friend.command';
 import { SuccessResponseDto } from 'src/common/dtos/response.dto';
 import { ObjectIdPipe } from 'src/common/pipes/object-id.pipe';
 

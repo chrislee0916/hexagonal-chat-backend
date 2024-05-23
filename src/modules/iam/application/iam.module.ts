@@ -7,7 +7,7 @@ import { SignInCommandHandler } from './commands/handlers/sign-in.command-handle
 import { RefreshTokenCommandHandler } from './commands/handlers/refresh-token.command-handler';
 import { UserSignedUpEventHandler } from './event-handlers/user-signed-up.event-handler';
 import { UserAskedFriendEventHandler } from './event-handlers/user-asked-friend.events';
-import { AskFriendCommandHandler } from './commands/handlers/add-friend.command-handler';
+import { AskFriendCommandHandler } from './commands/handlers/ask-friend.command-handler';
 
 @Module({
   controllers: [IamController],

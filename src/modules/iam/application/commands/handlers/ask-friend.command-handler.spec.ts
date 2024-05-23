@@ -10,8 +10,8 @@ import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 import { SignUpResponseDto } from 'src/modules/iam/presenters/http/dto/response/sign-up.response.dto';
 import { EventPublisher } from '@nestjs/cqrs';
 import { FindUserRepository } from '../../ports/find-user.repository';
-import { AskFriendCommandHandler } from './add-friend.command-handler';
-import { AskFriendCommand } from '../impl/add-friend.command';
+import { AskFriendCommandHandler } from './ask-friend.command-handler';
+import { AskFriendCommand } from '../impl/ask-friend.command';
 import { UserReadModel } from 'src/modules/iam/domain/read-models/user.read-model';
 import { Types } from 'mongoose';
 
