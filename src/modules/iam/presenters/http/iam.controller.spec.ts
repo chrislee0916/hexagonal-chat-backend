@@ -232,7 +232,7 @@ describe('IamController', () => {
       });
     });
 
-    describe('when the they are already friend', () => {
+    describe('when they are already been friend', () => {
       it('should throw conflict exception', async () => {
         const user: ActiveUserData = {
           sub: 1,
@@ -269,5 +269,11 @@ describe('IamController', () => {
         }
       });
     });
+  });
+
+  describe('accept', () => {
+    describe('when token valid and ask exists', () => {});
+    describe('when the ask does not exist', () => {});
+    describe('when they are already been friend', () => {});
   });
 });

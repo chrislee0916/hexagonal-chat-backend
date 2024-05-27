@@ -1,6 +1,7 @@
 import { AggregateRoot } from '@nestjs/cqrs';
 import { UserSignedUpEvent } from './events/user-signed-up.event';
 import { UserAskedFriendEvent } from './events/user-asked-friend.event';
+import { UserAcceptedFriendEvent } from './events/user-accepted-friend.event';
 
 export class User extends AggregateRoot {
   public id: number;
@@ -21,6 +22,12 @@ export class User extends AggregateRoot {
 
   askedFriend(friendId: number) {
     this.apply(new UserAskedFriendEvent(this.id, friendId), {
+      skipHandler: true,
+    });
+  }
+
+  acceptedFriend(friendId: number) {
+    this.apply(new UserAcceptedFriendEvent(this.id, friendId), {
       skipHandler: true,
     });
   }

@@ -8,6 +8,7 @@ import { RefreshTokenCommand } from './commands/impl/refresh-token.command';
 import { RefreshTokenResponseDto } from '../presenters/http/dto/response/refresh-token.response.dto';
 import { AskFriendCommand } from './commands/impl/ask-friend.command';
 import { SuccessResponseDto } from 'src/common/dtos/response.dto';
+import { AcceptFriendCommand } from './commands/impl/accept-friend.command';
 
 @Injectable()
 export class IamService {
@@ -34,5 +35,11 @@ export class IamService {
     askFriendCommand: AskFriendCommand,
   ): Promise<SuccessResponseDto> {
     return this.commandBus.execute(askFriendCommand);
+  }
+
+  async acceptFriend(
+    acceptFriendCommand: AcceptFriendCommand,
+  ): Promise<SuccessResponseDto> {
+    return this.commandBus.execute(acceptFriendCommand);
   }
 }

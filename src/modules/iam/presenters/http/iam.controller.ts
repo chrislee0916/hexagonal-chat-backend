@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -53,6 +54,10 @@ import { AuthType } from 'src/common/enums/auth-type.enum';
 import { AskFriendCommand } from '../../application/commands/impl/ask-friend.command';
 import { SuccessResponseDto } from 'src/common/dtos/response.dto';
 import { ObjectIdPipe } from 'src/common/pipes/object-id.pipe';
+import { AcceptFriendCommand } from '../../application/commands/impl/accept-friend.command';
+import { ErrorMsg } from 'src/common/enums/err-msg.enum';
+import { IsNumber } from 'class-validator';
+import { ParseIntPipe } from 'src/common/pipes/parse-int.pipe';
 
 @ApiTags('IAM - 身分識別與存取管理')
 @Auth(AuthType.None)
@@ -136,7 +141,7 @@ export class IamController {
   }
 
   @ApiOperation({
-    summary: '新增好友',
+    summary: '發送新增好友邀請',
   })
   @ApiOkResponse({
     type: SuccessResponseDto,
@@ -145,8 +150,28 @@ export class IamController {
   @Get('ask-friend/:friendId')
   askFriend(
     @ActiveUser() user: ActiveUserData,
-    @Param('friendId') friendId: number,
+    @Param('friendId', new ParseIntPipe()) friendId: number,
   ) {
+    if (user.sub === friendId) {
+      throw new BadRequestException(ErrorMsg.ERR_AUTH_ASK_FRIEND_TO_MYSELF);
+    }
     return this.iamService.askFriend(new AskFriendCommand(user.sub, friendId));
+  }
+
+  @ApiOperation({
+    summary: '接受好友邀請',
+  })
+  @ApiOkResponse({
+    type: SuccessResponseDto,
+  })
+  @Auth(AuthType.Bearer)
+  @Get('accept-friend/:friendId')
+  acceptFriend(
+    @ActiveUser() user: ActiveUserData,
+    @Param('friendId', new ParseIntPipe()) friendId: number,
+  ) {
+    return this.iamService.acceptFriend(
+      new AcceptFriendCommand(user.sub, friendId),
+    );
   }
 }

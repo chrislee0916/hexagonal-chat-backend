@@ -6,7 +6,7 @@ export class UserReadModel {
   name: string;
   email: string;
   password: string;
-  friends?: Omit<UserReadModel, 'friends'>[];
+  friends?: Omit<UserReadModel, 'friends' | '_id'>[];
   createdAt: Date;
   updatedAt: Date;
 }

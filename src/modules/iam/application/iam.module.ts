@@ -8,6 +8,8 @@ import { RefreshTokenCommandHandler } from './commands/handlers/refresh-token.co
 import { UserSignedUpEventHandler } from './event-handlers/user-signed-up.event-handler';
 import { UserAskedFriendEventHandler } from './event-handlers/user-asked-friend.events';
 import { AskFriendCommandHandler } from './commands/handlers/ask-friend.command-handler';
+import { AcceptFriendCommandHandler } from './commands/handlers/accept-friend.command-handler';
+import { UserAcceptedFriendEventHandler } from './event-handlers/user-accepted-friend.events';
 
 @Module({
   controllers: [IamController],
@@ -20,6 +22,8 @@ import { AskFriendCommandHandler } from './commands/handlers/ask-friend.command-
     UserFactory,
     UserSignedUpEventHandler,
     UserAskedFriendEventHandler,
+    AcceptFriendCommandHandler,
+    UserAcceptedFriendEventHandler,
   ],
 })
 export class IamModule {

@@ -40,7 +40,7 @@ export class OrmFindUserRepository implements FindUserRepository {
   }
 
   async findOneByObjectId(id: string): Promise<UserReadModel> {
-    const user = await this.userModel.findById(id);
+    const user = await this.userModel.findById<UserReadModel>(id);
     // if (!user) {
     //   throw new NotFoundException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
     // }

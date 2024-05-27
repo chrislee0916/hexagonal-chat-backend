@@ -10,5 +10,6 @@ export class UserAskedFriendEventHandler
 
   handle(event: UserAskedFriendEvent) {
     this.logger.log(`User asked friend event: ${JSON.stringify(event)}`);
+    // TODO: 對方在線用 socket.io 通知有好友邀請，不在線則用離線訊息
   }
 }

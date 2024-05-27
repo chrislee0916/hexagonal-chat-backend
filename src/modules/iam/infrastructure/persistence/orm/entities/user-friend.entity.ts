@@ -16,7 +16,7 @@ export class UserFriendEntity {
   friendId: number;
 
   @Column()
-  status: string;
+  status: 'pending' | 'accepted';
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
