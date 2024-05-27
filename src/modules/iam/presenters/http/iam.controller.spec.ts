@@ -23,6 +23,7 @@ const createMockIamService = (): MockIamService => ({
   signIn: jest.fn(),
   refreshToken: jest.fn(),
   askFriend: jest.fn(),
+  acceptFriend: jest.fn(),
 });
 
 type MockPasswordConfirmedPipe = Partial<
@@ -271,9 +272,36 @@ describe('IamController', () => {
     });
   });
 
-  describe('accept', () => {
-    describe('when token valid and ask exists', () => {});
-    describe('when the ask does not exist', () => {});
-    describe('when they are already been friend', () => {});
+  describe('acceptFriend', () => {
+    describe('when token valid and ask exists', () => {
+      it('should return null', async () => {
+        const user: ActiveUserData = {
+          sub: 1,
+          email: 'example@gmail.com',
+        };
+        const friendId = 2;
+        iamService.acceptFriend.mockReturnValue(null);
+        const actual = await controller.acceptFriend(user, friendId);
+        expect(actual).toEqual(null);
+      });
+    });
+    describe('when the ask does not exist', () => {
+      it('should throw the not found exception', async () => {
+        const user: ActiveUserData = {
+          sub: 1,
+          email: 'example@gmail.com',
+        };
+        const friendId = 2;
+        iamService.acceptFriend.mockRejectedValue(
+          new NotFoundException('11010 找不到此好友邀請'),
+        );
+        try {
+          const actual = await controller.acceptFriend(user, friendId);
+        } catch (err) {
+          expect(err).toBeInstanceOf(NotFoundException);
+          expect(err.message).toEqual('11010 找不到此好友邀請');
+        }
+      });
+    });
   });
 });

@@ -14,6 +14,7 @@ import { SignInResponseDto } from '../presenters/http/dto/response/sign-in.respo
 import { RefreshTokenCommand } from './commands/impl/refresh-token.command';
 import { RefreshTokenResponseDto } from '../presenters/http/dto/response/refresh-token.response.dto';
 import { AskFriendCommand } from './commands/impl/ask-friend.command';
+import { AcceptFriendCommand } from './commands/impl/accept-friend.command';
 
 type MockCommandBus<T = any> = Partial<Record<keyof CommandBus<T>, jest.Mock>>;
 const createMockCommandBus = <T = any>(): MockCommandBus<T> => ({
@@ -243,6 +244,37 @@ describe('IamService', () => {
         } catch (err) {
           expect(err).toBeInstanceOf(ConflictException);
           expect(err.message).toEqual('11008 已送出好友邀請');
+        }
+      });
+    });
+  });
+
+  describe('acceptFriend', () => {
+    describe('when token valid and ask exists', () => {
+      it('should return null', async () => {
+        const acceptFriendCommand: AcceptFriendCommand = {
+          userId: 1,
+          friendId: 2,
+        };
+        commandBus.execute.mockReturnValue(null);
+        const actual = await service.acceptFriend(acceptFriendCommand);
+        expect(actual).toEqual(null);
+      });
+    });
+    describe('when the ask does not exist', () => {
+      it('should throw the not found exception', async () => {
+        const acceptFriendCommand: AcceptFriendCommand = {
+          userId: 1,
+          friendId: 2,
+        };
+        commandBus.execute.mockRejectedValue(
+          new NotFoundException('11010 找不到此好友邀請'),
+        );
+        try {
+          const actual = await service.acceptFriend(acceptFriendCommand);
+        } catch (err) {
+          expect(err).toBeInstanceOf(NotFoundException);
+          expect(err.message).toEqual('11010 找不到此好友邀請');
         }
       });
     });

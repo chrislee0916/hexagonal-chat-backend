@@ -146,7 +146,6 @@ describe('AskFriendCommandHandler', () => {
           password: 'userpassword',
           friends: [
             {
-              _id: new Types.ObjectId(),
               id: askFriendCommand.friendId,
               name: 'friendname',
               email: 'friend@gmail.com',
@@ -166,7 +165,6 @@ describe('AskFriendCommandHandler', () => {
           password: 'friendpassword',
           friends: [
             {
-              _id: new Types.ObjectId(),
               id: askFriendCommand.userId,
               name: 'friendname',
               email: 'friend@gmail.com',
