@@ -30,7 +30,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
 
     const detail: ErrorDetailResponseDto =
       typeof exceptionResponse === 'string'
-        ? { message: exceptionResponse }
+        ? { message: exceptionResponse, statusCode: status }
         : (exceptionResponse as ErrorDetailResponseDto);
 
     const now = dayjs();

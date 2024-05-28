@@ -6,6 +6,8 @@ import { CommonModule } from './common/common.module';
 import { ApplicationBootstrapOptions } from './common/interfaces/application-bootstrap-options.interface';
 import { IamInfrastructureModule } from './modules/iam/infrastructure/iam-infrastructure.module';
 import { CoreModule } from './core/core.module';
+import { ChatModule } from './modules/chat/application/chat.module';
+import { ChatInfrastrucutureModule } from './modules/chat/infrastructure/chat-infrastrucuture.module';
 import * as Joi from '@hapi/joi';
 
 @Module({
@@ -51,6 +53,9 @@ export class AppModule {
         CoreModule.forRoot(options),
         IamModule.withInfrastructure(
           IamInfrastructureModule.use(options.driver),
+        ),
+        ChatModule.withInfrastructure(
+          ChatInfrastrucutureModule.use(options.driver),
         ),
       ],
     };

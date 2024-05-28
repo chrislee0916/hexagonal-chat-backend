@@ -15,10 +15,12 @@ import { AuthenticationGuard } from './guards/authentication.guard';
     },
     {
       provide: APP_PIPE,
-      useValue: new ValidationPipe({
-        whitelist: true,
-        transform: true,
-      }),
+      useFactory: () =>
+        new ValidationPipe({
+          whitelist: true,
+          transform: true,
+          disableErrorMessages: process.env.APP_DEBUG === 'false',
+        }),
     },
     {
       provide: APP_INTERCEPTOR,

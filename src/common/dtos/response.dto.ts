@@ -36,9 +36,9 @@ export class SuccessResponseDto {
 // * 發生錯誤的返回格式
 export class ErrorDetailResponseDto {
   @ApiProperty({
-    description: '失敗訊息',
+    description: '失敗訊息(debug mod 才會出現)',
   })
-  readonly message: string;
+  readonly message: string | string[];
   @ApiProperty({
     description: '失敗原因種類',
   })
