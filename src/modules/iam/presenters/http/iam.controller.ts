@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiBody,
   ApiConflictResponse,
   ApiCreatedResponse,
@@ -61,6 +62,7 @@ import { ParseIntPipe } from 'src/common/pipes/parse-int.pipe';
 
 @ApiTags('IAM - 身分識別與存取管理')
 @Auth(AuthType.None)
+@ApiBearerAuth()
 @Controller('iam')
 export class IamController {
   constructor(private readonly iamService: IamService) {}

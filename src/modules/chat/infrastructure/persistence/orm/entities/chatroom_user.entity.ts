@@ -16,8 +16,8 @@ export class ChatroomUserEntity {
   userId: number;
 
   @CreateDateColumn({ name: 'joined_at', type: 'timestamptz' })
-  joinedAt: Date;
+  joinedAt?: Date;
 
   @DeleteDateColumn({ name: 'left_at', type: 'timestamptz' })
-  leftAt: Date;
+  leftAt?: Date;
 }

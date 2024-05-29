@@ -1,9 +1,11 @@
 import { AggregateRoot } from '@nestjs/cqrs';
 import { ChatroomAddedUsersEvents } from './events/added-user.event';
+import { ChatroomUser } from './chatroom-user';
 
 export class Chatroom extends AggregateRoot {
   public id: number;
   public name: string;
+  // public userIds: ChatroomUser[];
   public createdAt: Date;
   public updatedAt: Date;
   public deletedAt: Date;
@@ -14,4 +16,8 @@ export class Chatroom extends AggregateRoot {
   constructor() {
     super();
   }
+
+  // addUserId(userId: number) {
+  //   this.userIds.push(userId);
+  // }
 }
