@@ -5,10 +5,25 @@ import { CreateChatroomCommandHandler } from './commands/handlers/create-chatroo
 import { CreateChatroomRepository } from './ports/create-chatroom.repository';
 import { OrmCreateChatroomRepository } from '../infrastructure/persistence/orm/repositories/create-chatroom.repository';
 import { ChatroomFactory } from '../domain/factories/chatroom.factory';
+import { ChatGateway } from '../presenters/websocket/chat.gateway';
+import { AuthenticationWebsocketGuard } from 'src/common/guards/websocket/authentication-websocket.guard';
+import { JwtService } from '@nestjs/jwt';
+import { SignInCommandHandler } from './commands/handlers/sign-in.command-handler';
+import { SignOutCommandHandler } from './commands/handlers/sign-out.command-handler';
+import { SendMessageCommandHandler } from './commands/handlers/send-message.command.handler';
 
 @Module({
   controllers: [ChatController],
-  providers: [ChatService, CreateChatroomCommandHandler, ChatroomFactory],
+  providers: [
+    ChatGateway,
+    ChatService,
+    CreateChatroomCommandHandler,
+    SignInCommandHandler,
+    SignOutCommandHandler,
+    SendMessageCommandHandler,
+    ChatroomFactory,
+    JwtService,
+  ],
 })
 export class ChatModule {
   static withInfrastructure(

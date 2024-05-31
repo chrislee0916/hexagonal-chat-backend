@@ -11,7 +11,7 @@ import { ErrorDetailResponseDto, ErrorResponseDto } from '../dtos/response.dto';
 import * as dayjs from 'dayjs';
 import { ErrorMsg } from '../enums/err-msg.enum';
 
-@Catch()
+@Catch(HttpException)
 export class HttpExceptionFilter implements ExceptionFilter {
   catch(exception: HttpException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();

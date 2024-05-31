@@ -5,7 +5,11 @@ import { ChatroomEntity } from '../entities/chatroom.entity';
 import { DataSource, Repository } from 'typeorm';
 import { ChatroomMapper } from '../mappers/chatroom.mapper';
 import { ChatroomUserEntity } from '../entities/chatroom_user.entity';
-import { NotFoundException } from '@nestjs/common';
+import {
+  HttpException,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 
 export class OrmCreateChatroomRepository implements CreateChatroomRepository {
@@ -41,7 +45,7 @@ export class OrmCreateChatroomRepository implements CreateChatroomRepository {
       if (err.code === '23503') {
         throw new NotFoundException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
       }
-      throw err;
+      throw new InternalServerErrorException(ErrorMsg.ERR_CORE_UNKNOWN_ERROR);
     } finally {
       await queryRunner.release();
     }

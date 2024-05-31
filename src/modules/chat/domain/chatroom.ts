@@ -1,6 +1,7 @@
 import { AggregateRoot } from '@nestjs/cqrs';
 import { ChatroomAddedUsersEvents } from './events/added-user.event';
 import { ChatroomUser } from './chatroom-user';
+import { SentMessageEvent } from './events/sent-message.event';
 
 export class Chatroom extends AggregateRoot {
   public id: number;
@@ -15,6 +16,12 @@ export class Chatroom extends AggregateRoot {
 
   constructor() {
     super();
+  }
+
+  sentMessage(userId: number, content: string) {
+    this.apply(new SentMessageEvent(this.id, userId, content), {
+      skipHandler: true,
+    });
   }
 
   // addUserId(userId: number) {

@@ -10,6 +10,7 @@ import { Reflector } from '@nestjs/core';
 import { AccessTokenGuard } from './access-token.guard';
 import { AUTH_TYPE_KEY } from '../decorators/auth.decorator';
 
+// * 這樣寫的原因可以保留很多種身份驗證方式，例如: API key...
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
   private static readonly defaultAuthType = AuthType.Bearer;

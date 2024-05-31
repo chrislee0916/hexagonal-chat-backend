@@ -2,6 +2,7 @@ export enum ErrorMsg {
   // 共用錯誤
   ERR_COMMON_INVALID_OBJECT_ID = '10001 不合格的ObjectId請求',
   ERR_COMMON_PARAM_NOT_INT = '10002 網址參數須為數字',
+  ERR_COMMON_RESOURCE_NOT_FOUND = '10003 找不到這筆資料',
 
   // Auth 登入相關
   ERR_AUTH_INVALID_ACCESS_TOKEN = '11001 無效的Access_Token',
@@ -15,7 +16,8 @@ export enum ErrorMsg {
   ERR_AUTH_USER_ALREADY_FRIEND = '11009 該使用者已經是好友',
   ERR_AUTH_ASK_FRIEND_NOT_FOUND = '11010 找不到此好友邀請',
   ERR_AUTH_ASK_FRIEND_TO_MYSELF = '11011 不能添加自己為朋友',
-
+  ERR_AUTH_ALREADY_ONLINE = '11012 該用戶已在線上',
+  ERR_AUTH_INVALID_SEND_MESSAGE = '11013 尚未登入無法發訊息',
   // 系統核心錯誤 相關錯誤
   ERR_CORE_UNKNOWN_ERROR = '99001 非預期系統錯誤',
 }

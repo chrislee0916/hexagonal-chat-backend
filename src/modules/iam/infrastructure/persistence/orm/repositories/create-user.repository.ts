@@ -5,7 +5,11 @@ import { Repository } from 'typeorm';
 import { UserMapper } from '../mappers/user.mapper';
 import { User } from 'src/modules/iam/domain/user';
 import { UserFriendEntity } from '../entities/user-friend.entity';
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 
 export class OrmCreateUserRepository implements CreateUserRepository {
@@ -43,7 +47,7 @@ export class OrmCreateUserRepository implements CreateUserRepository {
       if (err.code === '23505') {
         throw new ConflictException(ErrorMsg.ERR_AUTH_ALREADY_ASK_FRIEND);
       }
-      throw err;
+      throw new InternalServerErrorException(ErrorMsg.ERR_CORE_UNKNOWN_ERROR);
     }
   }
 

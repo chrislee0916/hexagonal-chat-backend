@@ -7,6 +7,7 @@ async function bootstrap() {
   const app = await NestFactory.create(
     AppModule.register({ driver: 'orm', type: 'postgres' }),
   );
+  app.enableShutdownHooks();
 
   const serverUrl =
     process.env.APP_DEBUG === 'true'
