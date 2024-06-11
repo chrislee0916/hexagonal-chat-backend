@@ -4,9 +4,16 @@ import { ChatroomEntity } from './entities/chatroom.entity';
 import { CreateChatroomRepository } from 'src/modules/chat/application/ports/create-chatroom.repository';
 import { OrmCreateChatroomRepository } from './repositories/create-chatroom.repository';
 import { ChatroomUserEntity } from './entities/chatroom_user.entity';
+import { MessageEntity } from './entities/message.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ChatroomEntity, ChatroomUserEntity])],
+  imports: [
+    TypeOrmModule.forFeature([
+      ChatroomEntity,
+      ChatroomUserEntity,
+      MessageEntity,
+    ]),
+  ],
   providers: [
     {
       provide: CreateChatroomRepository,

@@ -14,6 +14,6 @@ export class CreateChatroom1716875713881 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP TABLE "chatrooms"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "chatrooms"`);
   }
 }

@@ -1,12 +1,14 @@
 import { AggregateRoot } from '@nestjs/cqrs';
-import { ChatroomAddedUsersEvents } from './events/added-user.event';
-import { ChatroomUser } from './chatroom-user';
 import { SentMessageEvent } from './events/sent-message.event';
+import { Message } from './message';
+import { ChatroomUser } from './chatroom-user';
+import { Socket } from 'socket.io';
 
 export class Chatroom extends AggregateRoot {
   public id: number;
   public name: string;
-  // public userIds: ChatroomUser[];
+  public users = new Array<ChatroomUser>();
+  public message?: Message;
   public createdAt: Date;
   public updatedAt: Date;
   public deletedAt: Date;
@@ -18,13 +20,17 @@ export class Chatroom extends AggregateRoot {
     super();
   }
 
-  sentMessage(userId: number, content: string) {
-    this.apply(new SentMessageEvent(this.id, userId, content), {
+  addChatroomUser(userId: number) {
+    this.users.push(new ChatroomUser(userId));
+  }
+
+  addMessage(senderId: number, content: string) {
+    this.message = new Message(this.id, senderId, content);
+  }
+
+  sentMessage(socket: Socket) {
+    this.apply(new SentMessageEvent(this.message, socket), {
       skipHandler: true,
     });
   }
-
-  // addUserId(userId: number) {
-  //   this.userIds.push(userId);
-  // }
 }

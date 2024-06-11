@@ -21,8 +21,8 @@ export class CreateChatroomCommandHandler implements ICommandHandler {
     // ! 應該要去確認 userIds 是否存在
     // TODO: 應該需要發一個 ChatroomCreated 事件到 iam bounded context 確認 userIds 是否存在
     // TODO: 並在 chat bounded context 監聽 UserAddedToChatroom 事件確保使用者都存在或是有其他做法?
-    let chatroom = this.chatroomFactory.create(command.name);
-    return this.createChatroomRepository.save(chatroom, command.userIds);
+    let chatroom = this.chatroomFactory.create(command.name, command.userIds);
+    return this.createChatroomRepository.save(chatroom);
     // TODO: 建立還需使用 socket.io 去通知對方訊息
     // await this.createChatroomRepository.addUsers(chatroom.id, command.userIds);
     // return chatroom;

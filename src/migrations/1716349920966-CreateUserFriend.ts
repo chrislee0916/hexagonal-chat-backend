@@ -18,6 +18,6 @@ export class CreateUserFriend1716349920966 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(`DROP TABLE "user_friend"`);
+    await queryRunner.query(`DROP TABLE IF EXISTS "user_friend"`);
   }
 }

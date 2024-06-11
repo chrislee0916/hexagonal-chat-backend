@@ -18,6 +18,9 @@ export enum ErrorMsg {
   ERR_AUTH_ASK_FRIEND_TO_MYSELF = '11011 不能添加自己為朋友',
   ERR_AUTH_ALREADY_ONLINE = '11012 該用戶已在線上',
   ERR_AUTH_INVALID_SEND_MESSAGE = '11013 尚未登入無法發訊息',
+
+  // 聊天相關
+  ERR_CHAT_ROOM_NOT_FOUND = '12001 找不到此聊天室',
   // 系統核心錯誤 相關錯誤
   ERR_CORE_UNKNOWN_ERROR = '99001 非預期系統錯誤',
 }

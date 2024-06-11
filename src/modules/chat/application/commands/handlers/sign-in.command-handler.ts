@@ -4,6 +4,9 @@ import { HttpStatus, Logger } from '@nestjs/common';
 import { SocketOnlineIdsStorage } from '../../ports/socket-online-ids.storage';
 import { WsException } from '@nestjs/websockets';
 import { ErrorMsg } from 'src/common/enums/err-msg.enum';
+import { CreateChatroomRepository } from '../../ports/create-chatroom.repository';
+import { SocketIOService } from 'src/modules/chat/infrastructure/websocket/socketio/socketio.service';
+import { WebSocketService } from '../../ports/websocket.service';
 
 @CommandHandler(SignInCommand)
 export class SignInCommandHandler implements ICommandHandler {
@@ -11,13 +14,13 @@ export class SignInCommandHandler implements ICommandHandler {
 
   constructor(
     private readonly socketOnlineIdsStorage: SocketOnlineIdsStorage,
+    private readonly webSocketService: WebSocketService,
   ) {}
 
   async execute(command: SignInCommand): Promise<string> {
-    this.logger.debug(
-      `Processing "${SignInCommand.name}": ${JSON.stringify(command)}`,
-    );
-    const { userId, socketId } = command;
+    this.logger.debug(`Processing "${SignInCommand.name}": ${command.userId}`);
+    const { userId, socket } = command;
+    // * 同個使用者只允許一個在線
     const onlineSocketId =
       await this.socketOnlineIdsStorage.getSocketId(userId);
     if (onlineSocketId) {
@@ -27,7 +30,11 @@ export class SignInCommandHandler implements ICommandHandler {
       });
     }
 
-    await this.socketOnlineIdsStorage.signIn(userId, socketId);
-    return socketId;
+    // * redis 記錄上線狀態
+    await this.socketOnlineIdsStorage.signIn(userId, socket.id);
+    // * 載入聊天室以接收到即時訊息
+    await this.webSocketService.loadChatrooms(userId, socket);
+
+    return socket.id;
   }
 }

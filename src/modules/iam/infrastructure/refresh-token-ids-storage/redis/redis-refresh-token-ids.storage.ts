@@ -18,6 +18,7 @@ export class RedisRefreshTokenIdsStorage
   ) {}
 
   async onApplicationShutdown(signal?: string) {
+    await this.redisClient.reset();
     return this.redisClient.quit();
   }
 

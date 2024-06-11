@@ -1,9 +1,14 @@
 import {
+  ArgumentMetadata,
   BeforeApplicationShutdown,
   HttpStatus,
+  Injectable,
   OnApplicationShutdown,
+  PipeTransform,
   UseFilters,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import {
   ConnectedSocket,
@@ -27,37 +32,34 @@ import { SignInCommand } from '../../application/commands/impl/sign-in.command';
 import { ChatService } from '../../application/chat.service';
 import { SignOutCommand } from '../../application/commands/impl/sign-out.command';
 import { SendMessageCommand } from '../../application/commands/impl/send-message.command';
-import { ErrorMsg } from 'src/common/enums/err-msg.enum';
+import { SendMessageDto } from './dto/request/send-message.dto';
+import { MessageBodyPipe } from 'src/common/pipes/message-body.pipe';
 
 @WebSocketGateway()
 @UseFilters(WsExceptionFilter)
+@UsePipes(new MessageBodyPipe())
 @UseGuards(AuthenticationWebsocketGuard)
-export class ChatGateway implements OnGatewayDisconnect, OnApplicationShutdown {
+export class ChatGateway implements OnGatewayDisconnect {
   @WebSocketServer()
   private server: Server;
 
   constructor(private readonly chatService: ChatService) {}
-
-  onApplicationShutdown() {
-    this.server.sockets.disconnectSockets();
-  }
 
   @SubscribeMessage('sign-in')
   async signIn(
     @ActiveUser() user: ActiveUserData,
     @ConnectedSocket() socket: Socket,
   ): Promise<string> {
-    return this.chatService.signIn(new SignInCommand(user.sub, socket.id));
+    return this.chatService.signIn(new SignInCommand(user.sub, socket));
   }
 
   @SubscribeMessage('message')
   async sendMessage(
     @ActiveUser() user: ActiveUserData,
     @ConnectedSocket() socket: Socket,
-    @MessageBody() body: { chatroomId: number; content: string },
+    @MessageBody() body: SendMessageDto,
   ) {
     const { chatroomId, content } = body;
-    // this.server.to(chatroomId).emit('message', content);
     await this.chatService.sendMessage(
       new SendMessageCommand(chatroomId, user.sub, socket, content),
     );

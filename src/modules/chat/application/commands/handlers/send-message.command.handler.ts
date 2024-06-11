@@ -6,16 +6,16 @@ import { Server } from 'socket.io';
 import { SocketOnlineIdsStorage } from '../../ports/socket-online-ids.storage';
 import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 import { Chatroom } from 'src/modules/chat/domain/chatroom';
+import { CreateChatroomRepository } from '../../ports/create-chatroom.repository';
+import { Message } from 'src/modules/chat/domain/message';
 
 @CommandHandler(SendMessageCommand)
 export class SendMessageCommandHandler implements ICommandHandler {
   private readonly logger = new Logger(SendMessageCommandHandler.name);
 
-  @WebSocketServer()
-  private server: Server;
-
   constructor(
     private readonly socketOnlineIdsStorage: SocketOnlineIdsStorage,
+    private readonly chatroomRepository: CreateChatroomRepository,
     private readonly eventPublisher: EventPublisher,
   ) {}
 
@@ -35,19 +35,28 @@ export class SendMessageCommandHandler implements ICommandHandler {
         message: ErrorMsg.ERR_AUTH_INVALID_SEND_MESSAGE,
       });
     }
-    if (!socket.rooms.has(`${chatroomId}`)) {
+
+    if (!socket.rooms.has(`chatroom-${chatroomId}`)) {
       throw new WsException({
         statusCode: HttpStatus.NOT_FOUND,
-        message: ErrorMsg.ERR_COMMON_RESOURCE_NOT_FOUND,
+        message: ErrorMsg.ERR_CHAT_ROOM_NOT_FOUND,
       });
     }
+    // * ack訊息給發送者
+    socket.emit('message', content);
 
-    // * 需要檢查chatroom底下的user有哪些不在線上，使用離線訊息
-    this.server.to(`${chatroomId}`).emit('message', content);
+    // * 以 chatroom aggregate root 操作
     const chatroom = new Chatroom();
     chatroom.id = chatroomId;
-    chatroom.sentMessage(userId, content);
+    chatroom.addMessage(userId, content);
+
+    await this.chatroomRepository.saveMessage(chatroom);
+
+    // * 需要檢查chatroom底下的user有哪些不在線上，使用離線訊息
+    chatroom.sentMessage(socket);
     this.eventPublisher.mergeObjectContext(chatroom);
     chatroom.commit();
+
+    // socket.to(`chatroom-${chatroomId}`).emit('message', content);
   }
 }

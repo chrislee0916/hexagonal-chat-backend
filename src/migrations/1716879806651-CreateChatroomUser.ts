@@ -15,5 +15,7 @@ export class CreateChatroomUser1716879806651 implements MigrationInterface {
     `);
   }
 
-  public async down(queryRunner: QueryRunner): Promise<void> {}
+  public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(`DROP TABLE IF EXISTS "user_friend"`);
+  }
 }
