@@ -25,6 +25,10 @@ export class SignInResponseDto {
   })
   readonly name: string;
 
+  readonly image: string;
+
+  readonly expireIn: number;
+
   @ApiProperty({
     description: '存取令牌',
     example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6Ikp...',

@@ -6,6 +6,9 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(
     AppModule.register({ driver: 'orm', type: 'postgres' }),
+    {
+      cors: true,
+    },
   );
   app.enableShutdownHooks();
 

@@ -9,9 +9,16 @@ import { CoreModule } from './core/core.module';
 import { ChatModule } from './modules/chat/application/chat.module';
 import { ChatInfrastrucutureModule } from './modules/chat/infrastructure/chat-infrastrucuture.module';
 import * as Joi from '@hapi/joi';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '..', 'public'),
+      serveRoot: '/storage',
+      exclude: ['/api/(.*)'],
+    }),
     CqrsModule.forRoot(),
     ConfigModule.forRoot({
       // envFilePath: ['.env'],

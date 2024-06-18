@@ -40,7 +40,7 @@ export class RefreshTokenCommandHandler implements ICommandHandler {
 
       const user = await this.userRepository.findOneById(sub);
       if (!user) throw new Error();
-
+      console.log(user.id, refreshTokenId);
       const isValid = await this.refreshTokenIdsStorage.validate(
         user.id,
         refreshTokenId,
@@ -50,6 +50,7 @@ export class RefreshTokenCommandHandler implements ICommandHandler {
 
       return this.refreshTokenIdsStorage.generateTokens(user);
     } catch (err) {
+      console.log(err);
       // TODO: 應該做額外處理，例如： 紀錄log、通知用戶
       throw new UnauthorizedException(ErrorMsg.ERR_AUTH_REFRESH_TOKEN_INVALID);
     }
