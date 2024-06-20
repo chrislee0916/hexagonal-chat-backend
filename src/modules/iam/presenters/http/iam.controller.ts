@@ -58,6 +58,7 @@ import { ObjectIdPipe } from 'src/common/pipes/object-id.pipe';
 import { AcceptFriendCommand } from '../../application/commands/impl/accept-friend.command';
 import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 import { IsNumber } from 'class-validator';
+import { IsEmailPipe } from 'src/common/pipes/isEmail.pipe';
 import { ParseIntPipe } from 'src/common/pipes/parse-int.pipe';
 
 @ApiTags('IAM - 身分識別與存取管理')
@@ -171,15 +172,17 @@ export class IamController {
     type: SuccessResponseDto,
   })
   @Auth(AuthType.Bearer)
-  @Get('ask-friend/:friendId')
+  @Get('ask-friend/:friendEmail')
   askFriend(
     @ActiveUser() user: ActiveUserData,
-    @Param('friendId', new ParseIntPipe()) friendId: number,
+    @Param('friendEmail', new IsEmailPipe()) friendEmail: string,
   ) {
-    if (user.sub === friendId) {
-      throw new BadRequestException(ErrorMsg.ERR_AUTH_ASK_FRIEND_TO_MYSELF);
-    }
-    return this.iamService.askFriend(new AskFriendCommand(user.sub, friendId));
+    // if (user.sub === friendEmail) {
+    //   throw new BadRequestException(ErrorMsg.ERR_AUTH_ASK_FRIEND_TO_MYSELF);
+    // }
+    return this.iamService.askFriend(
+      new AskFriendCommand(user.sub, friendEmail),
+    );
   }
 
   @ApiOperation({

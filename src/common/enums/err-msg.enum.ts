@@ -3,6 +3,7 @@ export enum ErrorMsg {
   ERR_COMMON_INVALID_OBJECT_ID = '10001 不合格的ObjectId請求',
   ERR_COMMON_PARAM_NOT_INT = '10002 網址參數須為數字',
   ERR_COMMON_RESOURCE_NOT_FOUND = '10003 找不到這筆資料',
+  ERR_COMMON_PARAM_NOT_EMAIL = '10004 網址參數須為email',
 
   // Auth 登入相關
   ERR_AUTH_INVALID_ACCESS_TOKEN = '11001 無效的Access_Token',
