@@ -60,7 +60,9 @@ import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 import { IsNumber } from 'class-validator';
 import { IsEmailPipe } from 'src/common/pipes/isEmail.pipe';
 import { ParseIntPipe } from 'src/common/pipes/parse-int.pipe';
-
+import { GetFriendsQuery } from '../../application/querys/impl/get-friends.query';
+import { UserReadModel } from '../../domain/read-models/user.read-model';
+import { ObjectId } from 'mongodb';
 @ApiTags('IAM - 身分識別與存取管理')
 @Auth(AuthType.None)
 @ApiBearerAuth()
@@ -143,26 +145,54 @@ export class IamController {
     );
   }
 
-  @Get('friends')
+  @Get('user')
   @Auth(AuthType.Bearer)
-  friends() {
-    return [
-      {
-        id: 1,
-        name: 'name1',
-        email: 'email1',
-      },
-      {
-        id: 2,
-        name: 'name2',
-        email: 'email2',
-      },
-      {
-        id: 3,
-        name: 'name3',
-        email: 'email3',
-      },
-    ];
+  friends(@ActiveUser() user: ActiveUserData): UserReadModel {
+    // return this.iamService.getFriends(new GetFriendsQuery(user.sub));
+    return {
+      _id: new ObjectId('666957305c7e610c45674733'),
+      id: user.sub,
+      name: 'name1',
+      email: user.email,
+      password: 'passowrd',
+      image: '/images/logo.jpg',
+      friends: [
+        {
+          id: 11,
+          name: 'name11',
+          email: 'email11',
+          image: '/images/logo.jpg',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 2,
+          name: 'name2',
+          email: 'email2',
+          image: '/images/logo.jpg',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+        {
+          id: 3,
+          name: 'name3',
+          email: 'email3',
+          image: '/images/logo.jpg',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+        },
+      ],
+      askFriends: [
+        {
+          id: 2,
+          name: 'name2',
+          email: 'email2',
+          image: '/images/logo.jpg',
+        },
+      ],
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    };
   }
 
   @ApiOperation({

@@ -25,9 +25,11 @@ export class SignInResponseDto {
   })
   readonly name: string;
 
+  @ApiProperty({
+    description: '使用者大頭貼',
+    example: 'logo.png',
+  })
   readonly image: string;
-
-  readonly expireIn: number;
 
   @ApiProperty({
     description: '存取令牌',

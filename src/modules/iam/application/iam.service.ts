@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { SignUpCommand } from './commands/impl/sign-up.command';
-import { CommandBus } from '@nestjs/cqrs';
+import { CommandBus, QueryBus } from '@nestjs/cqrs';
 import { SignUpResponseDto } from '../presenters/http/dto/response/sign-up.response.dto';
 import { SignInCommand } from './commands/impl/sign-in.command';
 import { SignInResponseDto } from '../presenters/http/dto/response/sign-in.response.dto';
@@ -9,12 +9,13 @@ import { RefreshTokenResponseDto } from '../presenters/http/dto/response/refresh
 import { AskFriendCommand } from './commands/impl/ask-friend.command';
 import { SuccessResponseDto } from 'src/common/dtos/response.dto';
 import { AcceptFriendCommand } from './commands/impl/accept-friend.command';
+import { GetFriendsQuery } from './querys/impl/get-friends.query';
 
 @Injectable()
 export class IamService {
   constructor(
     private readonly commandBus: CommandBus,
-    // private readonly queryBus: CommandBus,
+    private readonly queryBus: QueryBus,
   ) {}
 
   async signUp(signUpCommand: SignUpCommand): Promise<SignUpResponseDto> {
@@ -26,9 +27,13 @@ export class IamService {
   }
 
   async refreshToken(
-    refreshToken: RefreshTokenCommand,
+    refreshTokenCommand: RefreshTokenCommand,
   ): Promise<RefreshTokenResponseDto> {
-    return this.commandBus.execute(refreshToken);
+    return this.commandBus.execute(refreshTokenCommand);
+  }
+
+  async getFriends(getFriendsQuery: GetFriendsQuery) {
+    return this.queryBus.execute(getFriendsQuery);
   }
 
   async askFriend(

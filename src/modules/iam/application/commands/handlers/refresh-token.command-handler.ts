@@ -40,7 +40,6 @@ export class RefreshTokenCommandHandler implements ICommandHandler {
 
       const user = await this.userRepository.findOneById(sub);
       if (!user) throw new Error();
-      console.log(user.id, refreshTokenId);
       const isValid = await this.refreshTokenIdsStorage.validate(
         user.id,
         refreshTokenId,

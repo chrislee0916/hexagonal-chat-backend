@@ -20,6 +20,7 @@ export class UserSignedUpEventHandler
       name: event.user.name,
       email: event.user.email,
       password: event.user.password,
+      image: event.user.image,
       createdAt: event.user.createdAt,
       updatedAt: event.user.updatedAt,
     });

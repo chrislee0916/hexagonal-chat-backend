@@ -29,7 +29,7 @@ export class UserAcceptedFriendEventHandler
       id: friend.id,
       name: friend.name,
       email: friend.email,
-      password: friend.password,
+      image: friend.image,
       createdAt: now,
       updatedAt: now,
     });
@@ -37,7 +37,7 @@ export class UserAcceptedFriendEventHandler
       id: user.id,
       name: user.name,
       email: user.email,
-      password: user.password,
+      image: user.image,
       createdAt: now,
       updatedAt: now,
     });

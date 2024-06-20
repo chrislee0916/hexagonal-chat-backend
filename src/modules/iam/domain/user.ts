@@ -8,6 +8,7 @@ export class User extends AggregateRoot {
   public name: string;
   public email: string;
   public password: string;
+  public image: string;
   public createdAt: Date;
   public updatedAt: Date;
   public deletedAt: Date;

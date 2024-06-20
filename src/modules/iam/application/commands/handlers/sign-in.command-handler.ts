@@ -40,8 +40,7 @@ export class SignInCommandHandler implements ICommandHandler {
       id: user.id,
       email: user.email,
       name: user.name,
-      image: 'logo.png',
-      expireIn: 3600,
+      image: user.image,
       ...tokens,
     };
   }

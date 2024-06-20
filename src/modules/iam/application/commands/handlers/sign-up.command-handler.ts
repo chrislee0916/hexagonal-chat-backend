@@ -37,9 +37,11 @@ export class SignUpCommandHandler implements ICommandHandler<SignUpCommand> {
     const hashedPassword = await this.hashingService.hash(command.password);
 
     try {
+      // * 在 write db 新增 user
       let user = await this.userRepository.save(
         this.userFactory.create(command.name, command.email, hashedPassword),
       );
+      // * write db 新增成功後，同步到 read db
       user.signedUp();
       this.eventPublisher.mergeObjectContext(user);
       user.commit();

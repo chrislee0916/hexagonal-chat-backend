@@ -27,6 +27,7 @@ export class OrmCreateUserRepository implements CreateUserRepository {
   }
 
   async askFriend(userId: number, friendId: number): Promise<void> {
+    // * 如果對方也發送邀請 直接成為好友
     let friendAsked = await this.userFriendRepository.findOneBy({
       userId: friendId,
       friendId: userId,
@@ -81,6 +82,7 @@ export class OrmCreateUserRepository implements CreateUserRepository {
       if (err.code === '23505') {
         throw new ConflictException(ErrorMsg.ERR_AUTH_USER_ALREADY_FRIEND);
       }
+      throw new InternalServerErrorException(ErrorMsg.ERR_CORE_UNKNOWN_ERROR);
     }
   }
 }

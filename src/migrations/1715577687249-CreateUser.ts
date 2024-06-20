@@ -8,6 +8,7 @@ export class CreateUser1715577687249 implements MigrationInterface {
               "name" VARCHAR NOT NULL,
               "email" VARCHAR NOT NULL UNIQUE,
               "password" VARCHAR NOT NULL,
+              "image" VARCHAR,
               "created_at" timestamp with time zone DEFAULT now(),
               "updated_at" timestamp with time zone DEFAULT now(),
               "deleted_at" timestamp with time zone DEFAULT NULL
