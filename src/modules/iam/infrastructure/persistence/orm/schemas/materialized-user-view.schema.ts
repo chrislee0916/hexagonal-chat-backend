@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { OmitType } from '@nestjs/swagger';
+import { OmitType, PickType } from '@nestjs/swagger';
 import { UserReadModel } from 'src/modules/iam/domain/read-models/user.read-model';
 import { User } from 'src/modules/iam/domain/user';
 
@@ -26,9 +26,33 @@ export class MaterializedUserView {
   password: string;
 
   @Prop({
-    type: [OmitType(MaterializedUserView, ['friends'])],
+    required: false,
   })
-  friends: Omit<MaterializedUserView, 'friends'>[];
+  image: string;
+
+  // @Prop({
+  //   required: false,
+  //   type: [OmitType(MaterializedUserView, ['friends', 'password'])],
+  // })
+  // friends: Omit<MaterializedUserView, 'friends' | 'password'>[];
+
+  // @Prop({
+  //   required: false,
+  //   type: [PickType(MaterializedUserView, ['id', 'name', 'email', 'image'])],
+  // })
+  // askFriends: Pick<MaterializedUserView, 'id' | 'name' | 'email' | 'image'>[];
+
+  @Prop({
+    required: false,
+    type: [Number],
+  })
+  friends: number[];
+
+  @Prop({
+    required: false,
+    type: [Number],
+  })
+  askFriends: number[];
 
   @Prop()
   createdAt: Date;

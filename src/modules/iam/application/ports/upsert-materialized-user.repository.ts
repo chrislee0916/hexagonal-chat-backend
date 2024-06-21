@@ -1,7 +1,7 @@
-import { UserReadModel } from '../../domain/read-models/user.read-model';
+import { MaterializedUserView } from '../../infrastructure/persistence/orm/schemas/materialized-user-view.schema';
 
 export abstract class UpsertMaterializedUserRepository {
   abstract upsert(
-    user: Pick<UserReadModel, 'id'> & Partial<UserReadModel>,
+    user: Pick<MaterializedUserView, 'id'> & Partial<MaterializedUserView>,
   ): Promise<void>;
 }

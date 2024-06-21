@@ -9,7 +9,7 @@ import { RefreshTokenResponseDto } from '../presenters/http/dto/response/refresh
 import { AskFriendCommand } from './commands/impl/ask-friend.command';
 import { SuccessResponseDto } from 'src/common/dtos/response.dto';
 import { AcceptFriendCommand } from './commands/impl/accept-friend.command';
-import { GetFriendsQuery } from './querys/impl/get-friends.query';
+import { GetUserQuery } from './querys/impl/get-user.query';
 
 @Injectable()
 export class IamService {
@@ -32,8 +32,8 @@ export class IamService {
     return this.commandBus.execute(refreshTokenCommand);
   }
 
-  async getFriends(getFriendsQuery: GetFriendsQuery) {
-    return this.queryBus.execute(getFriendsQuery);
+  async getUser(getUserQuery: GetUserQuery) {
+    return this.queryBus.execute(getUserQuery);
   }
 
   async askFriend(

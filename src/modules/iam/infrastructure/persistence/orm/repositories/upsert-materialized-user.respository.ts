@@ -15,7 +15,7 @@ export class OrmUpsertMaterializedUserRepository
   ) {}
 
   async upsert(
-    user: Pick<UserReadModel, 'id'> & Partial<UserReadModel>,
+    user: Pick<MaterializedUserView, 'id'> & Partial<MaterializedUserView>,
   ): Promise<void> {
     await this.userModel.findOneAndUpdate({ id: user.id }, user, {
       upsert: true,

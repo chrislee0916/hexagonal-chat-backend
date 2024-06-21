@@ -10,6 +10,7 @@ import { UserAskedFriendEventHandler } from './event-handlers/user-asked-friend.
 import { AskFriendCommandHandler } from './commands/handlers/ask-friend.command-handler';
 import { AcceptFriendCommandHandler } from './commands/handlers/accept-friend.command-handler';
 import { UserAcceptedFriendEventHandler } from './event-handlers/user-accepted-friend.event-handler';
+import { GetFriendsQueryHandler } from './querys/handlers/get-user.query-handler';
 
 @Module({
   controllers: [IamController],
@@ -24,6 +25,7 @@ import { UserAcceptedFriendEventHandler } from './event-handlers/user-accepted-f
     UserAskedFriendEventHandler,
     AcceptFriendCommandHandler,
     UserAcceptedFriendEventHandler,
+    GetFriendsQueryHandler,
   ],
 })
 export class IamModule {

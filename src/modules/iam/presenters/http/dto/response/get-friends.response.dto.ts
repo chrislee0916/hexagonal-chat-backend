@@ -1,48 +1,71 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { SuccessResponseDto } from 'src/common/dtos/response.dto';
+import { ObjectId } from 'mongodb';
 
-export class GetFriendResponseDto {
+export class GetUserResponseDto {
+  @ApiProperty({
+    description: 'objectId',
+    example: new ObjectId('667518b4c5ca411ccfdbaa72'),
+  })
+  _id: ObjectId;
+
   @ApiProperty({
     description: '使用者編號',
-    example: 123,
+    example: 1,
   })
-  readonly id: number;
+  id: number;
 
   @ApiProperty({
     description: '使用者名稱',
-    example: 'chris',
+    example: 'name',
   })
-  readonly name: string;
+  name: string;
 
   @ApiProperty({
-    description: '電子信箱',
+    description: '使用者電子信箱',
     example: 'example@gmail.com',
   })
-  readonly email: string;
+  email: string;
 
   @ApiProperty({
     description: '使用者大頭貼',
-    example: '/logo.png',
+    example: 'logo.png',
   })
   image: string;
 
   @ApiProperty({
+    description: '好友列表',
+    example: [],
+  })
+  friends?: Omit<
+    GetUserResponseDto,
+    '_id' | 'friends' | 'password' | 'askFriend'
+  >[];
+
+  @ApiProperty({
+    description: '好友邀請列表',
+    example: [],
+  })
+  askFriends?: Pick<GetUserResponseDto, 'id' | 'name' | 'email' | 'image'>[];
+
+  @ApiProperty({
     description: '建立時間',
-    example: Date.now(),
+    example: new Date(),
   })
   createdAt: Date;
 
   @ApiProperty({
     description: '最後更新時間',
-    example: Date.now(),
+    example: new Date(),
   })
   updatedAt: Date;
 }
 
-// * 成功取得好友列表返回結果
-export class SuccessGetFriendsResponseDto extends SuccessResponseDto {
+// * 成功取得使用者資料返回結果
+export class SuccessGetUserResponseDto extends SuccessResponseDto {
   @ApiProperty({
-    type: [GetFriendResponseDto],
+    type: GetUserResponseDto,
+    example: GetUserResponseDto,
   })
-  readonly data: GetFriendResponseDto[];
+  readonly data: GetUserResponseDto;
 }

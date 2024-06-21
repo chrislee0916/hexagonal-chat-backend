@@ -1,4 +1,4 @@
-import { ObjectId } from 'typeorm';
+import { ObjectId } from 'mongodb';
 
 export class UserReadModel {
   _id: ObjectId;
@@ -9,6 +9,8 @@ export class UserReadModel {
   image: string;
   friends?: Omit<UserReadModel, '_id' | 'friends' | 'password' | 'askFriend'>[];
   askFriends?: Pick<UserReadModel, 'id' | 'name' | 'email' | 'image'>[];
+  // friends?: number[];
+  // askFriends?: number[];
   createdAt: Date;
   updatedAt: Date;
 }
