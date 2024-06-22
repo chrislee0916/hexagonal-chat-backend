@@ -15,6 +15,7 @@ export class CreateUserFriend1716349920966 implements MigrationInterface {
               FOREIGN KEY (friend_id) REFERENCES users(id) ON DELETE CASCADE
             )
         `);
+    await queryRunner.query(`CREATE INDEX ON user_friend (user_id)`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

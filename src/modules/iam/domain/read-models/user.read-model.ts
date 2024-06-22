@@ -1,14 +1,14 @@
-import { ObjectId } from 'mongodb';
+import { Types } from 'mongoose';
 
 export class UserReadModel {
-  _id: ObjectId;
+  _id: Types.ObjectId;
   id: number;
   name: string;
   email: string;
   password: string;
   image: string;
-  friends?: Omit<UserReadModel, '_id' | 'friends' | 'password' | 'askFriend'>[];
-  askFriends?: Pick<UserReadModel, 'id' | 'name' | 'email' | 'image'>[];
+  friends?: Omit<UserReadModel, 'friends' | 'password' | 'askFriend'>[];
+  askFriends?: Pick<UserReadModel, '_id' | 'id' | 'name' | 'email' | 'image'>[];
   // friends?: number[];
   // askFriends?: number[];
   createdAt: Date;

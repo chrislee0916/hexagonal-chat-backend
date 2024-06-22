@@ -2,11 +2,12 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { OmitType, PickType } from '@nestjs/swagger';
 import { UserReadModel } from 'src/modules/iam/domain/read-models/user.read-model';
 import { User } from 'src/modules/iam/domain/user';
+import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 
 @Schema({
   timestamps: true,
 })
-export class MaterializedUserView {
+export class MaterializedUserView extends Document {
   @Prop({
     unique: true,
     index: true,
@@ -44,15 +45,17 @@ export class MaterializedUserView {
 
   @Prop({
     required: false,
-    type: [Number],
+    ref: 'MaterializedUserView',
+    type: [MongooseSchema.Types.ObjectId],
   })
-  friends: number[];
+  friends: Types.ObjectId[];
 
   @Prop({
     required: false,
-    type: [Number],
+    ref: 'MaterializedUserView',
+    type: [MongooseSchema.Types.ObjectId],
   })
-  askFriends: number[];
+  askFriends: Types.ObjectId[];
 
   @Prop()
   createdAt: Date;

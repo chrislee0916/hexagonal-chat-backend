@@ -20,7 +20,7 @@ export class AcceptFriendCommandHandler implements ICommandHandler {
     const { userId, friendId } = command;
     await this.createUserRepository.acceptFriend(userId, friendId);
 
-    // TODO: async 資料到 read-db
+    // * 同步資料到 read-db
     const user = new User();
     user.id = userId;
     user.acceptedFriend(friendId);

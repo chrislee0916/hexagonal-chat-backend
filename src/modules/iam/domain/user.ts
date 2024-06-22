@@ -2,6 +2,8 @@ import { AggregateRoot } from '@nestjs/cqrs';
 import { UserSignedUpEvent } from './events/user-signed-up.event';
 import { UserAskedFriendEvent } from './events/user-asked-friend.event';
 import { UserAcceptedFriendEvent } from './events/user-accepted-friend.event';
+import { UserReadModel } from './read-models/user.read-model';
+import { Types } from 'mongoose';
 
 export class User extends AggregateRoot {
   public id: number;
@@ -21,8 +23,8 @@ export class User extends AggregateRoot {
     this.apply(new UserSignedUpEvent(this), { skipHandler: true });
   }
 
-  askedFriend(friendId: number) {
-    this.apply(new UserAskedFriendEvent(this.id, friendId), {
+  askedFriend(friend: User) {
+    this.apply(new UserAskedFriendEvent(this, friend), {
       skipHandler: true,
     });
   }

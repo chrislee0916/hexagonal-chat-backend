@@ -1,6 +1,9 @@
+import { UserReadModel } from '../read-models/user.read-model';
+import { User } from '../user';
+
 export class UserAskedFriendEvent {
   constructor(
-    public readonly userId: number,
-    public readonly friendId: number,
+    public readonly user: User,
+    public readonly friend: User,
   ) {}
 }
