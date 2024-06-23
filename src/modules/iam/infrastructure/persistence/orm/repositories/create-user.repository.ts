@@ -85,8 +85,8 @@ export class OrmCreateUserRepository implements CreateUserRepository {
 
   async acceptFriend(userId: number, friendId: number): Promise<void> {
     const askFriend = await this.userFriendRepository.findOneBy({
-      userId: friendId,
-      friendId: userId,
+      userId,
+      friendId,
       status: 'pending',
     });
     if (!askFriend) {

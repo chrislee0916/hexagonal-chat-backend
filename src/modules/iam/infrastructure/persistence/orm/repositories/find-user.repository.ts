@@ -7,9 +7,13 @@ import { NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 import { UserMapper } from '../mappers/user.mapper';
 import { InjectModel } from '@nestjs/mongoose';
-import { MaterializedUserView } from '../schemas/materialized-user-view.schema';
+import {
+  MaterializedUserView,
+  MaterializedUserViewSchema,
+} from '../schemas/materialized-user-view.schema';
 import { Model } from 'mongoose';
 import { UserReadModel } from 'src/modules/iam/domain/read-models/user.read-model';
+import { OmitType } from '@nestjs/swagger';
 
 export class OrmFindUserRepository implements FindUserRepository {
   constructor(
@@ -31,7 +35,18 @@ export class OrmFindUserRepository implements FindUserRepository {
 
   async findOneById(id: number): Promise<UserReadModel> {
     // const userEntity = await this.userRepository.findOneBy({ id });
-    const user = await this.userModel.findOne<UserReadModel>({ id });
+    const user = await this.userModel.findOne<UserReadModel>({ id }, null, {
+      populate: [
+        {
+          path: 'friends',
+          select: '_id id name email image',
+        },
+        {
+          path: 'askFriends',
+          select: '_id id name email image',
+        },
+      ],
+    });
     // if (!user) {
     //   throw new UnauthorizedException(ErrorMsg.ERR_AUTH_SIGNIN_NOT_EXIST);
     // }

@@ -7,7 +7,7 @@ export class UserReadModel {
   email: string;
   password: string;
   image: string;
-  friends?: Omit<UserReadModel, 'friends' | 'password' | 'askFriend'>[];
+  friends?: Pick<UserReadModel, '_id' | 'id' | 'name' | 'email' | 'image'>[];
   askFriends?: Pick<UserReadModel, '_id' | 'id' | 'name' | 'email' | 'image'>[];
   // friends?: number[];
   // askFriends?: number[];

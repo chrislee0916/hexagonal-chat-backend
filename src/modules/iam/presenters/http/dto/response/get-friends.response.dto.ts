@@ -37,16 +37,19 @@ export class GetUserResponseDto {
     description: '好友列表',
     example: [],
   })
-  friends?: Omit<
+  friends?: Pick<
     GetUserResponseDto,
-    '_id' | 'friends' | 'password' | 'askFriend'
+    '_id' | 'id' | 'name' | 'email' | 'image'
   >[];
 
   @ApiProperty({
     description: '好友邀請列表',
     example: [],
   })
-  askFriends?: Pick<GetUserResponseDto, 'id' | 'name' | 'email' | 'image'>[];
+  askFriends?: Pick<
+    GetUserResponseDto,
+    '_id' | 'id' | 'name' | 'email' | 'image'
+  >[];
 
   @ApiProperty({
     description: '建立時間',
