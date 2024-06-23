@@ -15,6 +15,7 @@ import { Message } from 'src/modules/chat/domain/message';
 import { MessageEntity } from '../entities/message.entity';
 import { MessageMapper } from '../mappers/message.mapper';
 import { ChatroomUserMapper } from '../mappers/chatroom-user.mapper';
+import { UserEntity } from 'src/modules/iam/infrastructure/persistence/orm/entities/user.entity';
 
 export class OrmCreateChatroomRepository implements CreateChatroomRepository {
   constructor(
@@ -24,6 +25,8 @@ export class OrmCreateChatroomRepository implements CreateChatroomRepository {
     private readonly chatroomUserRepository: Repository<ChatroomUserEntity>,
     @InjectRepository(MessageEntity)
     private readonly messageRepository: Repository<MessageEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
     private dataSource: DataSource,
   ) {}
 
@@ -35,6 +38,15 @@ export class OrmCreateChatroomRepository implements CreateChatroomRepository {
   }
 
   async save(chatroom: Chatroom): Promise<Chatroom> {
+    // * 檢查 users 是否都存在
+    const [_, count] = await this.userRepository.findAndCountBy({
+      id: In(chatroom.users),
+    });
+    if (count !== chatroom.users.length) {
+      throw new NotFoundException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
+    }
+
+    // * 開始執行建立 chatroom 的 transaction
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();

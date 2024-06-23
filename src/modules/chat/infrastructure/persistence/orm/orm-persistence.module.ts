@@ -5,6 +5,7 @@ import { CreateChatroomRepository } from 'src/modules/chat/application/ports/cre
 import { OrmCreateChatroomRepository } from './repositories/create-chatroom.repository';
 import { ChatroomUserEntity } from './entities/chatroom_user.entity';
 import { MessageEntity } from './entities/message.entity';
+import { UserEntity } from 'src/modules/iam/infrastructure/persistence/orm/entities/user.entity';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { MessageEntity } from './entities/message.entity';
       ChatroomEntity,
       ChatroomUserEntity,
       MessageEntity,
+      UserEntity,
     ]),
   ],
   providers: [

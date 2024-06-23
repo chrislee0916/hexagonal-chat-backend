@@ -7,7 +7,8 @@ export class CreateMessage1717481063526 implements MigrationInterface {
                 "id" SERIAL PRIMARY KEY,
                 "chatroom_id" INTEGER NOT NULL,
                 "sender_id" INTEGER NOT NULL,
-                "content" TEXT NOT NULL,
+                "image" VARCHAR,
+                "content" TEXT,
                 "created_at" timestamp with time zone DEFAULT now(),
                 FOREIGN KEY (chatroom_id) REFERENCES chatrooms(id) ON DELETE CASCADE,
                 FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE

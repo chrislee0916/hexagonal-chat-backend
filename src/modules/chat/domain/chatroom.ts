@@ -8,6 +8,7 @@ export class Chatroom extends AggregateRoot {
   public id: number;
   public name: string;
   public users = new Array<ChatroomUser>();
+  // public messages = new Array<Message>();
   public message?: Message;
   public createdAt: Date;
   public updatedAt: Date;

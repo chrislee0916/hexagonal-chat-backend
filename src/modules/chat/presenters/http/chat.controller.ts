@@ -83,41 +83,42 @@ export class ChatController {
     @ActiveUser() user: ActiveUserData,
     @Body() createChatroomDto: CreateChatroomDto,
   ) {
-    const lastChatId = this.chats.length;
-    const newChat = {
-      id: `${lastChatId + 1}`,
-      createdAt: new Date(),
-      lastMessageAt: new Date(),
-      name: `chatname${lastChatId + 1}`,
-      isGroup: false,
-      messagesIds: ['3', '4'],
-      messages: [
-        {
-          id: '3',
-          body: 'hello, world1',
-          createdAt: new Date(),
-          seen: [],
-          sender: this.user2,
-        },
-        {
-          id: '4',
-          body: 'hello, world2',
-          image: '/images/logo.png',
-          createdAt: new Date(),
-          seen: [],
-          sender: this.user2,
-        },
-      ],
-      userIds: ['1', '2'],
-      users: [this.user1, this.user2],
-    };
-    this.chats.unshift(newChat);
-    // return this.chatService.createChatroom(
-    //   new CreateChatroomCommand(
-    //     createChatroomDto.name,
-    //     createChatroomDto.userIds,
-    //   ),
-    // );
+    // const lastChatId = this.chats.length;
+    // const newChat = {
+    //   id: `${lastChatId + 1}`,
+    //   createdAt: new Date(),
+    //   lastMessageAt: new Date(),
+    //   name: `chatname${lastChatId + 1}`,
+    //   isGroup: false,
+    //   messagesIds: ['3', '4'],
+    //   messages: [
+    //     {
+    //       id: '3',
+    //       body: 'hello, world1',
+    //       createdAt: new Date(),
+    //       seen: [],
+    //       sender: this.user2,
+    //     },
+    //     {
+    //       id: '4',
+    //       body: 'hello, world2',
+    //       image: '/images/logo.png',
+    //       createdAt: new Date(),
+    //       seen: [],
+    //       sender: this.user2,
+    //     },
+    //   ],
+    //   userIds: ['1', '2'],
+    //   users: [this.user1, this.user2],
+    // };
+    // this.chats.unshift(newChat);
+
+    return this.chatService.createChatroom(
+      new CreateChatroomCommand(createChatroomDto.name, [
+        user.sub,
+        ...createChatroomDto.userIds,
+      ]),
+    );
   }
 
   @Get('chatrooms')
