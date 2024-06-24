@@ -57,6 +57,13 @@ export class MaterializedUserView extends Document {
   })
   askFriends: Types.ObjectId[];
 
+  @Prop({
+    required: false,
+    ref: 'MaterializedChatroomView',
+    type: [MongooseSchema.Types.ObjectId],
+  })
+  chatrooms: Types.ObjectId[];
+
   @Prop()
   createdAt: Date;
 

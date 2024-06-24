@@ -45,6 +45,10 @@ export class OrmFindUserRepository implements FindUserRepository {
           path: 'askFriends',
           select: '_id id name email image',
         },
+        {
+          path: 'chatrooms',
+          select: '_id id name',
+        },
       ],
     });
     // if (!user) {

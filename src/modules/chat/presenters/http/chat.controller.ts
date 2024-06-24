@@ -1,8 +1,10 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiCreatedResponse,
   ApiOperation,
+  ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { CreateChatroomDto } from './dto/request/create-chatroom.dto';
@@ -12,6 +14,10 @@ import { AuthType } from 'src/common/enums/auth-type.enum';
 import { CreateChatroomCommand } from '../../application/commands/impl/create-chatroom.command';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/modules/iam/domain/interfaces/active-user-data.interface';
+import {
+  CreateChatroomResponseDto,
+  SuccessCreateChatroomResponseDto,
+} from './dto/response/create-chatroom.response.dto';
 
 @Auth(AuthType.Bearer)
 @ApiTags('CHAT - 即時通訊服務')
@@ -78,11 +84,17 @@ export class ChatController {
   @ApiOperation({
     summary: '建立聊天室',
   })
+  @ApiBody({
+    type: CreateChatroomDto,
+  })
+  @ApiCreatedResponse({
+    type: SuccessCreateChatroomResponseDto,
+  })
   @Post('chatroom')
   async createChatroom(
     @ActiveUser() user: ActiveUserData,
     @Body() createChatroomDto: CreateChatroomDto,
-  ) {
+  ): Promise<CreateChatroomResponseDto> {
     // const lastChatId = this.chats.length;
     // const newChat = {
     //   id: `${lastChatId + 1}`,

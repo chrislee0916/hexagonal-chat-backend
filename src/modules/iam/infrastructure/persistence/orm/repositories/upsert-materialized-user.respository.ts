@@ -53,4 +53,6 @@ export class OrmUpsertMaterializedUserRepository
       },
     );
   }
+
+  async syncChatroom(chatroomId: number, userIds: number[]): Promise<void> {}
 }

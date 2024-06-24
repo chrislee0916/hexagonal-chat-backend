@@ -8,6 +8,7 @@ import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 import { Chatroom } from 'src/modules/chat/domain/chatroom';
 import { CreateChatroomRepository } from '../../ports/create-chatroom.repository';
 import { Message } from 'src/modules/chat/domain/message';
+import { CreateMessageRepository } from '../../ports/create-message.repository';
 
 @CommandHandler(SendMessageCommand)
 export class SendMessageCommandHandler implements ICommandHandler {
@@ -15,7 +16,7 @@ export class SendMessageCommandHandler implements ICommandHandler {
 
   constructor(
     private readonly socketOnlineIdsStorage: SocketOnlineIdsStorage,
-    private readonly chatroomRepository: CreateChatroomRepository,
+    private readonly messageRepository: CreateMessageRepository,
     private readonly eventPublisher: EventPublisher,
   ) {}
 
@@ -50,7 +51,7 @@ export class SendMessageCommandHandler implements ICommandHandler {
     chatroom.id = chatroomId;
     chatroom.addMessage(userId, content);
 
-    await this.chatroomRepository.saveMessage(chatroom);
+    await this.messageRepository.save(chatroom);
 
     // * 需要檢查chatroom底下的user有哪些不在線上，使用離線訊息
     chatroom.sentMessage(socket);

@@ -16,6 +16,10 @@ export class SentMessageEventHandler
 
   async handle(event: SentMessageEvent): Promise<void> {
     this.logger.log(`Sent message event: ${JSON.stringify(event.message)}`);
+
+    // * 同步資料到 read db
+
+    // * websocket 通知給有在線的人
     const {
       message: { chatroomId, content },
       socket,

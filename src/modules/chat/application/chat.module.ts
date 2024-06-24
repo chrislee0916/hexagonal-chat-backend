@@ -11,6 +11,7 @@ import { SignInCommandHandler } from './commands/handlers/sign-in.command-handle
 import { SignOutCommandHandler } from './commands/handlers/sign-out.command-handler';
 import { SendMessageCommandHandler } from './commands/handlers/send-message.command.handler';
 import { SentMessageEventHandler } from './event-handlers/sent-message.event-handler';
+import { CreatedChatroomEventHandler } from './event-handlers/created-chatroom.event-handler';
 
 @Module({
   controllers: [ChatController],
@@ -24,6 +25,7 @@ import { SentMessageEventHandler } from './event-handlers/sent-message.event-han
     ChatroomFactory,
     JwtService,
     SentMessageEventHandler,
+    CreatedChatroomEventHandler,
   ],
 })
 export class ChatModule {

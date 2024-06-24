@@ -1,9 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  ErrorDetailResponseDto,
-  ErrorResponseDto,
-  SuccessResponseDto,
-} from 'src/common/dtos/response.dto';
+import { SuccessResponseDto } from 'src/common/dtos/response.dto';
 
 // * 成功建立聊天室返回結果
 export class CreateChatroomResponseDto {
@@ -20,7 +16,7 @@ export class CreateChatroomResponseDto {
   readonly name: string;
 }
 
-export class SuccessSignUpResponseDto extends SuccessResponseDto {
+export class SuccessCreateChatroomResponseDto extends SuccessResponseDto {
   @ApiProperty({
     type: CreateChatroomResponseDto,
     example: CreateChatroomResponseDto,

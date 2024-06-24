@@ -52,6 +52,12 @@ export class GetUserResponseDto {
   >[];
 
   @ApiProperty({
+    description: '聊天室列表',
+    example: [],
+  })
+  chatrooms?: any;
+
+  @ApiProperty({
     description: '建立時間',
     example: new Date(),
   })
