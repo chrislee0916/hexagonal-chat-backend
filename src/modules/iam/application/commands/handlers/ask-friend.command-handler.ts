@@ -29,13 +29,10 @@ export class AskFriendCommandHandler implements ICommandHandler {
 
     const { userId, friendEmail } = command;
     // * 發送好友邀請
-    const [user, friend] = await this.createUserRepository.askFriend(
-      userId,
-      friendEmail,
-    );
+    const user = await this.createUserRepository.askFriend(userId, friendEmail);
 
     // * 送出邀請後通知對方消息以及同步資料到 read db
-    user.askedFriend(friend);
+    user.askedFriend();
     this.publisher.mergeObjectContext(user);
     user.commit();
   }

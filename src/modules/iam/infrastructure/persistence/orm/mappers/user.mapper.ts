@@ -11,7 +11,6 @@ export class UserMapper {
     userModel.password = password;
     userModel.createdAt = userEntity.createdAt;
     userModel.updatedAt = userEntity.updatedAt;
-    userModel.deletedAt = userEntity.deletedAt;
     return userModel;
   }
 
@@ -23,7 +22,6 @@ export class UserMapper {
     entity.password = user.password;
     entity.createdAt = user.createdAt;
     entity.updatedAt = user.updatedAt;
-    entity.deletedAt = user.deletedAt;
     return entity;
   }
 }

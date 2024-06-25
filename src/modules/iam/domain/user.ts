@@ -4,6 +4,7 @@ import { UserAskedFriendEvent } from './events/user-asked-friend.event';
 import { UserAcceptedFriendEvent } from './events/user-accepted-friend.event';
 import { UserReadModel } from './read-models/user.read-model';
 import { Types } from 'mongoose';
+import { Chatroom } from './chatroom';
 
 export class User extends AggregateRoot {
   public id: number;
@@ -11,9 +12,13 @@ export class User extends AggregateRoot {
   public email: string;
   public password: string;
   public image: string;
+  public askFriends = new Array<
+    Pick<User, 'id' | 'name' | 'email' | 'image'>
+  >();
+  public friends = new Array<Pick<User, 'id' | 'name' | 'email' | 'image'>>();
+  public chatrooms = new Array<Chatroom>();
   public createdAt: Date;
   public updatedAt: Date;
-  public deletedAt: Date;
 
   constructor() {
     super();
@@ -23,8 +28,8 @@ export class User extends AggregateRoot {
     this.apply(new UserSignedUpEvent(this), { skipHandler: true });
   }
 
-  askedFriend(friend: User) {
-    this.apply(new UserAskedFriendEvent(this, friend), {
+  askedFriend() {
+    this.apply(new UserAskedFriendEvent(this), {
       skipHandler: true,
     });
   }

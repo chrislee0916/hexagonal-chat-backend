@@ -28,10 +28,21 @@ export class OrmCreateUserRepository implements CreateUserRepository {
     return UserMapper.toDomain(newEntity);
   }
 
-  async askFriend(userId: number, friendEmail: string): Promise<[User, User]> {
+  async askFriend(userId: number, friendEmail: string): Promise<User> {
     // * 判斷要加入的 friend 是否存在
-    const friendModel = await this.userRepository.findOneBy({
-      email: friendEmail,
+    const friendModel = await this.userRepository.findOne({
+      where: { email: friendEmail },
+      select: {
+        askFriends: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+        },
+      },
+      relations: {
+        askFriends: true,
+      },
     });
     if (!friendModel) {
       throw new NotFoundException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
@@ -42,7 +53,22 @@ export class OrmCreateUserRepository implements CreateUserRepository {
     }
 
     // * 判斷 user 是否存在
-    const userModel = await this.userRepository.findOneBy({ id: userId });
+    const userModel = await this.userRepository.findOne({
+      where: {
+        id: userId,
+      },
+      select: {
+        askFriends: {
+          id: true,
+          name: true,
+          email: true,
+          image: true,
+        },
+      },
+      relations: {
+        askFriends: true,
+      },
+    });
     if (!userModel) {
       throw new UnauthorizedException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
     }
@@ -66,7 +92,7 @@ export class OrmCreateUserRepository implements CreateUserRepository {
 
     if (friendAsked) {
       await this.beingFriends(userId, friendModel.id);
-      return [UserMapper.toDomain(userModel), UserMapper.toDomain(friendModel)];
+      return UserMapper.toDomain(userModel);
     }
 
     try {
@@ -74,7 +100,7 @@ export class OrmCreateUserRepository implements CreateUserRepository {
         userId: friendModel.id,
         friendId: userId,
       });
-      return [UserMapper.toDomain(userModel), UserMapper.toDomain(friendModel)];
+      return UserMapper.toDomain(userModel);
     } catch (err) {
       if (err.code === '23505') {
         throw new ConflictException(ErrorMsg.ERR_AUTH_ALREADY_ASK_FRIEND);

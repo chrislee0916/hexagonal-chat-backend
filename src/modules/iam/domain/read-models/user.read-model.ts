@@ -8,11 +8,9 @@ export class UserReadModel {
   email: string;
   password: string;
   image: string;
-  friends?: Pick<UserReadModel, '_id' | 'id' | 'name' | 'email' | 'image'>[];
-  askFriends?: Pick<UserReadModel, '_id' | 'id' | 'name' | 'email' | 'image'>[];
-  chatrooms?: Pick<ChatroomReadModel, '_id' | 'id' | 'name' | 'image'>[];
-  // friends?: number[];
-  // askFriends?: number[];
+  friends?: Pick<UserReadModel, 'id' | 'name' | 'email' | 'image'>[];
+  askFriends?: Pick<UserReadModel, 'id' | 'name' | 'email' | 'image'>[];
+  chatrooms?: Pick<ChatroomReadModel, 'id' | 'name' | 'image'>[];
   createdAt: Date;
   updatedAt: Date;
 }

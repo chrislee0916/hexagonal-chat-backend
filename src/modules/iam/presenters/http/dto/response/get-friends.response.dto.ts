@@ -3,11 +3,11 @@ import { SuccessResponseDto } from 'src/common/dtos/response.dto';
 import { ObjectId } from 'mongodb';
 
 export class GetUserResponseDto {
-  @ApiProperty({
-    description: 'objectId',
-    example: new ObjectId('667518b4c5ca411ccfdbaa72'),
-  })
-  _id: ObjectId;
+  // @ApiProperty({
+  //   description: 'objectId',
+  //   example: new ObjectId('667518b4c5ca411ccfdbaa72'),
+  // })
+  // _id: ObjectId;
 
   @ApiProperty({
     description: '使用者編號',
@@ -37,19 +37,13 @@ export class GetUserResponseDto {
     description: '好友列表',
     example: [],
   })
-  friends?: Pick<
-    GetUserResponseDto,
-    '_id' | 'id' | 'name' | 'email' | 'image'
-  >[];
+  friends?: Pick<GetUserResponseDto, 'id' | 'name' | 'email' | 'image'>[];
 
   @ApiProperty({
     description: '好友邀請列表',
     example: [],
   })
-  askFriends?: Pick<
-    GetUserResponseDto,
-    '_id' | 'id' | 'name' | 'email' | 'image'
-  >[];
+  askFriends?: Pick<GetUserResponseDto, 'id' | 'name' | 'email' | 'image'>[];
 
   @ApiProperty({
     description: '聊天室列表',
