@@ -28,21 +28,10 @@ export class OrmCreateUserRepository implements CreateUserRepository {
     return UserMapper.toDomain(newEntity);
   }
 
-  async askFriend(userId: number, friendEmail: string): Promise<User> {
+  async askFriend(userId: number, friendEmail: string): Promise<[User, User]> {
     // * 判斷要加入的 friend 是否存在
-    const friendModel = await this.userRepository.findOne({
-      where: { email: friendEmail },
-      select: {
-        askFriends: {
-          id: true,
-          name: true,
-          email: true,
-          image: true,
-        },
-      },
-      relations: {
-        askFriends: true,
-      },
+    const friendModel = await this.userRepository.findOneBy({
+      email: friendEmail,
     });
     if (!friendModel) {
       throw new NotFoundException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
@@ -53,21 +42,8 @@ export class OrmCreateUserRepository implements CreateUserRepository {
     }
 
     // * 判斷 user 是否存在
-    const userModel = await this.userRepository.findOne({
-      where: {
-        id: userId,
-      },
-      select: {
-        askFriends: {
-          id: true,
-          name: true,
-          email: true,
-          image: true,
-        },
-      },
-      relations: {
-        askFriends: true,
-      },
+    const userModel = await this.userRepository.findOneBy({
+      id: userId,
     });
     if (!userModel) {
       throw new UnauthorizedException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
@@ -92,7 +68,10 @@ export class OrmCreateUserRepository implements CreateUserRepository {
 
     if (friendAsked) {
       await this.beingFriends(userId, friendModel.id);
-      return UserMapper.toDomain(userModel);
+      return [
+        await this.getAskFriendAndFriend(userModel),
+        await this.getAskFriendAndFriend(friendModel),
+      ];
     }
 
     try {
@@ -100,7 +79,7 @@ export class OrmCreateUserRepository implements CreateUserRepository {
         userId: friendModel.id,
         friendId: userId,
       });
-      return UserMapper.toDomain(userModel);
+      return [await this.getAskFriendAndFriend(friendModel), null];
     } catch (err) {
       if (err.code === '23505') {
         throw new ConflictException(ErrorMsg.ERR_AUTH_ALREADY_ASK_FRIEND);
@@ -109,7 +88,7 @@ export class OrmCreateUserRepository implements CreateUserRepository {
     }
   }
 
-  async acceptFriend(userId: number, friendId: number): Promise<void> {
+  async acceptFriend(userId: number, friendId: number): Promise<[User, User]> {
     const askFriend = await this.userFriendRepository.findOneBy({
       userId,
       friendId,
@@ -118,7 +97,26 @@ export class OrmCreateUserRepository implements CreateUserRepository {
     if (!askFriend) {
       throw new NotFoundException(ErrorMsg.ERR_AUTH_ASK_FRIEND_NOT_FOUND);
     }
+    // * 判斷要加入的 friend 是否存在
+    const friendModel = await this.userRepository.findOneBy({
+      id: friendId,
+    });
+    if (!friendModel) {
+      throw new NotFoundException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
+    }
+    // * 判斷 user 是否存在
+    const userModel = await this.userRepository.findOneBy({
+      id: userId,
+    });
+    if (!userModel) {
+      throw new UnauthorizedException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
+    }
+
     await this.beingFriends(userId, friendId);
+    return [
+      await this.getAskFriendAndFriend(userModel),
+      await this.getAskFriendAndFriend(friendModel),
+    ];
   }
 
   private async beingFriends(userId: number, friendId: number): Promise<void> {
@@ -140,6 +138,30 @@ export class OrmCreateUserRepository implements CreateUserRepository {
         throw new ConflictException(ErrorMsg.ERR_AUTH_USER_ALREADY_FRIEND);
       }
       throw new InternalServerErrorException(ErrorMsg.ERR_CORE_UNKNOWN_ERROR);
+    }
+  }
+
+  private async getAskFriendAndFriend(userModel: UserEntity): Promise<User> {
+    // * 取得所有的好友關係資料
+    try {
+      const res = await this.userRepository
+        .createQueryBuilder('user')
+        .innerJoinAndSelect(UserFriendEntity, 'uf', 'uf.friend_id = user.id')
+        .select('user.id, user.name, user.email, user.image, uf.status')
+        .where('uf.user_id = :userId', { userId: userModel.id })
+        .getRawMany<
+          Pick<UserEntity, 'id' | 'name' | 'email' | 'image'> &
+            Pick<UserFriendEntity, 'status'>
+        >();
+      // * 篩選
+      return UserMapper.toDomain({
+        ...userModel,
+        askFriends: res.filter((val) => val.status === 'pending'),
+        friends: res.filter((val) => val.status === 'accepted'),
+      });
+    } catch (error) {
+      console.log('asasd: ', error);
+      throw error;
     }
   }
 }

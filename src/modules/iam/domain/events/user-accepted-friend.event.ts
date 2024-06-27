@@ -1,6 +1,8 @@
+import { User } from '../user';
+
 export class UserAcceptedFriendEvent {
   constructor(
-    public readonly userId: number,
-    public readonly friendId: number,
+    public readonly user: User,
+    public readonly friend: User,
   ) {}
 }

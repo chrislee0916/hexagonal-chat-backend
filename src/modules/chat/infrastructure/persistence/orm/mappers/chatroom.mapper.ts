@@ -3,10 +3,11 @@ import { ChatroomEntity } from '../entities/chatroom.entity';
 
 export class ChatroomMapper {
   static toDomain(chatroomEntity: ChatroomEntity): Chatroom {
-    const { id, name, createdAt, updatedAt, deletedAt } = chatroomEntity;
+    const { id, name, users, createdAt, updatedAt, deletedAt } = chatroomEntity;
     const chatroomModel = new Chatroom();
     chatroomModel.id = id;
     chatroomModel.name = name;
+    chatroomModel.users = users;
     chatroomModel.createdAt = createdAt;
     chatroomModel.updatedAt = updatedAt;
     chatroomModel.deletedAt = deletedAt;

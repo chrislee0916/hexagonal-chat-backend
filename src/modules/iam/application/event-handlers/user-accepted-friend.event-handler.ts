@@ -19,14 +19,21 @@ export class UserAcceptedFriendEventHandler
   async handle(event: UserAcceptedFriendEvent) {
     this.logger.log(`User accepted friend event: ${JSON.stringify(event)}`);
 
-    const { userId, friendId } = event;
+    const { user, friend } = event;
 
     // * 同步資料到 read db
     // TODO: 後續改用 CDC
-    await Promise.all([
-      this.upsertMaterializedUserRepository.syncFriendShip(userId),
-      this.upsertMaterializedUserRepository.syncFriendShip(friendId),
-    ]);
+    // * 如果成為好友則兩個都需更新
+    await this.upsertMaterializedUserRepository.upsert({
+      id: user.id,
+      askFriends: user.askFriends,
+      friends: user.friends,
+    });
+    await this.upsertMaterializedUserRepository.upsert({
+      id: friend.id,
+      askFriends: friend.askFriends,
+      friends: friend.friends,
+    });
     // TODO: socket 同步通知對方有新好友加入
   }
 }

@@ -18,12 +18,13 @@ export class AcceptFriendCommandHandler implements ICommandHandler {
       `Processing "${AcceptFriendCommand.name}": ${JSON.stringify(command)}`,
     );
     const { userId, friendId } = command;
-    await this.createUserRepository.acceptFriend(userId, friendId);
+    const [user, friend] = await this.createUserRepository.acceptFriend(
+      userId,
+      friendId,
+    );
 
     // * 同步資料到 read-db
-    const user = new User();
-    user.id = userId;
-    user.acceptedFriend(friendId);
+    user.acceptedFriend(friend);
     this.eventPublisher.mergeObjectContext(user);
     user.commit();
   }

@@ -6,8 +6,8 @@ export class ChatroomFactory {
   create(name: string, userIds: number[]) {
     let chatroom = new Chatroom();
     chatroom.name = name;
-    userIds.forEach((userId) => {
-      chatroom.addChatroomUser(userId);
+    userIds.forEach((id) => {
+      chatroom.addChatroomUser(id);
     });
     return chatroom;
   }

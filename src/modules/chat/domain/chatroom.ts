@@ -9,7 +9,9 @@ export class Chatroom extends AggregateRoot {
   public id: number;
   public name: string;
   // public image: number; // * 為file的外鍵
-  public users = new Array<ChatroomUser>();
+  public users = new Array<
+    Pick<ChatroomUser, 'id' | 'email' | 'name' | 'image'>
+  >();
   // public messages = new Array<Message>();
   public message?: Message;
   public createdAt: Date;
@@ -20,8 +22,8 @@ export class Chatroom extends AggregateRoot {
     super();
   }
 
-  addChatroomUser(userId: number) {
-    this.users.push(new ChatroomUser(userId));
+  addChatroomUser(id: number) {
+    this.users.push(new ChatroomUser(id));
   }
 
   addMessage(senderId: number, content: string) {

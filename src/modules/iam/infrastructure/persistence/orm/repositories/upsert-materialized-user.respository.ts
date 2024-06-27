@@ -15,8 +15,6 @@ export class OrmUpsertMaterializedUserRepository
   constructor(
     @InjectModel(MaterializedUserView.name)
     private readonly userModel: Model<MaterializedUserView>,
-    @InjectRepository(UserFriendEntity)
-    private readonly userFriendRepository: Repository<UserFriendEntity>,
   ) {}
 
   async upsert(
@@ -27,32 +25,16 @@ export class OrmUpsertMaterializedUserRepository
     });
   }
 
-  async syncFriendShip(userId: number): Promise<void> {
-    const friendShips = await this.userFriendRepository.findBy({
-      userId,
-      deletedAt: null,
-    });
-
-    let askFriendIds = friendShips
-      .filter((val) => val.status === 'pending')
-      .flatMap((val) => val.friendId);
-
-    let askFriends = await this.userModel.find({ id: { $in: askFriendIds } });
-
-    let friendIds = friendShips
-      .filter((val) => val.status === 'accepted')
-      .flatMap((val) => val.friendId);
-
-    let friends = await this.userModel.find({ id: { $in: friendIds } });
-
-    await this.userModel.findOneAndUpdate(
-      { id: userId },
-      {
-        askFriends: askFriends.flatMap((val) => val._id),
-        friends: friends.flatMap((val) => val._id),
+  async upsertMany(
+    users: (Pick<UserReadModel, 'id'> & Partial<UserReadModel>)[],
+  ): Promise<void> {
+    const operations = users.map((user) => ({
+      updateOne: {
+        filter: { id: user.id },
+        update: user,
+        upsert: true,
       },
-    );
+    }));
+    await this.userModel.bulkWrite(operations);
   }
-
-  async syncChatroom(chatroomId: number, userIds: number[]): Promise<void> {}
 }

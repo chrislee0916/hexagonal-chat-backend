@@ -6,5 +6,5 @@ export class ChatroomReadModel {
   id: number;
   name: string;
   image: string;
-  users: Pick<UserReadModel, '_id' | 'id' | 'name' | 'email'>;
+  users: Pick<UserReadModel, 'id' | 'name' | 'email' | 'image'>;
 }

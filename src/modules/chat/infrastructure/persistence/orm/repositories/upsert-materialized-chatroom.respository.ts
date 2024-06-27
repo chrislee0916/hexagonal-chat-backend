@@ -21,35 +21,10 @@ export class OrmUpsertMaterializedChatroomRepository
   async upsert(
     chatroom: Pick<Chatroom, 'id'> & Partial<Chatroom>,
   ): Promise<void> {
-    const chatroomReadModel = await this.chatroomModel.findOneAndUpdate(
-      { id: chatroom.id },
-      {
-        name: chatroom.name,
-      },
-      {
-        upsert: true,
-        new: true,
-      },
-    );
-    const userObjectIds = [];
-    await Promise.all(
-      chatroom.users.map(async (user) => {
-        const res = await this.userModel.findOne({ id: user.userId });
-        userObjectIds.push(res._id);
-        return this.userModel.findOneAndUpdate(
-          { id: res.id },
-          {
-            chatrooms: [chatroomReadModel._id, ...res.chatrooms],
-          },
-        );
-      }),
-    );
-    await this.chatroomModel.findOneAndUpdate(
-      { id: chatroom.id },
-      {
-        users: userObjectIds,
-      },
-    );
+    console.log('chatroom: ', chatroom);
+    await this.chatroomModel.findOneAndUpdate({ id: chatroom.id }, chatroom, {
+      upsert: true,
+    });
   }
 
   async saveMessage(

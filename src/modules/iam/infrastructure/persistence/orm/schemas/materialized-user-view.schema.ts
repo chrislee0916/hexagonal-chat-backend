@@ -41,7 +41,8 @@ export class MaterializedUserView extends Document {
 
   @Prop({
     required: false,
-    raw: [
+    _id: false,
+    type: [
       {
         id: Number,
         name: String,
@@ -59,6 +60,7 @@ export class MaterializedUserView extends Document {
 
   @Prop({
     required: false,
+    _id: false,
     type: [
       {
         id: Number,
@@ -77,6 +79,7 @@ export class MaterializedUserView extends Document {
 
   @Prop({
     required: false,
+    _id: false,
     type: [
       {
         id: Number,

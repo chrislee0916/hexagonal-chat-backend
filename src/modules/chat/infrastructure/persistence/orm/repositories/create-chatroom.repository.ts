@@ -10,6 +10,7 @@ import {
 import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 import { ChatroomUserMapper } from '../mappers/chatroom-user.mapper';
 import { UserEntity } from 'src/modules/iam/infrastructure/persistence/orm/entities/user.entity';
+import { ChatroomUserEntity } from '../entities/chatroom_user.entity';
 
 export class OrmCreateChatroomRepository implements CreateChatroomRepository {
   constructor(
@@ -20,8 +21,8 @@ export class OrmCreateChatroomRepository implements CreateChatroomRepository {
 
   async save(chatroom: Chatroom): Promise<Chatroom> {
     // * 檢查 users 是否都存在
-    const [_, count] = await this.userRepository.findAndCountBy({
-      id: In(chatroom.users.flatMap((val) => val.userId)),
+    const [userModels, count] = await this.userRepository.findAndCountBy({
+      id: In(chatroom.users.flatMap((val) => val.id)),
     });
     if (count !== chatroom.users.length) {
       throw new NotFoundException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
@@ -35,15 +36,21 @@ export class OrmCreateChatroomRepository implements CreateChatroomRepository {
       const persistenceModel = ChatroomMapper.toPersistence(chatroom);
       const newEntity = await queryRunner.manager.save(persistenceModel);
 
-      const chatroomUsers = chatroom.users.map((user) => {
-        user.chatroomId = newEntity.id;
-        return ChatroomUserMapper.toPersistence(user);
-      });
-      await queryRunner.manager.save(chatroomUsers);
+      await queryRunner.manager.save<ChatroomUserEntity>(
+        chatroom.users.map((user) => {
+          let val = new ChatroomUserEntity();
+          val.chatroomId = newEntity.id;
+          val.userId = user.id;
+          return val;
+        }),
+      );
 
       await queryRunner.commitTransaction();
 
       chatroom.id = newEntity.id;
+      chatroom.users = userModels.map(({ id, name, email, image }) => {
+        return { id, name, email, image };
+      });
       return chatroom;
     } catch (err) {
       await queryRunner.rollbackTransaction();

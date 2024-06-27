@@ -19,9 +19,23 @@ export class UserAskedFriendEventHandler
   async handle(event: UserAskedFriendEvent) {
     this.logger.log(`User asked friend event: ${JSON.stringify(event)}`);
 
-    const { user } = event;
-    // * 同步資料到 read db
+    const { user, friend } = event;
     // TODO: 後續改用 CDC
+    // * 同步資料到 read db
+    // * 如果只有發送好友邀請則更新被邀請的部分
+    await this.upsertMaterializedUserRepository.upsert({
+      id: user.id,
+      askFriends: user.askFriends,
+      friends: user.friends,
+    });
+    // * 如果成為好友則兩個都需更新
+    if (friend) {
+      await this.upsertMaterializedUserRepository.upsert({
+        id: friend.id,
+        askFriends: friend.askFriends,
+        friends: friend.friends,
+      });
+    }
     // await Promise.all([
     //   this.upsertMaterializedUserRepository.syncFriendShip(user.id),
     //   this.upsertMaterializedUserRepository.syncFriendShip(friend.id),

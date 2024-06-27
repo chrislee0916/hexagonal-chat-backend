@@ -28,14 +28,14 @@ export class User extends AggregateRoot {
     this.apply(new UserSignedUpEvent(this), { skipHandler: true });
   }
 
-  askedFriend() {
-    this.apply(new UserAskedFriendEvent(this), {
+  askedFriend(user: User) {
+    this.apply(new UserAskedFriendEvent(this, user), {
       skipHandler: true,
     });
   }
 
-  acceptedFriend(friendId: number) {
-    this.apply(new UserAcceptedFriendEvent(this.id, friendId), {
+  acceptedFriend(friend: User) {
+    this.apply(new UserAcceptedFriendEvent(this, friend), {
       skipHandler: true,
     });
   }

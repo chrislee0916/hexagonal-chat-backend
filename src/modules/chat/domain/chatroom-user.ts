@@ -2,5 +2,8 @@ export class ChatroomUser {
   public chatroomId: number;
   public joinedAt: Date;
   public leftAt: Date;
-  constructor(public userId: number) {}
+  public name: string;
+  public email: string;
+  public image: string;
+  constructor(public id: number) {}
 }

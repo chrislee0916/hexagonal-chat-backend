@@ -28,16 +28,20 @@ export class UserEntity {
   @Column()
   image: string;
 
-  @ManyToMany(() => UserEntity, (user) => user.askedFriends)
-  @JoinTable({
-    name: 'user_friend',
-    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'friend_id', referencedColumnName: 'id' },
-  })
-  askFriends: UserEntity[];
+  // @ManyToMany(() => UserEntity, (user) => user.askedFriends)
+  // @JoinTable({
+  //   name: 'user_friend',
+  //   joinColumn: { name: 'user_id', referencedColumnName: 'id' },
+  //   inverseJoinColumn: { name: 'friend_id', referencedColumnName: 'id' },
+  // })
+  // askFriends: UserEntity[];
 
-  @ManyToMany(() => UserEntity, (user) => user.askFriends)
-  askedFriends: UserEntity[];
+  // @ManyToMany(() => UserEntity, (user) => user.askFriends)
+  // askedFriends: UserEntity[];
+
+  askFriends: Pick<UserEntity, 'id' | 'name' | 'email' | 'image'>[];
+
+  friends: Pick<UserEntity, 'id' | 'name' | 'email' | 'image'>[];
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;

@@ -4,5 +4,7 @@ export abstract class UpsertMaterializedUserRepository {
   abstract upsert(
     user: Pick<UserReadModel, 'id'> & Partial<UserReadModel>,
   ): Promise<void>;
-  abstract syncFriendShip(id: number): Promise<void>;
+  abstract upsertMany(
+    users: Array<Pick<UserReadModel, 'id'> & Partial<UserReadModel>>,
+  ): Promise<void>;
 }

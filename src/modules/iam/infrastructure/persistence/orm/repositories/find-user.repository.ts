@@ -35,22 +35,9 @@ export class OrmFindUserRepository implements FindUserRepository {
 
   async findOneById(id: number): Promise<UserReadModel> {
     // const userEntity = await this.userRepository.findOneBy({ id });
-    const user = await this.userModel.findOne<UserReadModel>({ id }, null, {
-      populate: [
-        {
-          path: 'friends',
-          select: '_id id name email image',
-        },
-        {
-          path: 'askFriends',
-          select: '_id id name email image',
-        },
-        {
-          path: 'chatrooms',
-          select: '_id id name',
-        },
-      ],
-    });
+
+    const user = await this.userModel.findOne<UserReadModel>({ id });
+    console.log('userss: ', user);
     // if (!user) {
     //   throw new UnauthorizedException(ErrorMsg.ERR_AUTH_SIGNIN_NOT_EXIST);
     // }

@@ -1,3 +1,4 @@
+import { UserEntity } from 'src/modules/iam/infrastructure/persistence/orm/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
@@ -14,6 +15,8 @@ export class ChatroomEntity {
 
   @Column()
   name: string;
+
+  users: Pick<UserEntity, 'id' | 'name' | 'email' | 'image'>[];
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;
