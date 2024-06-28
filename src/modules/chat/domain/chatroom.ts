@@ -8,12 +8,12 @@ import { CreatedChatroomEvent } from './events/created-chatroom.event';
 export class Chatroom extends AggregateRoot {
   public id: number;
   public name: string;
-  // public image: number; // * 為file的外鍵
+  public image: string; // * 為file的外鍵
   public users = new Array<
     Pick<ChatroomUser, 'id' | 'email' | 'name' | 'image'>
   >();
   // public messages = new Array<Message>();
-  public message?: Message;
+  public newMessage?: Message;
   public createdAt: Date;
   public updatedAt: Date;
   public deletedAt: Date;
@@ -26,8 +26,8 @@ export class Chatroom extends AggregateRoot {
     this.users.push(new ChatroomUser(id));
   }
 
-  addMessage(senderId: number, content: string) {
-    this.message = new Message(this.id, senderId, content);
+  addNewMessage(senderId: number, content: string) {
+    this.newMessage = new Message(this.id, senderId, content);
   }
 
   created() {
@@ -35,7 +35,7 @@ export class Chatroom extends AggregateRoot {
   }
 
   sentMessage(socket: Socket) {
-    this.apply(new SentMessageEvent(this.message, socket), {
+    this.apply(new SentMessageEvent(this.newMessage, socket), {
       skipHandler: true,
     });
   }

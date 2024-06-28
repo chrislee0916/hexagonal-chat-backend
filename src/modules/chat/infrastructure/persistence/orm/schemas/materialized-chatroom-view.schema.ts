@@ -23,10 +23,21 @@ export class MaterializedChatroomView extends Document<Types.ObjectId> {
   image: string;
 
   @Prop({
-    ref: 'MaterializedUserView',
-    type: [MongooseSchema.Types.ObjectId],
+    type: [
+      {
+        id: Number,
+        name: String,
+        email: String,
+        image: String,
+      },
+    ],
   })
-  users: Types.ObjectId[];
+  users: {
+    id: number;
+    name: string;
+    email: string;
+    image: string;
+  }[];
 
   @Prop()
   createdAt: Date;

@@ -19,6 +19,12 @@ import {
 } from './schemas/materialized-chatroom-view.schema';
 import { CreateMessageRepository } from 'src/modules/chat/application/ports/create-message.repository';
 import { OrmCreateMessageRepository } from './repositories/create-message.repository';
+import { UpsertMaterializedMessageRespository } from 'src/modules/chat/application/ports/upsert-materialized-message.respository';
+import { OrmUpsertMaterializedMessageRepository } from './repositories/upsert-materialized-message.repository';
+import {
+  MaterializedMessageView,
+  MaterializedMessageViewSchema,
+} from './schemas/materialized-message-view.schema';
 
 @Module({
   imports: [
@@ -37,6 +43,10 @@ import { OrmCreateMessageRepository } from './repositories/create-message.reposi
         name: MaterializedChatroomView.name,
         schema: MaterializedChatroomViewSchema,
       },
+      {
+        name: MaterializedMessageView.name,
+        schema: MaterializedMessageViewSchema,
+      },
     ]),
   ],
   providers: [
@@ -52,11 +62,16 @@ import { OrmCreateMessageRepository } from './repositories/create-message.reposi
       provide: UpsertMaterializedChatroomRespository,
       useClass: OrmUpsertMaterializedChatroomRepository,
     },
+    {
+      provide: UpsertMaterializedMessageRespository,
+      useClass: OrmUpsertMaterializedMessageRepository,
+    },
   ],
   exports: [
     CreateChatroomRepository,
     CreateMessageRepository,
     UpsertMaterializedChatroomRespository,
+    UpsertMaterializedMessageRespository,
   ],
 })
 export class OrmChatPersistenceModule {}

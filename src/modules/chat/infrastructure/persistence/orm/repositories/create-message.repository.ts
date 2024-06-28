@@ -12,9 +12,9 @@ export class OrmCreateMessageRepository implements CreateMessageRepository {
   ) {}
 
   async save(chatroom: Chatroom): Promise<Chatroom> {
-    const persistenceModel = MessageMapper.toPersistence(chatroom.message);
+    const persistenceModel = MessageMapper.toPersistence(chatroom.newMessage);
     const newEntity = await this.messageRepository.save(persistenceModel);
-    chatroom.message = MessageMapper.toDomain(newEntity);
+    chatroom.newMessage = MessageMapper.toDomain(newEntity);
     return chatroom;
   }
 }

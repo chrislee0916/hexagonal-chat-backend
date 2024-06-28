@@ -14,12 +14,12 @@ export class MaterializedMessageView extends Document<Types.ObjectId> {
   @Prop({
     index: true,
   })
-  chatroom_id: number;
+  chatroomId: number;
 
   @Prop({
     index: true,
   })
-  sender_id: number;
+  senderId: number;
 
   @Prop({
     required: false,
@@ -30,12 +30,6 @@ export class MaterializedMessageView extends Document<Types.ObjectId> {
     required: false,
   })
   content: string;
-
-  @Prop({
-    ref: 'MaterializedUserView',
-    type: [MongooseSchema.Types.ObjectId],
-  })
-  users: Types.ObjectId[];
 
   @Prop()
   createdAt: Date;

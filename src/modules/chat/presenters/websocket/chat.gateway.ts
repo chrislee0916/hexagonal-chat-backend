@@ -3,6 +3,7 @@ import {
   BeforeApplicationShutdown,
   HttpStatus,
   Injectable,
+  OnApplicationBootstrap,
   OnApplicationShutdown,
   PipeTransform,
   UseFilters,

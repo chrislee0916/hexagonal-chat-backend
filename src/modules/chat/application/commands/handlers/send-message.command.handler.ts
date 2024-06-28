@@ -49,7 +49,7 @@ export class SendMessageCommandHandler implements ICommandHandler {
     // * 以 chatroom aggregate root 操作
     const chatroom = new Chatroom();
     chatroom.id = chatroomId;
-    chatroom.addMessage(userId, content);
+    chatroom.addNewMessage(userId, content);
 
     await this.messageRepository.save(chatroom);
 

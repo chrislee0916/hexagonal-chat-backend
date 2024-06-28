@@ -6,6 +6,7 @@ import { Chatroom } from 'src/modules/chat/domain/chatroom';
 import { MaterializedUserView } from 'src/modules/iam/infrastructure/persistence/orm/schemas/materialized-user-view.schema';
 import { MaterializedChatroomView } from '../schemas/materialized-chatroom-view.schema';
 import { Message } from 'src/modules/chat/domain/message';
+import { ChatroomReadModel } from 'src/modules/chat/domain/read-models/chatroom.read-model';
 
 @Injectable()
 export class OrmUpsertMaterializedChatroomRepository
@@ -19,15 +20,19 @@ export class OrmUpsertMaterializedChatroomRepository
   ) {}
 
   async upsert(
-    chatroom: Pick<Chatroom, 'id'> & Partial<Chatroom>,
+    chatroom: Pick<ChatroomReadModel, 'id'> & Partial<ChatroomReadModel>,
   ): Promise<void> {
     console.log('chatroom: ', chatroom);
-    await this.chatroomModel.findOneAndUpdate({ id: chatroom.id }, chatroom, {
-      upsert: true,
-    });
+    await this.chatroomModel.findOneAndUpdate(
+      { id: chatroom.id },
+      {
+        id: chatroom.id,
+        name: chatroom.name,
+        users: chatroom.users,
+      },
+      {
+        upsert: true,
+      },
+    );
   }
-
-  async saveMessage(
-    message: Pick<Message, 'id'> & Partial<Message>,
-  ): Promise<void> {}
 }
