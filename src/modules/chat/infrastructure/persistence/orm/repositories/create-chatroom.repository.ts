@@ -21,10 +21,12 @@ export class OrmCreateChatroomRepository implements CreateChatroomRepository {
 
   async save(chatroom: Chatroom): Promise<Chatroom> {
     // * 檢查 users 是否都存在
-    const [userModels, count] = await this.userRepository.findAndCountBy({
-      id: In(chatroom.users.flatMap((val) => val.id)),
+    const userModels = await this.userRepository.find({
+      where: {
+        id: In(chatroom.users.flatMap((val) => val.id)),
+      },
     });
-    if (count !== chatroom.users.length) {
+    if (userModels.length !== chatroom.users.length) {
       throw new NotFoundException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
     }
 

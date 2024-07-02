@@ -30,16 +30,25 @@ export class CreatedChatroomEventHandler
       image: event.chatroom.image,
       users: event.chatroom.users,
     });
-    await this.upsertMaterializedUserRepository.upsertMany(
-      event.chatroom.users,
+    await this.upsertMaterializedUserRepository.upsertChatrooms(
+      event.chatroom.users.flatMap((user) => user.id),
     );
 
     // * socket 通知其他被加入的的使用者
-
-    // this.chatGateway.brocast2Chatroom(event.chatroom.id, 'createChatroom', {
-    //   id: event.chatroom.id,
-    //   name: event.chatroom.users,
-    //   image: event.chatroom.image,
-    // });
+    await this.webSocketService.joinChatroom(
+      event.chatroom.id,
+      event.chatroom.users.flatMap((user) => user.id),
+    );
+    await this.webSocketService.brocastToChatroom(
+      'createChatroom',
+      event.chatroom.id,
+      {
+        data: {
+          id: event.chatroom.id,
+          name: event.chatroom.name,
+          image: event.chatroom.image,
+        },
+      },
+    );
   }
 }

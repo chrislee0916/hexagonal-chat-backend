@@ -1,3 +1,4 @@
+import { ChatroomEntity } from '../../../../../chat/infrastructure/persistence/orm/entities/chatroom.entity';
 import {
   Column,
   CreateDateColumn,
@@ -42,6 +43,14 @@ export class UserEntity {
   askFriends: Pick<UserEntity, 'id' | 'name' | 'email' | 'image'>[];
 
   friends: Pick<UserEntity, 'id' | 'name' | 'email' | 'image'>[];
+
+  @ManyToMany(() => ChatroomEntity)
+  @JoinTable({
+    name: 'chatroom_user',
+    joinColumn: { name: 'user_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'chatroom_id', referencedColumnName: 'id' },
+  })
+  chatrooms: Pick<ChatroomEntity, 'id' | 'name'>[];
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;

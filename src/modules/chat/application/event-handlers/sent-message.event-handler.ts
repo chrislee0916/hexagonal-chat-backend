@@ -7,6 +7,7 @@ import { UpsertMaterializedChatroomRespository } from '../ports/upsert-materiali
 import { UpsertMaterializedMessageRespository } from '../ports/upsert-materialized-message.respository';
 import { Server } from 'socket.io';
 import { WebSocketServer } from '@nestjs/websockets';
+import { WebSocketService } from '../ports/websocket.service';
 
 @EventsHandler(SentMessageEvent)
 export class SentMessageEventHandler
@@ -17,6 +18,7 @@ export class SentMessageEventHandler
   constructor(
     private readonly upsertMaterializedChatroomRepository: UpsertMaterializedChatroomRespository,
     private readonly upsertMaterializedMessageRepository: UpsertMaterializedMessageRespository,
+    private readonly webSocketService: WebSocketService,
   ) {}
 
   async handle(event: SentMessageEvent): Promise<void> {
@@ -33,9 +35,16 @@ export class SentMessageEventHandler
 
     // * websocket 通知給有在線的人
     const {
-      message: { chatroomId, content },
+      message: { id, chatroomId, senderId, content },
       socket,
     } = event;
-    socket.to(`chatroom-${chatroomId}`).emit('message', content);
+    // socket.to(`chatroom-${chatroomId}`).emit('message', content);
+    await this.webSocketService.brocastToChatroom('message', chatroomId, {
+      messageId: id,
+      chatroomId,
+      senderId,
+      content,
+    });
+    // * 不在線額外處理
   }
 }

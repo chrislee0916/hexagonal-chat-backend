@@ -6,7 +6,8 @@ import { MaterializedUserView } from '../schemas/materialized-user-view.schema';
 import { Model } from 'mongoose';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserFriendEntity } from '../entities/user-friend.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
+import { UserEntity } from '../entities/user.entity';
 
 @Injectable()
 export class OrmUpsertMaterializedUserRepository
@@ -15,6 +16,8 @@ export class OrmUpsertMaterializedUserRepository
   constructor(
     @InjectModel(MaterializedUserView.name)
     private readonly userModel: Model<MaterializedUserView>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
   async upsert(
@@ -25,9 +28,15 @@ export class OrmUpsertMaterializedUserRepository
     });
   }
 
-  async upsertMany(
-    users: (Pick<UserReadModel, 'id'> & Partial<UserReadModel>)[],
-  ): Promise<void> {
+  async upsertChatrooms(userIds: number[]): Promise<void> {
+    let users = await this.userRepository.find({
+      where: {
+        id: In(userIds),
+      },
+      relations: {
+        chatrooms: true,
+      },
+    });
     const operations = users.map((user) => ({
       updateOne: {
         filter: { id: user.id },

@@ -26,7 +26,6 @@ export class OrmUpsertMaterializedChatroomRepository
     await this.chatroomModel.findOneAndUpdate(
       { id: chatroom.id },
       {
-        id: chatroom.id,
         name: chatroom.name,
         users: chatroom.users,
       },

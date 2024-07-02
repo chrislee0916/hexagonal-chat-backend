@@ -11,5 +11,4 @@ export class ChatroomReadModel {
   newMessage: Omit<MessageReadModel, '_id'>;
   createdAt: Date;
   updatedAt: Date;
-  deletedAt: Date;
 }

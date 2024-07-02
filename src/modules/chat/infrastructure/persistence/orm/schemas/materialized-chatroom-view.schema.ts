@@ -23,6 +23,7 @@ export class MaterializedChatroomView extends Document<Types.ObjectId> {
   image: string;
 
   @Prop({
+    _id: false,
     type: [
       {
         id: Number,
@@ -38,6 +39,24 @@ export class MaterializedChatroomView extends Document<Types.ObjectId> {
     email: string;
     image: string;
   }[];
+
+  @Prop({
+    _id: false,
+    type: {
+      id: Number,
+      chatroomId: Number,
+      senderId: Number,
+      content: String,
+      createdAt: Date,
+    },
+  })
+  newMessage: {
+    id: number;
+    chatroomId: number;
+    senderId: number;
+    content: string;
+    createdAt: Date;
+  };
 
   @Prop()
   createdAt: Date;

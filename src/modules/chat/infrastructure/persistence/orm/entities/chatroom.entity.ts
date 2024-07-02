@@ -1,9 +1,10 @@
-import { UserEntity } from 'src/modules/iam/infrastructure/persistence/orm/entities/user.entity';
+import { UserEntity } from '../../../../../iam/infrastructure/persistence/orm/entities/user.entity';
 import {
   Column,
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -16,6 +17,7 @@ export class ChatroomEntity {
   @Column()
   name: string;
 
+  @ManyToMany(() => ChatroomEntity)
   users: Pick<UserEntity, 'id' | 'name' | 'email' | 'image'>[];
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })

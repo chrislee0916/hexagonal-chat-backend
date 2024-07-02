@@ -18,6 +18,7 @@ import {
   CreateChatroomResponseDto,
   SuccessCreateChatroomResponseDto,
 } from './dto/response/create-chatroom.response.dto';
+import { FindOneChatroomQuery } from '../../application/querys/impl/find-one-chatroom.query';
 
 @Auth(AuthType.Bearer)
 @ApiTags('CHAT - 即時通訊服務')
@@ -168,16 +169,8 @@ export class ChatController {
   }
 
   @Get('chatroom/:id')
-  async findOne() {
-    return {
-      id: '1',
-      createdAt: new Date(),
-      lastMessageAt: new Date(),
-      name: 'chatname1',
-      isGroup: true,
-      userIds: ['1', '2', '3'],
-      users: [this.user1, this.user2, this.user3],
-    };
+  async findOne(@Param('id') id: number) {
+    return this.chatService.findOneChatroom(new FindOneChatroomQuery(id));
   }
 
   @Delete('chatroom/:id')

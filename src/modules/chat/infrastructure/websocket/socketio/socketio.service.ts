@@ -4,6 +4,10 @@ import { Server, Socket } from 'socket.io';
 import { WebSocketService } from 'src/modules/chat/application/ports/websocket.service';
 import { ChatroomUserEntity } from '../../persistence/orm/entities/chatroom_user.entity';
 import { Repository } from 'typeorm';
+import { Redis } from 'ioredis';
+import { InjectRedis } from '@liaoliaots/nestjs-redis';
+import { SocketOnlineIdsStorage } from 'src/modules/chat/application/ports/socket-online-ids.storage';
+import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
 @WebSocketGateway()
 export class SocketIOService implements WebSocketService {
@@ -13,6 +17,7 @@ export class SocketIOService implements WebSocketService {
   constructor(
     @InjectRepository(ChatroomUserEntity)
     private readonly chatroomUserRepository: Repository<ChatroomUserEntity>,
+    private readonly socketOnlineIdsStorage: SocketOnlineIdsStorage,
   ) {}
 
   async loadChatrooms(userId: number, socket: Socket): Promise<void> {
@@ -24,7 +29,28 @@ export class SocketIOService implements WebSocketService {
     await socket.join(chatroomIds);
   }
 
-  getKey(chatroomId: number): string {
+  async joinChatroom(chatroomId: number, userIds: number[]): Promise<void> {
+    const offlineUsers = [];
+    userIds.forEach(async (id) => {
+      const socketId = await this.socketOnlineIdsStorage.getSocketId(id);
+      if (!socketId) {
+        offlineUsers.push(id);
+        return;
+      }
+      const socket = this.server.sockets.sockets.get(socketId);
+      await socket.join(this.getKey(chatroomId));
+    });
+  }
+
+  async brocastToChatroom<T = any>(
+    event: 'createChatroom' | 'message',
+    chatroomId: number,
+    data: T,
+  ): Promise<void> {
+    this.server.in(this.getKey(chatroomId)).emit(event, data);
+  }
+
+  private getKey(chatroomId: number): string {
     return `chatroom-${chatroomId}`;
   }
 }

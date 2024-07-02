@@ -4,7 +4,5 @@ export abstract class UpsertMaterializedUserRepository {
   abstract upsert(
     user: Pick<UserReadModel, 'id'> & Partial<UserReadModel>,
   ): Promise<void>;
-  abstract upsertMany(
-    users: Array<Pick<UserReadModel, 'id'> & Partial<UserReadModel>>,
-  ): Promise<void>;
+  abstract upsertChatrooms(users: number[]): Promise<void>;
 }
