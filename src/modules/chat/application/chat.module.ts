@@ -12,6 +12,7 @@ import { SignOutCommandHandler } from './commands/handlers/sign-out.command-hand
 import { SendMessageCommandHandler } from './commands/handlers/send-message.command.handler';
 import { SentMessageEventHandler } from './event-handlers/sent-message.event-handler';
 import { CreatedChatroomEventHandler } from './event-handlers/created-chatroom.event-handler';
+import { FindOneChatroomQueryHandler } from './querys/handlers/find-one-chatroom.query-handler';
 
 @Module({
   controllers: [ChatController],
@@ -22,6 +23,7 @@ import { CreatedChatroomEventHandler } from './event-handlers/created-chatroom.e
     SignInCommandHandler,
     SignOutCommandHandler,
     SendMessageCommandHandler,
+    FindOneChatroomQueryHandler,
     ChatroomFactory,
     JwtService,
     SentMessageEventHandler,

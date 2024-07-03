@@ -36,7 +36,7 @@ import { SendMessageCommand } from '../../application/commands/impl/send-message
 import { SendMessageDto } from './dto/request/send-message.dto';
 import { MessageBodyPipe } from 'src/common/pipes/message-body.pipe';
 
-@WebSocketGateway()
+@WebSocketGateway({ cors: true })
 @UseFilters(WsExceptionFilter)
 @UsePipes(new MessageBodyPipe())
 @UseGuards(AuthenticationWebsocketGuard)

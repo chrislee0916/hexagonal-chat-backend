@@ -25,6 +25,10 @@ import {
   MaterializedMessageView,
   MaterializedMessageViewSchema,
 } from './schemas/materialized-message-view.schema';
+import { FindChatroomRepository } from 'src/modules/chat/application/ports/find-chatroom.repository';
+import { OrmFindChatroomRepository } from './repositories/find-chatroom.repository';
+import { FindMessageRepository } from 'src/modules/chat/application/ports/find-message.repository';
+import { OrmFindMessageRepository } from './repositories/find-message.repository';
 
 @Module({
   imports: [
@@ -59,6 +63,14 @@ import {
       useClass: OrmCreateMessageRepository,
     },
     {
+      provide: FindChatroomRepository,
+      useClass: OrmFindChatroomRepository,
+    },
+    {
+      provide: FindMessageRepository,
+      useClass: OrmFindMessageRepository,
+    },
+    {
       provide: UpsertMaterializedChatroomRespository,
       useClass: OrmUpsertMaterializedChatroomRepository,
     },
@@ -70,6 +82,8 @@ import {
   exports: [
     CreateChatroomRepository,
     CreateMessageRepository,
+    FindChatroomRepository,
+    FindMessageRepository,
     UpsertMaterializedChatroomRespository,
     UpsertMaterializedMessageRespository,
   ],

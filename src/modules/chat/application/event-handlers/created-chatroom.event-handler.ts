@@ -43,11 +43,9 @@ export class CreatedChatroomEventHandler
       'createChatroom',
       event.chatroom.id,
       {
-        data: {
-          id: event.chatroom.id,
-          name: event.chatroom.name,
-          image: event.chatroom.image,
-        },
+        id: event.chatroom.id,
+        name: event.chatroom.name,
+        image: event.chatroom.image,
       },
     );
   }
