@@ -9,6 +9,7 @@ import { Chatroom } from 'src/modules/chat/domain/chatroom';
 import { CreateChatroomRepository } from '../../ports/create-chatroom.repository';
 import { Message } from 'src/modules/chat/domain/message';
 import { CreateMessageRepository } from '../../ports/create-message.repository';
+import { REQUEST_USER_KEY } from 'src/common/decorators/active-user.decorator';
 
 @CommandHandler(SendMessageCommand)
 export class SendMessageCommandHandler implements ICommandHandler {
@@ -25,12 +26,10 @@ export class SendMessageCommandHandler implements ICommandHandler {
       `Processing "${SendMessageCommand.name}": ${JSON.stringify({ ...command, socket: '' })}`,
     );
 
-    const { chatroomId, userId, socket, content } = command;
-    // * 確認發訊息的與在線上的人同個 socketId
-    const onlineSocketId =
-      await this.socketOnlineIdsStorage.getSocketId(userId);
-
-    if (onlineSocketId !== socket.id) {
+    const { chatroomId, socket, content } = command;
+    // * 確認發訊息的是否在線
+    const userId = await this.socketOnlineIdsStorage.getUserId(socket.id);
+    if (!userId) {
       throw new WsException({
         statusCode: HttpStatus.UNAUTHORIZED,
         message: ErrorMsg.ERR_AUTH_INVALID_SEND_MESSAGE,
@@ -49,7 +48,7 @@ export class SendMessageCommandHandler implements ICommandHandler {
     // * 以 chatroom aggregate root 操作
     const chatroom = new Chatroom();
     chatroom.id = chatroomId;
-    chatroom.addNewMessage(userId, content);
+    chatroom.addNewMessage(+userId, content);
 
     await this.messageRepository.save(chatroom);
 

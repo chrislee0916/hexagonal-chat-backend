@@ -19,7 +19,7 @@ export class AuthenticationWebsocketGuard implements CanActivate {
   constructor(private readonly jwtService: JwtService) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const socket = context.switchToWs().getClient<Socket>();
-    const token = this.extractTokenFromHandshake(socket);
+    const { token } = context.switchToWs().getData();
     if (!token) {
       throw new WsException({
         statusCode: 401,
@@ -42,9 +42,9 @@ export class AuthenticationWebsocketGuard implements CanActivate {
     return true;
   }
 
-  private extractTokenFromHandshake(socket: Socket): string | undefined {
-    const [type, token] =
-      socket.handshake.headers?.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
-  }
+  // private extractTokenFromHandshake(socket: Socket): string | undefined {
+  //   const [type, token] =
+  //     socket.handshake.headers?.authorization?.split(' ') ?? [];
+  //   return type === 'Bearer' ? token : undefined;
+  // }
 }

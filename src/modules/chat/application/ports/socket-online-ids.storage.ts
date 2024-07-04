@@ -1,5 +1,6 @@
 export abstract class SocketOnlineIdsStorage {
   abstract signIn(userId: number, socketId: string): Promise<void>;
   abstract getSocketId(userId: number): Promise<string>;
-  abstract signOut(userId: number): Promise<void>;
+  abstract getUserId(socketId: string): Promise<string>;
+  abstract signOut(socketId: string): Promise<void>;
 }

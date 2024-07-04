@@ -35,38 +35,41 @@ import { SignOutCommand } from '../../application/commands/impl/sign-out.command
 import { SendMessageCommand } from '../../application/commands/impl/send-message.command';
 import { SendMessageDto } from './dto/request/send-message.dto';
 import { MessageBodyPipe } from 'src/common/pipes/message-body.pipe';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { SignInDto } from './dto/request/sign-in.dto';
 
 @WebSocketGateway({ cors: true })
 @UseFilters(WsExceptionFilter)
 @UsePipes(new MessageBodyPipe())
-@UseGuards(AuthenticationWebsocketGuard)
 export class ChatGateway implements OnGatewayDisconnect {
   @WebSocketServer()
   private server: Server;
 
   constructor(private readonly chatService: ChatService) {}
 
+  @UseGuards(AuthenticationWebsocketGuard)
   @SubscribeMessage('sign-in')
-  async signIn(
-    @ActiveUser() user: ActiveUserData,
-    @ConnectedSocket() socket: Socket,
-  ): Promise<string> {
-    return this.chatService.signIn(new SignInCommand(user.sub, socket));
+  async signIn(@ConnectedSocket() socket: Socket): Promise<string> {
+    return this.chatService.signIn(new SignInCommand(socket));
   }
 
   @SubscribeMessage('message')
   async sendMessage(
-    @ActiveUser() user: ActiveUserData,
     @ConnectedSocket() socket: Socket,
     @MessageBody() body: SendMessageDto,
   ) {
     const { chatroomId, content } = body;
     await this.chatService.sendMessage(
-      new SendMessageCommand(chatroomId, user.sub, socket, content),
+      new SendMessageCommand(chatroomId, socket, content),
     );
   }
 
   handleDisconnect(@ConnectedSocket() socket: Socket) {
+    console.log(
+      'socket disconnected...',
+      socket.id,
+      socket[REQUEST_USER_KEY]?.sub,
+    );
     return this.chatService.signOut(new SignOutCommand(socket));
   }
 }

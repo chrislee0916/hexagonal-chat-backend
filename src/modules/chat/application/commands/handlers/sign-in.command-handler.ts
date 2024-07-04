@@ -7,6 +7,7 @@ import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 import { CreateChatroomRepository } from '../../ports/create-chatroom.repository';
 import { SocketIOService } from 'src/modules/chat/infrastructure/websocket/socketio/socketio.service';
 import { WebSocketService } from '../../ports/websocket.service';
+import { REQUEST_USER_KEY } from 'src/common/decorators/active-user.decorator';
 
 @CommandHandler(SignInCommand)
 export class SignInCommandHandler implements ICommandHandler {
@@ -18,8 +19,9 @@ export class SignInCommandHandler implements ICommandHandler {
   ) {}
 
   async execute(command: SignInCommand): Promise<string> {
-    this.logger.debug(`Processing "${SignInCommand.name}": ${command.userId}`);
-    const { userId, socket } = command;
+    this.logger.debug(`Processing "${SignInCommand.name}"`);
+    const { socket } = command;
+    const userId: number = socket[REQUEST_USER_KEY].sub;
     // * 同個使用者只允許一個在線
     const onlineSocketId =
       await this.socketOnlineIdsStorage.getSocketId(userId);

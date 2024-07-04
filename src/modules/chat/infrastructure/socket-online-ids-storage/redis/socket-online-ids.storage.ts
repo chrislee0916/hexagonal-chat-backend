@@ -8,18 +8,31 @@ export class RedisSocketOnlineIdsStorage implements SocketOnlineIdsStorage {
   constructor(@InjectRedis() private readonly redisClient: Redis) {}
 
   async signIn(userId: number, socketId: string): Promise<void> {
-    await this.redisClient.set(this.getKey(userId), socketId);
+    await this.redisClient.set(this.getSocketUserKey(userId), socketId);
+    await this.redisClient.set(this.getSocketKey(socketId), userId);
   }
 
   async getSocketId(userId: number): Promise<string> {
-    return this.redisClient.get(this.getKey(userId));
+    return this.redisClient.get(this.getSocketUserKey(userId));
   }
 
-  async signOut(userId: number): Promise<void> {
-    await this.redisClient.del(this.getKey(userId));
+  async getUserId(socketId: string): Promise<string> {
+    return this.redisClient.get(this.getSocketKey(socketId));
   }
 
-  private getKey(userId: number): string {
-    return `socket-${userId}`;
+  async signOut(socketId: string): Promise<void> {
+    const userId = await this.getUserId(socketId);
+    if (userId) {
+      await this.redisClient.del(this.getSocketUserKey(+userId));
+    }
+    await this.redisClient.del(this.getSocketKey(socketId));
+  }
+
+  private getSocketKey(socketId: string): string {
+    return `socket-${socketId}`;
+  }
+
+  private getSocketUserKey(userId: number): string {
+    return `socket-user-${userId}`;
   }
 }
