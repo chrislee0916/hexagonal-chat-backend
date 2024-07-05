@@ -28,15 +28,15 @@ export class User extends AggregateRoot {
     this.apply(new UserSignedUpEvent(this), { skipHandler: true });
   }
 
-  askedFriend(user: User) {
-    this.apply(new UserAskedFriendEvent(this, user), {
-      skipHandler: true,
-    });
-  }
+  // askedFriend(user: User) {
+  //   this.apply(new UserAskedFriendEvent(this, user), {
+  //     skipHandler: true,
+  //   });
+  // }
 
-  acceptedFriend(friend: User) {
-    this.apply(new UserAcceptedFriendEvent(this, friend), {
-      skipHandler: true,
-    });
-  }
+  // acceptedFriend(friend: User) {
+  //   this.apply(new UserAcceptedFriendEvent(this, friend), {
+  //     skipHandler: true,
+  //   });
+  // }
 }

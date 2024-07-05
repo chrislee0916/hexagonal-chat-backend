@@ -7,11 +7,17 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { CreateChatroomDto } from './dto/request/create-chatroom.dto';
+import {
+  CreateGroupChatroomDto,
+  CreateSingleChatroomDto,
+} from './dto/request/create-chatroom.dto';
 import { ChatService } from '../../application/chat.service';
 import { Auth } from 'src/common/decorators/auth.decorator';
 import { AuthType } from 'src/common/enums/auth-type.enum';
-import { CreateChatroomCommand } from '../../application/commands/impl/create-chatroom.command';
+import {
+  CreateGroupChatroomCommand,
+  CreateSingleChatroomCommand,
+} from '../../application/commands/impl/create-chatroom.command';
 import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/modules/iam/domain/interfaces/active-user-data.interface';
 import {
@@ -83,54 +89,47 @@ export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
   @ApiOperation({
-    summary: '建立聊天室',
+    summary: '建立群組聊天室',
   })
   @ApiBody({
-    type: CreateChatroomDto,
+    type: CreateGroupChatroomDto,
   })
   @ApiCreatedResponse({
     type: SuccessCreateChatroomResponseDto,
   })
-  @Post('chatroom')
-  async createChatroom(
+  @Post('group-chatroom')
+  async createGroupChatroom(
     @ActiveUser() user: ActiveUserData,
-    @Body() createChatroomDto: CreateChatroomDto,
+    @Body() createGroupChatroomDto: CreateGroupChatroomDto,
   ): Promise<CreateChatroomResponseDto> {
-    // const lastChatId = this.chats.length;
-    // const newChat = {
-    //   id: `${lastChatId + 1}`,
-    //   createdAt: new Date(),
-    //   lastMessageAt: new Date(),
-    //   name: `chatname${lastChatId + 1}`,
-    //   isGroup: false,
-    //   messagesIds: ['3', '4'],
-    //   messages: [
-    //     {
-    //       id: '3',
-    //       body: 'hello, world1',
-    //       createdAt: new Date(),
-    //       seen: [],
-    //       sender: this.user2,
-    //     },
-    //     {
-    //       id: '4',
-    //       body: 'hello, world2',
-    //       image: '/images/logo.png',
-    //       createdAt: new Date(),
-    //       seen: [],
-    //       sender: this.user2,
-    //     },
-    //   ],
-    //   userIds: ['1', '2'],
-    //   users: [this.user1, this.user2],
-    // };
-    // this.chats.unshift(newChat);
-
-    return this.chatService.createChatroom(
-      new CreateChatroomCommand(createChatroomDto.name, [
+    return this.chatService.createGroupChatroom(
+      new CreateGroupChatroomCommand(createGroupChatroomDto.name, [
         user.sub,
-        ...createChatroomDto.userIds,
+        ...createGroupChatroomDto.userIds,
       ]),
+    );
+  }
+
+  @Post('single-chatroom')
+  @ApiOperation({
+    summary: '建立一對一聊天室',
+  })
+  @ApiBody({
+    type: CreateSingleChatroomDto,
+  })
+  @ApiCreatedResponse({
+    type: SuccessCreateChatroomResponseDto,
+  })
+  async createSingleChatroom(
+    @ActiveUser() user: ActiveUserData,
+    @Body() createSingleChatroomDto: CreateSingleChatroomDto,
+  ) {
+    return this.chatService.createSingleChatroom(
+      new CreateSingleChatroomCommand(
+        createSingleChatroomDto.name,
+        user.sub,
+        createSingleChatroomDto.userId,
+      ),
     );
   }
 

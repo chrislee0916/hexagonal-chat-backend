@@ -1,6 +1,9 @@
 import { Injectable, UseFilters } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
-import { CreateChatroomCommand } from './commands/impl/create-chatroom.command';
+import {
+  CreateGroupChatroomCommand,
+  CreateSingleChatroomCommand,
+} from './commands/impl/create-chatroom.command';
 import { SignInCommand } from './commands/impl/sign-in.command';
 import { SignOutCommand } from './commands/impl/sign-out.command';
 import { SendMessageCommand } from './commands/impl/send-message.command';
@@ -14,8 +17,17 @@ export class ChatService {
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
   ) {}
-  async createChatroom(createChatroomCommand: CreateChatroomCommand) {
-    return this.commandBus.execute(createChatroomCommand);
+
+  async createGroupChatroom(
+    createGroupChatroomCommand: CreateGroupChatroomCommand,
+  ) {
+    return this.commandBus.execute(createGroupChatroomCommand);
+  }
+
+  async createSingleChatroom(
+    createSingleChatroomCommand: CreateSingleChatroomCommand,
+  ) {
+    return this.commandBus.execute(createSingleChatroomCommand);
   }
 
   async findOneChatroom(findOneChatroomQuery: FindOneChatroomQuery) {

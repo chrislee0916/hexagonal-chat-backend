@@ -1,7 +1,7 @@
 import { DynamicModule, Module, Type } from '@nestjs/common';
 import { ChatService } from './chat.service';
 import { ChatController } from '../presenters/http/chat.controller';
-import { CreateChatroomCommandHandler } from './commands/handlers/create-chatroom.command-handler';
+import { CreateChatroomCommandHandler } from './commands/handlers/create-group-chatroom.command-handler';
 import { CreateChatroomRepository } from './ports/create-chatroom.repository';
 import { ChatroomFactory } from '../domain/factories/chatroom.factory';
 import { ChatGateway } from '../presenters/websocket/chat.gateway';
@@ -13,6 +13,7 @@ import { SendMessageCommandHandler } from './commands/handlers/send-message.comm
 import { SentMessageEventHandler } from './event-handlers/sent-message.event-handler';
 import { CreatedChatroomEventHandler } from './event-handlers/created-chatroom.event-handler';
 import { FindOneChatroomQueryHandler } from './querys/handlers/find-one-chatroom.query-handler';
+import { IamModule } from 'src/modules/iam/application/iam.module';
 
 @Module({
   controllers: [ChatController],

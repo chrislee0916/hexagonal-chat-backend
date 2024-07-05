@@ -11,6 +11,7 @@ import { AskFriendCommandHandler } from './commands/handlers/ask-friend.command-
 import { AcceptFriendCommandHandler } from './commands/handlers/accept-friend.command-handler';
 import { UserAcceptedFriendEventHandler } from './event-handlers/user-accepted-friend.event-handler';
 import { GetFriendsQueryHandler } from './querys/handlers/get-user.query-handler';
+import { ChatModule } from 'src/modules/chat/application/chat.module';
 
 @Module({
   controllers: [IamController],

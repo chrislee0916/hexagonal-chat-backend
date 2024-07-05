@@ -6,6 +6,7 @@ import { UpsertMaterializedUserRepository } from '../ports/upsert-materialized-u
 import { ObjectId } from 'typeorm';
 import { UserReadModel } from '../../domain/read-models/user.read-model';
 import { Types } from 'mongoose';
+import { WebSocketService } from 'src/modules/chat/application/ports/websocket.service';
 
 @EventsHandler(UserAcceptedFriendEvent)
 export class UserAcceptedFriendEventHandler
@@ -15,25 +16,33 @@ export class UserAcceptedFriendEventHandler
 
   constructor(
     private readonly upsertMaterializedUserRepository: UpsertMaterializedUserRepository,
+    private readonly webSocketService: WebSocketService,
   ) {}
   async handle(event: UserAcceptedFriendEvent) {
     this.logger.log(`User accepted friend event: ${JSON.stringify(event)}`);
 
-    const { user, friend } = event;
-
-    // * 同步資料到 read db
+    const { shouldUpdate, socketEvents } = event;
     // TODO: 後續改用 CDC
-    // * 如果成為好友則兩個都需更新
-    await this.upsertMaterializedUserRepository.upsert({
-      id: user.id,
-      askFriends: user.askFriends,
-      friends: user.friends,
-    });
-    await this.upsertMaterializedUserRepository.upsert({
-      id: friend.id,
-      askFriends: friend.askFriends,
-      friends: friend.friends,
-    });
+    // * 同步資料到 read db
+    await Promise.all(
+      shouldUpdate.map((user) => {
+        return this.upsertMaterializedUserRepository.upsert({
+          id: user.id,
+          askFriends: user.askFriends,
+          friends: user.friends,
+        });
+      }),
+    );
+
     // TODO: socket 同步通知對方有新好友加入
+    await Promise.all(
+      socketEvents.map((socketEvent) => {
+        return this.webSocketService.sendToPerson<typeof socketEvent.data>(
+          socketEvent.event,
+          socketEvent.userId,
+          socketEvent.data,
+        );
+      }),
+    );
   }
 }

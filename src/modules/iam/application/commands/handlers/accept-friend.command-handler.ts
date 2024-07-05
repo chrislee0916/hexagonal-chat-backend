@@ -1,8 +1,14 @@
 import { Logger } from '@nestjs/common';
-import { CommandHandler, EventPublisher, ICommandHandler } from '@nestjs/cqrs';
+import {
+  CommandHandler,
+  EventBus,
+  EventPublisher,
+  ICommandHandler,
+} from '@nestjs/cqrs';
 import { AcceptFriendCommand } from '../impl/accept-friend.command';
 import { CreateUserRepository } from '../../ports/create-user.repository';
 import { User } from 'src/modules/iam/domain/user';
+import { UserAcceptedFriendEvent } from 'src/modules/iam/domain/events/user-accepted-friend.event';
 
 @CommandHandler(AcceptFriendCommand)
 export class AcceptFriendCommandHandler implements ICommandHandler {
@@ -10,7 +16,7 @@ export class AcceptFriendCommandHandler implements ICommandHandler {
 
   constructor(
     private readonly createUserRepository: CreateUserRepository,
-    private readonly eventPublisher: EventPublisher,
+    private readonly eventBus: EventBus,
   ) {}
 
   async execute(command: AcceptFriendCommand): Promise<void> {
@@ -18,14 +24,13 @@ export class AcceptFriendCommandHandler implements ICommandHandler {
       `Processing "${AcceptFriendCommand.name}": ${JSON.stringify(command)}`,
     );
     const { userId, friendId } = command;
-    const [user, friend] = await this.createUserRepository.acceptFriend(
-      userId,
-      friendId,
-    );
+    const { shouldUpdate, socketEvents } =
+      await this.createUserRepository.acceptFriend(userId, friendId);
 
     // * 同步資料到 read-db
-    user.acceptedFriend(friend);
-    this.eventPublisher.mergeObjectContext(user);
-    user.commit();
+    await this.eventBus.publish(
+      new UserAcceptedFriendEvent(shouldUpdate, socketEvents),
+      { skipHandler: true },
+    );
   }
 }

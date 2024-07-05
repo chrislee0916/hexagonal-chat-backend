@@ -17,6 +17,12 @@ export class ChatroomEntity {
   @Column()
   name: string;
 
+  @Column({ name: 'user1_id' })
+  user1Id: number;
+
+  @Column({ name: 'user2_id' })
+  user2Id: number;
+
   @ManyToMany(() => ChatroomEntity)
   users: Pick<UserEntity, 'id' | 'name' | 'email' | 'image'>[];
 

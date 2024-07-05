@@ -13,6 +13,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ErrorMsg } from 'src/common/enums/err-msg.enum';
+import { UserAskedFriendEvent } from 'src/modules/iam/domain/events/user-asked-friend.event';
+import { UserAcceptedFriendEvent } from 'src/modules/iam/domain/events/user-accepted-friend.event';
 
 export class OrmCreateUserRepository implements CreateUserRepository {
   constructor(
@@ -28,16 +30,19 @@ export class OrmCreateUserRepository implements CreateUserRepository {
     return UserMapper.toDomain(newEntity);
   }
 
-  async askFriend(userId: number, friendEmail: string): Promise<[User, User]> {
+  async askFriend(
+    userId: number,
+    askedEmail: string,
+  ): Promise<UserAskedFriendEvent> {
     // * 判斷要加入的 friend 是否存在
-    const friendModel = await this.userRepository.findOneBy({
-      email: friendEmail,
+    const askedUser = await this.userRepository.findOneBy({
+      email: askedEmail,
     });
-    if (!friendModel) {
+    if (!askedUser) {
       throw new NotFoundException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
     }
     // * 是否為同個人
-    if (userId === friendModel.id) {
+    if (userId === askedUser.id) {
       throw new BadRequestException(ErrorMsg.ERR_AUTH_ASK_FRIEND_TO_MYSELF);
     }
 
@@ -52,7 +57,7 @@ export class OrmCreateUserRepository implements CreateUserRepository {
     // * 是否已經是好友狀態
     const alreadyExist = await this.userFriendRepository.findOneBy({
       userId,
-      friendId: friendModel.id,
+      friendId: askedUser.id,
       status: 'accepted',
     });
     if (alreadyExist) {
@@ -62,24 +67,65 @@ export class OrmCreateUserRepository implements CreateUserRepository {
     // * 如果對方也發送邀請 直接成為好友
     let friendAsked = await this.userFriendRepository.findOneBy({
       userId,
-      friendId: friendModel.id,
+      friendId: askedUser.id,
       status: 'pending',
     });
 
     if (friendAsked) {
-      await this.beingFriends(userId, friendModel.id);
-      return [
-        await this.getAskFriendAndFriend(userModel),
-        await this.getAskFriendAndFriend(friendModel),
-      ];
+      await this.beingFriends(userId, askedUser.id);
+      return {
+        // * 如果成為好友則兩個都需更新
+        shouldUpdate: [
+          await this.getAskFriendAndFriend(userModel),
+          await this.getAskFriendAndFriend(askedUser),
+        ],
+        socketEvents: [
+          {
+            event: 'newFriend',
+            userId: askedUser.id,
+            data: {
+              id: userModel.id,
+              name: userModel.name,
+              email: userModel.email,
+              image: userModel.image,
+            },
+          },
+          {
+            event: 'newFriend',
+            userId,
+            data: {
+              id: askedUser.id,
+              name: askedUser.name,
+              email: askedUser.email,
+              image: askedUser.image,
+            },
+          },
+        ],
+      };
     }
 
     try {
       await this.userFriendRepository.insert({
-        userId: friendModel.id,
+        userId: askedUser.id,
         friendId: userId,
       });
-      return [await this.getAskFriendAndFriend(friendModel), null];
+      // return [await this.getAskFriendAndFriend(friendModel), null];
+      return {
+        // * 如果只有發送好友邀請則更新被邀請的部分
+        shouldUpdate: [await this.getAskFriendAndFriend(askedUser)],
+        socketEvents: [
+          {
+            event: 'newAskFriend',
+            userId: askedUser.id,
+            data: {
+              id: userModel.id,
+              name: userModel.name,
+              email: userModel.email,
+              image: userModel.image,
+            },
+          },
+        ],
+      };
     } catch (err) {
       if (err.code === '23505') {
         throw new ConflictException(ErrorMsg.ERR_AUTH_ALREADY_ASK_FRIEND);
@@ -88,7 +134,10 @@ export class OrmCreateUserRepository implements CreateUserRepository {
     }
   }
 
-  async acceptFriend(userId: number, friendId: number): Promise<[User, User]> {
+  async acceptFriend(
+    userId: number,
+    friendId: number,
+  ): Promise<UserAcceptedFriendEvent> {
     const askFriend = await this.userFriendRepository.findOneBy({
       userId,
       friendId,
@@ -98,10 +147,10 @@ export class OrmCreateUserRepository implements CreateUserRepository {
       throw new NotFoundException(ErrorMsg.ERR_AUTH_ASK_FRIEND_NOT_FOUND);
     }
     // * 判斷要加入的 friend 是否存在
-    const friendModel = await this.userRepository.findOneBy({
+    const askedUser = await this.userRepository.findOneBy({
       id: friendId,
     });
-    if (!friendModel) {
+    if (!askedUser) {
       throw new NotFoundException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
     }
     // * 判斷 user 是否存在
@@ -113,10 +162,35 @@ export class OrmCreateUserRepository implements CreateUserRepository {
     }
 
     await this.beingFriends(userId, friendId);
-    return [
-      await this.getAskFriendAndFriend(userModel),
-      await this.getAskFriendAndFriend(friendModel),
-    ];
+    return {
+      // * 如果成為好友則兩個都需更新
+      shouldUpdate: [
+        await this.getAskFriendAndFriend(userModel),
+        await this.getAskFriendAndFriend(askedUser),
+      ],
+      socketEvents: [
+        {
+          event: 'newFriend',
+          userId: askedUser.id,
+          data: {
+            id: userModel.id,
+            name: userModel.name,
+            email: userModel.email,
+            image: userModel.image,
+          },
+        },
+        {
+          event: 'newFriend',
+          userId,
+          data: {
+            id: askedUser.id,
+            name: askedUser.name,
+            email: askedUser.email,
+            image: askedUser.image,
+          },
+        },
+      ],
+    };
   }
 
   private async beingFriends(userId: number, friendId: number): Promise<void> {
@@ -160,7 +234,6 @@ export class OrmCreateUserRepository implements CreateUserRepository {
         friends: res.filter((val) => val.status === 'accepted'),
       });
     } catch (error) {
-      console.log('asasd: ', error);
       throw error;
     }
   }

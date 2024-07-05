@@ -50,6 +50,15 @@ export class SocketIOService implements WebSocketService {
     this.server.in(this.getKey(chatroomId)).emit(event, data);
   }
 
+  async sendToPerson<T = any>(
+    event: 'newAskFriend' | 'newFriend',
+    userId: number,
+    data: T,
+  ): Promise<void> {
+    const socketId = await this.socketOnlineIdsStorage.getSocketId(userId);
+    this.server.sockets.sockets.get(socketId).emit(event, data);
+  }
+
   private getKey(chatroomId: number): string {
     return `chatroom-${chatroomId}`;
   }

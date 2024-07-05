@@ -3,6 +3,8 @@ import { UserAskedFriendEvent } from '../../domain/events/user-asked-friend.even
 import { Logger } from '@nestjs/common';
 import { UpsertMaterializedUserRepository } from '../ports/upsert-materialized-user.repository';
 import { FindUserRepository } from '../ports/find-user.repository';
+import { WebSocketService } from 'src/modules/chat/application/ports/websocket.service';
+import { User } from '../../domain/user';
 
 @EventsHandler(UserAskedFriendEvent)
 export class UserAskedFriendEventHandler
@@ -11,36 +13,35 @@ export class UserAskedFriendEventHandler
   private readonly logger = new Logger(UserAskedFriendEventHandler.name);
 
   constructor(
-    private readonly findUserRepository: FindUserRepository,
-
     private readonly upsertMaterializedUserRepository: UpsertMaterializedUserRepository,
+    private readonly webSocketService: WebSocketService,
   ) {}
 
   async handle(event: UserAskedFriendEvent) {
     this.logger.log(`User asked friend event: ${JSON.stringify(event)}`);
 
-    const { user, friend } = event;
+    const { shouldUpdate, socketEvents } = event;
     // TODO: 後續改用 CDC
     // * 同步資料到 read db
-    // * 如果只有發送好友邀請則更新被邀請的部分
-    await this.upsertMaterializedUserRepository.upsert({
-      id: user.id,
-      askFriends: user.askFriends,
-      friends: user.friends,
-    });
-    // * 如果成為好友則兩個都需更新
-    if (friend) {
-      await this.upsertMaterializedUserRepository.upsert({
-        id: friend.id,
-        askFriends: friend.askFriends,
-        friends: friend.friends,
-      });
-    }
-    // await Promise.all([
-    //   this.upsertMaterializedUserRepository.syncFriendShip(user.id),
-    //   this.upsertMaterializedUserRepository.syncFriendShip(friend.id),
-    // ]);
+    await Promise.all(
+      shouldUpdate.map((user) => {
+        return this.upsertMaterializedUserRepository.upsert({
+          id: user.id,
+          askFriends: user.askFriends,
+          friends: user.friends,
+        });
+      }),
+    );
 
     // TODO: 對方在線用 socket.io 通知有好友邀請，不在線則用離線訊息
+    await Promise.all(
+      socketEvents.map((socketEvent) => {
+        this.webSocketService.sendToPerson(
+          socketEvent.event,
+          socketEvent.userId,
+          socketEvent.data,
+        );
+      }),
+    );
   }
 }

@@ -42,9 +42,7 @@ export class IamService {
     return this.commandBus.execute(askFriendCommand);
   }
 
-  async acceptFriend(
-    acceptFriendCommand: AcceptFriendCommand,
-  ): Promise<SuccessResponseDto> {
+  async acceptFriend(acceptFriendCommand: AcceptFriendCommand): Promise<void> {
     return this.commandBus.execute(acceptFriendCommand);
   }
 }

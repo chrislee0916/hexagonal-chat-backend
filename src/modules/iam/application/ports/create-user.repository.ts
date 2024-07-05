@@ -1,3 +1,5 @@
+import { UserAcceptedFriendEvent } from '../../domain/events/user-accepted-friend.event';
+import { UserAskedFriendEvent } from '../../domain/events/user-asked-friend.event';
 import { User } from '../../domain/user';
 
 export abstract class CreateUserRepository {
@@ -5,9 +7,9 @@ export abstract class CreateUserRepository {
   abstract askFriend(
     userId: number,
     friendEmail: string,
-  ): Promise<[User, User]>;
+  ): Promise<UserAskedFriendEvent>;
   abstract acceptFriend(
     userId: number,
     friendId: number,
-  ): Promise<[User, User]>;
+  ): Promise<UserAcceptedFriendEvent>;
 }

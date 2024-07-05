@@ -1,5 +1,5 @@
-import { ChatroomReadModel } from '../../domain/read-models/chatroom.read-model';
+import { Chatroom } from '../../domain/chatroom';
 
 export abstract class FindChatroomRepository {
-  abstract findOne(id: number): Promise<ChatroomReadModel>;
+  abstract findOne(user1Id: number, user2Id: number): Promise<Chatroom>;
 }

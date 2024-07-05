@@ -10,4 +10,9 @@ export abstract class WebSocketService {
     chatroomId: number,
     data: T,
   ): Promise<void>;
+  abstract sendToPerson<T = any>(
+    event: 'newAskFriend' | 'newFriend',
+    userId: number,
+    data: T,
+  ): Promise<void>;
 }

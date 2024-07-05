@@ -20,6 +20,7 @@ export class AuthenticationWebsocketGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const socket = context.switchToWs().getClient<Socket>();
     const { token } = context.switchToWs().getData();
+    console.log('token: ...', token);
     if (!token) {
       throw new WsException({
         statusCode: 401,
@@ -34,6 +35,7 @@ export class AuthenticationWebsocketGuard implements CanActivate {
       });
       socket[REQUEST_USER_KEY] = payload;
     } catch (err) {
+      console.log('here catch errorL ', err);
       throw new WsException({
         statusCode: 401,
         message: ErrorMsg.ERR_AUTH_INVALID_ACCESS_TOKEN,

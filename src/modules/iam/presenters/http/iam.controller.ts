@@ -67,6 +67,7 @@ import {
   GetUserResponseDto,
   SuccessGetUserResponseDto,
 } from './dto/response/get-friends.response.dto';
+
 @ApiTags('IAM - 身分識別與存取管理')
 @Auth(AuthType.None)
 @ApiBearerAuth()
@@ -161,50 +162,6 @@ export class IamController {
     @ActiveUser() user: ActiveUserData,
   ): Promise<GetUserResponseDto> {
     return this.iamService.getUser(new GetUserQuery(user.sub));
-    // return {
-    //   _id: new ObjectId('666957305c7e610c45674733'),
-    //   id: user.sub,
-    //   name: 'name1',
-    //   email: user.email,
-    //   password: 'passowrd',
-    //   image: '/images/logo.jpg',
-    //   friends: [
-    //     {
-    //       id: 11,
-    //       name: 'name11',
-    //       email: 'email11',
-    //       image: '/images/logo.jpg',
-    //       createdAt: new Date(),
-    //       updatedAt: new Date(),
-    //     },
-    //     {
-    //       id: 2,
-    //       name: 'name2',
-    //       email: 'email2',
-    //       image: '/images/logo.jpg',
-    //       createdAt: new Date(),
-    //       updatedAt: new Date(),
-    //     },
-    //     {
-    //       id: 3,
-    //       name: 'name3',
-    //       email: 'email3',
-    //       image: '/images/logo.jpg',
-    //       createdAt: new Date(),
-    //       updatedAt: new Date(),
-    //     },
-    //   ],
-    //   askFriends: [
-    //     {
-    //       id: 2,
-    //       name: 'name2',
-    //       email: 'email2',
-    //       image: '/images/logo.jpg',
-    //     },
-    //   ],
-    //   createdAt: new Date(),
-    //   updatedAt: new Date(),
-    // };
   }
 
   @ApiOperation({
@@ -219,9 +176,6 @@ export class IamController {
     @ActiveUser() user: ActiveUserData,
     @Param('friendEmail', new IsEmailPipe()) friendEmail: string,
   ) {
-    // if (user.sub === friendEmail) {
-    //   throw new BadRequestException(ErrorMsg.ERR_AUTH_ASK_FRIEND_TO_MYSELF);
-    // }
     return this.iamService.askFriend(
       new AskFriendCommand(user.sub, friendEmail),
     );
