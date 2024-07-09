@@ -31,15 +31,17 @@ export class SocketIOService implements WebSocketService {
 
   async joinChatroom(chatroomId: number, userIds: number[]): Promise<void> {
     const offlineUsers = [];
-    userIds.forEach(async (id) => {
+    for (let id of userIds) {
+      console.log('userId: ', id);
       const socketId = await this.socketOnlineIdsStorage.getSocketId(id);
       if (!socketId) {
         offlineUsers.push(id);
         return;
       }
+      console.log('socketId: ', socketId);
       const socket = this.server.sockets.sockets.get(socketId);
       await socket.join(this.getKey(chatroomId));
-    });
+    }
   }
 
   async brocastToChatroom<T = any>(
@@ -47,7 +49,12 @@ export class SocketIOService implements WebSocketService {
     chatroomId: number,
     data: T,
   ): Promise<void> {
-    this.server.in(this.getKey(chatroomId)).emit(event, data);
+    console.log(
+      'this.server.in(this.getKey(chatroomId)): ',
+      await this.server.in(this.getKey(chatroomId)).fetchSockets(),
+    );
+    const res = this.server.in(this.getKey(chatroomId)).emit(event, data);
+    console.log('is success: ', res);
   }
 
   async sendToPerson<T = any>(

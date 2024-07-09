@@ -10,6 +10,7 @@ import { SendMessageCommand } from './commands/impl/send-message.command';
 import { WebSocketServer, WsException } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { FindOneChatroomQuery } from './querys/impl/find-one-chatroom.query';
+import { FindListMessageQuery } from './querys/impl/find-list-message.query';
 
 @Injectable()
 export class ChatService {
@@ -32,6 +33,10 @@ export class ChatService {
 
   async findOneChatroom(findOneChatroomQuery: FindOneChatroomQuery) {
     return this.queryBus.execute(findOneChatroomQuery);
+  }
+
+  async findListMessage(findListMessageQuery: FindListMessageQuery) {
+    return this.queryBus.execute(findListMessageQuery);
   }
 
   async signIn(signInCommand: SignInCommand) {

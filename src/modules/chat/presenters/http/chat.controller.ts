@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -25,6 +34,9 @@ import {
   SuccessCreateChatroomResponseDto,
 } from './dto/response/create-chatroom.response.dto';
 import { FindOneChatroomQuery } from '../../application/querys/impl/find-one-chatroom.query';
+import { Request } from 'express';
+import { DefaultListQueryDto } from 'src/common/dtos/request.dto';
+import { FindListMessageQuery } from '../../application/querys/impl/find-list-message.query';
 
 @Auth(AuthType.Bearer)
 @ApiTags('CHAT - 即時通訊服務')
@@ -110,62 +122,28 @@ export class ChatController {
     );
   }
 
-  @Post('single-chatroom')
-  @ApiOperation({
-    summary: '建立一對一聊天室',
-  })
-  @ApiBody({
-    type: CreateSingleChatroomDto,
-  })
-  @ApiCreatedResponse({
-    type: SuccessCreateChatroomResponseDto,
-  })
-  async createSingleChatroom(
-    @ActiveUser() user: ActiveUserData,
-    @Body() createSingleChatroomDto: CreateSingleChatroomDto,
-  ) {
-    return this.chatService.createSingleChatroom(
-      new CreateSingleChatroomCommand(
-        createSingleChatroomDto.name,
-        user.sub,
-        createSingleChatroomDto.userId,
-      ),
-    );
-  }
-
-  @Get('chatrooms')
-  async findAll() {
-    // const chats = [
-    //   {
-    //     id: '1',
-    //     createdAt: new Date(),
-    //     lastMessageAt: new Date(),
-    //     name: 'chatname1',
-    //     isGroup: false,
-    //     messagesIds: ['1', '2'],
-    //     messages: [
-    //       {
-    //         id: '1',
-    //         body: 'hello, world1',
-    //         createdAt: new Date(),
-    //         seen: [],
-    //         sender: this.user2,
-    //       },
-    //       {
-    //         id: '2',
-    //         body: 'hello, world2',
-    //         image: '/images/logo.png',
-    //         createdAt: new Date(),
-    //         seen: [],
-    //         sender: this.user2,
-    //       },
-    //     ],
-    //     userIds: ['1', '2', '3'],
-    //     users: [this.user1, this.user2, this.user3],
-    //   },
-    // ];
-    return this.chats;
-  }
+  // @Post('single-chatroom')
+  // @ApiOperation({
+  //   summary: '建立一對一聊天室',
+  // })
+  // @ApiBody({
+  //   type: CreateSingleChatroomDto,
+  // })
+  // @ApiCreatedResponse({
+  //   type: SuccessCreateChatroomResponseDto,
+  // })
+  // async createSingleChatroom(
+  //   @ActiveUser() user: ActiveUserData,
+  //   @Body() createSingleChatroomDto: CreateSingleChatroomDto,
+  // ) {
+  //   return this.chatService.createSingleChatroom(
+  //     new CreateSingleChatroomCommand(
+  //       createSingleChatroomDto.name,
+  //       user.sub,
+  //       createSingleChatroomDto.userId,
+  //     ),
+  //   );
+  // }
 
   @Get('chatroom/:id')
   async findOne(@Param('id') id: number) {
@@ -177,8 +155,15 @@ export class ChatController {
     this.chats = this.chats.filter((chat) => chat.id !== id);
   }
 
-  @Get('messages')
-  async findAllMessages() {
+  @Get('chatroom/:id/messages')
+  @Auth(AuthType.None)
+  async findAllMessages(
+    @Param('id') id: number,
+    @Query() query: DefaultListQueryDto,
+  ) {
+    // return this.chatService.findListMessage(
+    //   new FindListMessageQuery(id, query.limit, query.skip, query.sort),
+    // );
     const user1 = {
       id: '1',
       name: 'ChrisLee',

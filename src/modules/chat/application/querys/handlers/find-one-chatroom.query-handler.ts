@@ -1,14 +1,14 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { FindOneChatroomQuery } from '../impl/find-one-chatroom.query';
 import { Logger } from '@nestjs/common';
-import { FindChatroomRepository } from '../../ports/find-materialized-chatroom.repository';
+import { FindMaterializedChatroomRepository } from '../../ports/find-materialized-chatroom.repository';
 
 @QueryHandler(FindOneChatroomQuery)
 export class FindOneChatroomQueryHandler implements IQueryHandler {
   private readonly logger = new Logger(FindOneChatroomQueryHandler.name);
 
   constructor(
-    private readonly findChatroomRepository: FindChatroomRepository,
+    private readonly findChatroomRepository: FindMaterializedChatroomRepository,
   ) {}
 
   async execute(query: FindOneChatroomQuery): Promise<any> {

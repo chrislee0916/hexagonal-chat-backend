@@ -11,8 +11,8 @@ export class FindListMessageQueryHandler implements IQueryHandler {
 
   async execute(query: FindListMessageQuery): Promise<any> {
     this.logger.debug(
-      `Processing "${FindListMessageQuery.name}": ${JSON.stringify(query)}`,
+      `Processing a"${FindListMessageQuery.name}": ${JSON.stringify(query)}`,
     );
-    return this.findMessageRepository.findList();
+    return this.findMessageRepository.findList(query);
   }
 }

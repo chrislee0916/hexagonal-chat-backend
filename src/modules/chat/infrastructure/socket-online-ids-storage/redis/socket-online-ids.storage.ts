@@ -22,6 +22,8 @@ export class RedisSocketOnlineIdsStorage implements SocketOnlineIdsStorage {
 
   async signOut(socketId: string): Promise<void> {
     const userId = await this.getUserId(socketId);
+    console.log('disconnect userId: ', userId);
+    console.log('disconnect socketId: ', socketId);
     if (userId) {
       await this.redisClient.del(this.getSocketUserKey(+userId));
     }
