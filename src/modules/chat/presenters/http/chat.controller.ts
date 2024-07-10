@@ -161,52 +161,8 @@ export class ChatController {
     @Param('id') id: number,
     @Query() query: DefaultListQueryDto,
   ) {
-    const res = await this.chatService.findListMessage(
+    return this.chatService.findListMessage(
       new FindListMessageQuery(id, query.limit, query.skip, query.sort),
     );
-    console.log('res: ', res);
-    return res;
-    const user1 = {
-      id: '1',
-      name: 'ChrisLee',
-      email: 'hsinda456@gmail.com',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    const user2 = {
-      id: '2',
-      name: 'username2',
-      email: 'user2@email.com',
-      image: '/images/logo.png',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    const user3 = {
-      id: '3',
-      name: 'username3',
-      email: 'user3@email.com',
-      image: '/images/logo.png',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    return [
-      {
-        id: '1',
-        body: 'hello, world1',
-        createdAt: new Date(),
-        seen: [],
-        sender: user2,
-      },
-      {
-        id: '2',
-        body: 'hello, world2',
-        image: '/images/logo.png',
-        createdAt: new Date(),
-        seen: [user2],
-        sender: user1,
-      },
-    ];
   }
 }

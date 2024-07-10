@@ -223,6 +223,7 @@ export class OrmCreateUserRepository implements CreateUserRepository {
         .innerJoinAndSelect(UserFriendEntity, 'uf', 'uf.friend_id = user.id')
         .select('user.id, user.name, user.email, user.image, uf.status')
         .where('uf.user_id = :userId', { userId: userModel.id })
+        .orderBy('uf.created_at', 'DESC')
         .getRawMany<
           Pick<UserEntity, 'id' | 'name' | 'email' | 'image'> &
             Pick<UserFriendEntity, 'status'>

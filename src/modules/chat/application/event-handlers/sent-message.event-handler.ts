@@ -34,15 +34,7 @@ export class SentMessageEventHandler
     await this.upsertMaterializedMessageRepository.upsert(event.message);
 
     // * websocket 通知給有在線的人
-    // const {
-    //   message: { id, chatroomId, senderId, content },
-    //   socket,
-    // } = event;
     const { chatroomId, senderId, content, id } = event.message;
-    console.log(chatroomId);
-    console.log(senderId);
-    console.log(content);
-    console.log(id);
     await this.webSocketService.brocastToChatroom('message', chatroomId, {
       messageId: id,
       chatroomId,
