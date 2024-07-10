@@ -15,6 +15,8 @@ export class FindOneChatroomQueryHandler implements IQueryHandler {
     this.logger.debug(
       `Processing "${FindOneChatroomQuery.name}": ${JSON.stringify(query)}`,
     );
-    return this.findChatroomRepository.findOne(query.id);
+    const res = await this.findChatroomRepository.findOne(query.id);
+    console.log(res);
+    return res;
   }
 }

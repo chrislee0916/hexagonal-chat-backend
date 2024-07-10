@@ -43,15 +43,16 @@ export class SendMessageCommandHandler implements ICommandHandler {
       });
     }
     // * ack訊息給發送者
-    socket.emit('message', content);
+    // socket.emit('message', content);
 
     // * 以 chatroom aggregate root 操作
-    const chatroom = new Chatroom();
+    let chatroom = new Chatroom();
     chatroom.id = chatroomId;
     chatroom.addNewMessage(+userId, content);
 
     await this.messageRepository.save(chatroom);
 
+    console.log('chatroom chatroom: ', chatroom);
     // * 需要檢查chatroom底下的user有哪些不在線上，使用離線訊息
     chatroom.sentMessage(socket);
     this.eventPublisher.mergeObjectContext(chatroom);

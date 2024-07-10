@@ -5,8 +5,8 @@ export class MessageMapper {
   static toDomain(message: MessageEntity): Message {
     const { id, chatroomId, senderId, content, createdAt } = message;
     const messageModel = new Message(chatroomId, senderId, content);
-    message.id = id;
-    message.createdAt = createdAt;
+    messageModel.id = id;
+    messageModel.createdAt = createdAt;
     return messageModel;
   }
 

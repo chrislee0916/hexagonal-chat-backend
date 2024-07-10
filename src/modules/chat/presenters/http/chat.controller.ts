@@ -161,9 +161,11 @@ export class ChatController {
     @Param('id') id: number,
     @Query() query: DefaultListQueryDto,
   ) {
-    // return this.chatService.findListMessage(
-    //   new FindListMessageQuery(id, query.limit, query.skip, query.sort),
-    // );
+    const res = await this.chatService.findListMessage(
+      new FindListMessageQuery(id, query.limit, query.skip, query.sort),
+    );
+    console.log('res: ', res);
+    return res;
     const user1 = {
       id: '1',
       name: 'ChrisLee',

@@ -22,15 +22,6 @@ export class SignInCommandHandler implements ICommandHandler {
     this.logger.debug(`Processing "${SignInCommand.name}"`);
     const { socket } = command;
     const userId: number = socket[REQUEST_USER_KEY].sub;
-    // // * 同個使用者只允許一個在線
-    // const onlineSocketId =
-    //   await this.socketOnlineIdsStorage.getSocketId(userId);
-    // if (onlineSocketId) {
-    //   throw new WsException({
-    //     statusCode: HttpStatus.UNAUTHORIZED,
-    //     message: ErrorMsg.ERR_AUTH_ALREADY_ONLINE,
-    //   });
-    // }
 
     // * redis 記錄上線狀態
     await this.socketOnlineIdsStorage.signIn(userId, socket.id);
