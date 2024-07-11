@@ -13,6 +13,10 @@ import {
 import { UpsertMaterializedUserRepository } from 'src/modules/iam/application/ports/upsert-materialized-user.repository';
 import { OrmUpsertMaterializedUserRepository } from './repositories/upsert-materialized-user.respository';
 import { UserFriendEntity } from './entities/user-friend.entity';
+import {
+  MaterializedChatroomView,
+  MaterializedChatroomViewSchema,
+} from 'src/modules/chat/infrastructure/persistence/orm/schemas/materialized-chatroom-view.schema';
 
 @Module({
   imports: [
@@ -21,6 +25,10 @@ import { UserFriendEntity } from './entities/user-friend.entity';
       {
         name: MaterializedUserView.name,
         schema: MaterializedUserViewSchema,
+      },
+      {
+        name: MaterializedChatroomView.name,
+        schema: MaterializedChatroomViewSchema,
       },
     ]),
   ],

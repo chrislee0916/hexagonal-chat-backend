@@ -34,13 +34,26 @@ export class SentMessageEventHandler
     await this.upsertMaterializedMessageRepository.upsert(event.message);
 
     // * websocket 通知給有在線的人
-    const { chatroomId, senderId, content, id } = event.message;
+    const { chatroomId, senderId, content, id, createdAt } = event.message;
     await this.webSocketService.brocastToChatroom('message', chatroomId, {
       messageId: id,
       chatroomId,
       senderId,
       content,
+      createdAt,
     });
+    await this.webSocketService.brocastToChatroom(
+      'chatroomNewMessage',
+      chatroomId,
+      {
+        id: id,
+        chatroomId,
+        senderId,
+        content,
+        createdAt,
+      },
+    );
+
     // * 不在線額外處理
   }
 }

@@ -17,6 +17,7 @@ export class OrmFindMessageRepository implements FindMessageRepository {
       .limit(query.limit)
       .skip(query.skip)
       .sort(query.sort);
+    console.log('message list res: ', res);
     return res;
   }
 }

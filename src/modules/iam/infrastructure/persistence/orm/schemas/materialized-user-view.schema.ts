@@ -15,7 +15,7 @@ export type MaterializedUserViewDocument =
 @Schema({
   timestamps: true,
 })
-export class MaterializedUserView extends Document {
+export class MaterializedUserView extends Document<Types.ObjectId> {
   @Prop({
     unique: true,
     index: true,
@@ -80,19 +80,9 @@ export class MaterializedUserView extends Document {
   @Prop({
     required: false,
     _id: false,
-    type: [
-      {
-        id: Number,
-        name: String,
-        image: String,
-      },
-    ],
+    type: [Number],
   })
-  chatrooms: Array<{
-    id: number;
-    name: string;
-    image: string;
-  }>;
+  chatrooms: Array<number>;
 
   @Prop()
   createdAt: Date;

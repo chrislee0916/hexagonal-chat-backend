@@ -13,9 +13,9 @@ function parseQuery(input: unknown, defaultVal: number): string {
 export class ParseQueryMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: () => void) {
     if (req.method === 'GET') {
-      req.query.limit = parseQuery(req.query.limit, 25);
+      req.query.limit = parseQuery(req.query.limit, 100);
       req.query.skip = parseQuery(req.query.skip, 0);
-      req.query.sort = req.query.sort ? req.query.sort : 'createdAt';
+      req.query.sort = req.query.sort ? req.query.sort : '-createdAt';
     }
     next();
   }

@@ -29,10 +29,13 @@ export class CreatedChatroomEventHandler
       name: event.chatroom.name,
       image: event.chatroom.image,
       users: event.chatroom.users,
+      newMessage: event.chatroom.newMessage,
     });
+    console.log('start upsertChatrooms');
     await this.upsertMaterializedUserRepository.upsertChatrooms(
       event.chatroom.users.flatMap((user) => user.id),
     );
+    console.log('end upsertChatrooms');
 
     // * socket 通知其他被加入的的使用者
     await this.webSocketService.joinChatroom(

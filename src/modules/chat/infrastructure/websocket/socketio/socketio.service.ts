@@ -49,10 +49,6 @@ export class SocketIOService implements WebSocketService {
     chatroomId: number,
     data: T,
   ): Promise<void> {
-    console.log(
-      'this.server.in(this.getKey(chatroomId)): ',
-      await this.server.in(this.getKey(chatroomId)).fetchSockets(),
-    );
     const res = this.server.in(this.getKey(chatroomId)).emit(event, data);
     console.log('is success: ', res);
   }

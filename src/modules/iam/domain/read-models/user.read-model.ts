@@ -10,7 +10,8 @@ export class UserReadModel {
   image: string;
   friends?: Pick<UserReadModel, 'id' | 'name' | 'email' | 'image'>[];
   askFriends?: Pick<UserReadModel, 'id' | 'name' | 'email' | 'image'>[];
-  chatrooms?: Pick<ChatroomReadModel, 'id' | 'name' | 'image'>[];
+  chatrooms?: Pick<ChatroomReadModel, 'id' | 'name' | 'image' | 'newMessage'>[];
+  // chatrooms?: number[];
   createdAt: Date;
   updatedAt: Date;
 }

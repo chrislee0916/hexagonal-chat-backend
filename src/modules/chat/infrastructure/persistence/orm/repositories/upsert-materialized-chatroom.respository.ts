@@ -28,6 +28,7 @@ export class OrmUpsertMaterializedChatroomRepository
       {
         name: chatroom.name,
         users: chatroom.users,
+        image: chatroom.image,
         newMessage: chatroom.newMessage,
       },
       {
