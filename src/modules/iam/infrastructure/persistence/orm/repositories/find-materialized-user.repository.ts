@@ -9,6 +9,7 @@ import { UserMapper } from '../mappers/user.mapper';
 import { InjectModel } from '@nestjs/mongoose';
 import {
   MaterializedUserView,
+  MaterializedUserViewDocument,
   MaterializedUserViewSchema,
 } from '../schemas/materialized-user-view.schema';
 import { Model } from 'mongoose';
@@ -16,15 +17,17 @@ import { UserReadModel } from 'src/modules/iam/domain/read-models/user.read-mode
 import { OmitType } from '@nestjs/swagger';
 import { MaterializedChatroomView } from 'src/modules/chat/infrastructure/persistence/orm/schemas/materialized-chatroom-view.schema';
 import { ChatroomReadModel } from 'src/modules/chat/domain/read-models/chatroom.read-model';
+import {
+  ChatroomUser,
+  ChatroomUserDocument,
+} from 'src/modules/chat/infrastructure/persistence/orm/schemas/chatroom-user.schema';
 
 export class OrmFindUserRepository implements FindUserRepository {
   constructor(
-    // @InjectRepository(UserEntity)
-    // private readonly userRepository: Repository<UserEntity>
     @InjectModel(MaterializedUserView.name)
-    private readonly userModel: Model<MaterializedUserView>,
-    @InjectModel(MaterializedChatroomView.name)
-    private readonly chatroomModel: Model<MaterializedChatroomView>,
+    private readonly userModel: Model<MaterializedUserViewDocument>,
+    @InjectModel(ChatroomUser.name)
+    private readonly chatroomUserModel: Model<ChatroomUser>,
   ) {}
 
   async findOneByEmail(email: string): Promise<UserReadModel> {
@@ -38,28 +41,22 @@ export class OrmFindUserRepository implements FindUserRepository {
   }
 
   async findOneById(id: number): Promise<UserReadModel> {
-    // const userEntity = await this.userRepository.findOneBy({ id });
+    const user = await this.userModel.findOne({ id }).exec();
+    const chatroomUsers = await this.chatroomUserModel
+      .find({ userId: id })
+      .populate('chatroom')
+      .exec();
 
-    const user = await this.userModel.findOne<MaterializedUserView>({ id });
-    console.log('usssser: ', user);
-    const chatrooms = await this.chatroomModel.find<
-      Pick<ChatroomReadModel, 'id' | 'name' | 'image' | 'newMessage'>
-    >({ id: { $in: user.chatrooms } }, 'id name image newMessage');
-    console.log('finddd chatrooms: ', chatrooms);
     return {
-      _id: user._id,
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      password: user.password,
-      image: user.image,
-      friends: user.friends,
-      askFriends: user.askFriends,
-      chatrooms,
-      createdAt: user.createdAt,
-      updatedAt: user.updatedAt,
+      ...user.toJSON(),
+      chatrooms: chatroomUsers.map((val) => ({
+        id: val.chatroomId,
+        name: val.chatroom.name,
+        image: val.chatroom.image,
+        newMessage: val.chatroom.newMessage,
+        lastAckId: val.lastAckId,
+      })),
     };
-    // return UserMapper.toDomain(user);
   }
 
   async findOneByObjectId(id: string): Promise<UserReadModel> {

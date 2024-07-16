@@ -7,8 +7,6 @@ export class CreateChatroom1716875713881 implements MigrationInterface {
               "id" SERIAL PRIMARY KEY,
               "name" VARCHAR NOT NULL,
               "image" VARCHAR,
-              "user1_id" INTEGER DEFAULT null,
-              "user2_id" INTEGER DEFAULT null,
               "created_at" timestamp with time zone DEFAULT now(),
               "updated_at" timestamp with time zone DEFAULT now(),
               "deleted_at" timestamp with time zone DEFAULT NULL

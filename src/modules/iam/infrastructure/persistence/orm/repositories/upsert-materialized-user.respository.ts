@@ -37,17 +37,10 @@ export class OrmUpsertMaterializedUserRepository
         chatrooms: true,
       },
     });
-    console.log(
-      'user chatroomsIds: ',
-      users[0].chatrooms.flatMap((chatroom) => chatroom.id),
-    );
     const operations = users.map((user) => ({
       updateOne: {
         filter: { id: user.id },
-        update: {
-          ...user,
-          chatrooms: user.chatrooms.flatMap((chatroom) => chatroom.id),
-        },
+        update: user,
         upsert: true,
       },
     }));

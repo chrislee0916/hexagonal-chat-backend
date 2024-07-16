@@ -6,6 +6,7 @@ export class CreateChatroomUser1716879806651 implements MigrationInterface {
         CREATE TABLE "chatroom_user" (
             "chatroom_id" INTEGER NOT NULL,
             "user_id" INTEGER NOT NULL,
+            "last_ack_id" INTEGER DEFAULT NULL,
             "joined_at" timestamp with time zone DEFAULT now(),
             "left_at" timestamp with time zone DEFAULT NULL,
             PRIMARY KEY (user_id, chatroom_id),

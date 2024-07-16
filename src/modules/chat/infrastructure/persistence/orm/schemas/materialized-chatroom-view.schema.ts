@@ -2,12 +2,22 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { OmitType, PickType } from '@nestjs/swagger';
 import { ChatroomReadModel } from 'src/modules/chat/domain/read-models/chatroom.read-model';
 import { Chatroom } from 'src/modules/chat/domain/chatroom';
-import { Document, Schema as MongooseSchema, Types } from 'mongoose';
+import {
+  Document,
+  HydratedDocument,
+  Schema as MongooseSchema,
+  Types,
+} from 'mongoose';
+import { MaterializedUserView } from 'src/modules/iam/infrastructure/persistence/orm/schemas/materialized-user-view.schema';
 
+export type MaterializedChatroomViewDocument =
+  HydratedDocument<MaterializedChatroomView>;
 @Schema({
   timestamps: true,
+  toJSON: { virtuals: true, getters: true },
+  toObject: { virtuals: true, getters: true },
 })
-export class MaterializedChatroomView extends Document<Types.ObjectId> {
+export class MaterializedChatroomView {
   @Prop({
     unique: true,
     index: true,
@@ -21,24 +31,6 @@ export class MaterializedChatroomView extends Document<Types.ObjectId> {
     required: false,
   })
   image: string;
-
-  @Prop({
-    _id: false,
-    type: [
-      {
-        id: Number,
-        name: String,
-        email: String,
-        image: String,
-      },
-    ],
-  })
-  users: {
-    id: number;
-    name: string;
-    email: string;
-    image: string;
-  }[];
 
   @Prop({
     _id: false,

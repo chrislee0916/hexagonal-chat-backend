@@ -29,6 +29,10 @@ import { FindMaterializedChatroomRepository } from 'src/modules/chat/application
 import { OrmFindChatroomRepository } from './repositories/find-materialized-chatroom.repository';
 import { FindMessageRepository } from 'src/modules/chat/application/ports/find-message.repository';
 import { OrmFindMessageRepository } from './repositories/find-message.repository';
+import {
+  ChatroomUser,
+  ChatroomUserSchema,
+} from './schemas/chatroom-user.schema';
 
 @Module({
   imports: [
@@ -40,8 +44,8 @@ import { OrmFindMessageRepository } from './repositories/find-message.repository
     ]),
     MongooseModule.forFeature([
       {
-        name: MaterializedUserView.name,
-        schema: MaterializedUserViewSchema,
+        name: ChatroomUser.name,
+        schema: ChatroomUserSchema,
       },
       {
         name: MaterializedChatroomView.name,

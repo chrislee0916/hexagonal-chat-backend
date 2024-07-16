@@ -49,7 +49,14 @@ export class SocketIOService implements WebSocketService {
     chatroomId: number,
     data: T,
   ): Promise<void> {
-    const res = this.server.in(this.getKey(chatroomId)).emit(event, data);
+    // const res = this.server.in(this.getKey(chatroomId)).emit(event, data);
+    const res = await this.server
+      .in(this.getKey(chatroomId))
+      .timeout(1000)
+      .emitWithAck(event, data);
+
+    // TODO: 之後可以改良成批量更新 eventually consistency
+    // * 需要去更新 chatroomuser 資料
     console.log('is success: ', res);
   }
 

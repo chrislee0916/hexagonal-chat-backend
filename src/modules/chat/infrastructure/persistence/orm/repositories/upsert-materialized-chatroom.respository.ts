@@ -7,27 +7,28 @@ import { MaterializedUserView } from 'src/modules/iam/infrastructure/persistence
 import { MaterializedChatroomView } from '../schemas/materialized-chatroom-view.schema';
 import { Message } from 'src/modules/chat/domain/message';
 import { ChatroomReadModel } from 'src/modules/chat/domain/read-models/chatroom.read-model';
+import { ChatroomUser } from '../schemas/chatroom-user.schema';
 
 @Injectable()
 export class OrmUpsertMaterializedChatroomRepository
   implements UpsertMaterializedChatroomRespository
 {
   constructor(
-    @InjectModel(MaterializedUserView.name)
-    private readonly userModel: Model<MaterializedUserView>,
+    @InjectModel(ChatroomUser.name)
+    private readonly chatroomUserModel: Model<ChatroomUser>,
     @InjectModel(MaterializedChatroomView.name)
     private readonly chatroomModel: Model<MaterializedChatroomView>,
   ) {}
 
   async upsert(
-    chatroom: Pick<ChatroomReadModel, 'id'> & Partial<ChatroomReadModel>,
+    // chatroom: Pick<ChatroomReadModel, 'id'> & Partial<ChatroomReadModel>,
+    chatroom: Pick<Chatroom, 'id'> & Partial<Chatroom>,
   ): Promise<void> {
     console.log('chatroom: ', chatroom);
     await this.chatroomModel.findOneAndUpdate(
       { id: chatroom.id },
       {
         name: chatroom.name,
-        users: chatroom.users,
         image: chatroom.image,
         newMessage: chatroom.newMessage,
       },
@@ -35,5 +36,23 @@ export class OrmUpsertMaterializedChatroomRepository
         upsert: true,
       },
     );
+
+    if (chatroom.users?.length) {
+      await this.chatroomUserModel.bulkWrite(
+        chatroom.users.map((user) => ({
+          updateOne: {
+            filter: { chatroomId: chatroom.id, userId: user.id },
+            update: {
+              chatroomId: chatroom.id,
+              userId: user.id,
+              lastAckId: user.lastAckId,
+              joinedAt: user.joinedAt,
+              leftAt: user.leftAt,
+            },
+            upsert: true,
+          },
+        })),
+      );
+    }
   }
 }

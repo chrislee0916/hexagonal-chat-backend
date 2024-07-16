@@ -161,7 +161,9 @@ export class IamController {
   async friends(
     @ActiveUser() user: ActiveUserData,
   ): Promise<GetUserResponseDto> {
-    return this.iamService.getUser(new GetUserQuery(user.sub));
+    const res = await this.iamService.getUser(new GetUserQuery(user.sub));
+    // console.log('res: ', res);
+    return res;
   }
 
   @ApiOperation({

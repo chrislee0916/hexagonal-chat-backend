@@ -4,14 +4,13 @@ import { Message } from './message';
 import { ChatroomUser } from './chatroom-user';
 import { Socket } from 'socket.io';
 import { CreatedChatroomEvent } from './events/created-chatroom.event';
+import { ChatroomUserEntity } from '../infrastructure/persistence/orm/entities/chatroom_user.entity';
 
 export class Chatroom extends AggregateRoot {
   public id: number;
   public name: string;
   public image: string; // * 為file的外鍵
-  public users = new Array<
-    Pick<ChatroomUser, 'id' | 'email' | 'name' | 'image'>
-  >();
+  public users = new Array<ChatroomUser>();
   // public messages = new Array<Message>();
   public newMessage?: Message;
   public createdAt: Date;

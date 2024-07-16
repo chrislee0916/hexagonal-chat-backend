@@ -22,26 +22,13 @@ export class CreatedChatroomEventHandler
 
   async handle(event: CreatedChatroomEvent): Promise<void> {
     this.logger.log(`Created chatroom event: ${JSON.stringify(event)}`);
-
+    const userIds = event.chatroom.users.flatMap((user) => user.id);
     // * 同步資料到 read db
-    await this.upsertMaterializedChatroomRepository.upsert({
-      id: event.chatroom.id,
-      name: event.chatroom.name,
-      image: event.chatroom.image,
-      users: event.chatroom.users,
-      newMessage: event.chatroom.newMessage,
-    });
-    console.log('start upsertChatrooms');
-    await this.upsertMaterializedUserRepository.upsertChatrooms(
-      event.chatroom.users.flatMap((user) => user.id),
-    );
-    console.log('end upsertChatrooms');
+    await this.upsertMaterializedChatroomRepository.upsert(event.chatroom);
+    // await this.upsertMaterializedUserRepository.upsertChatrooms(userIds);
 
     // * socket 通知其他被加入的的使用者
-    await this.webSocketService.joinChatroom(
-      event.chatroom.id,
-      event.chatroom.users.flatMap((user) => user.id),
-    );
+    await this.webSocketService.joinChatroom(event.chatroom.id, userIds);
     await this.webSocketService.brocastToChatroom(
       'createChatroom',
       event.chatroom.id,

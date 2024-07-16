@@ -7,8 +7,16 @@ export class ChatroomReadModel {
   id: number;
   name: string;
   image: string;
-  users: Pick<UserReadModel, 'id' | 'name' | 'email' | 'image'>[];
+  users: {
+    id: number;
+    email: string;
+    name: string;
+    image: string;
+    joinedAt: Date;
+    lastAckId: number;
+  }[];
   newMessage: Omit<MessageReadModel, '_id'>;
+  lastAckId?: number;
   createdAt: Date;
   updatedAt: Date;
 }

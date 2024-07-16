@@ -4,7 +4,7 @@ import { UserEntity } from './entities/user.entity';
 import { CreateUserRepository } from 'src/modules/iam/application/ports/create-user.repository';
 import { OrmCreateUserRepository } from './repositories/create-user.repository';
 import { FindUserRepository } from 'src/modules/iam/application/ports/find-user.repository';
-import { OrmFindUserRepository } from './repositories/find-user.repository';
+import { OrmFindUserRepository } from './repositories/find-materialized-user.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import {
   MaterializedUserView,
@@ -17,6 +17,10 @@ import {
   MaterializedChatroomView,
   MaterializedChatroomViewSchema,
 } from 'src/modules/chat/infrastructure/persistence/orm/schemas/materialized-chatroom-view.schema';
+import {
+  ChatroomUserSchema,
+  ChatroomUser,
+} from 'src/modules/chat/infrastructure/persistence/orm/schemas/chatroom-user.schema';
 
 @Module({
   imports: [
@@ -29,6 +33,10 @@ import {
       {
         name: MaterializedChatroomView.name,
         schema: MaterializedChatroomViewSchema,
+      },
+      {
+        name: ChatroomUser.name,
+        schema: ChatroomUserSchema,
       },
     ]),
   ],

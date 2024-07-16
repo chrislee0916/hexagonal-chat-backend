@@ -8,14 +8,17 @@ import {
   Schema as MongooseSchema,
   Types,
 } from 'mongoose';
+import { ChatroomUser } from 'src/modules/chat/infrastructure/persistence/orm/schemas/chatroom-user.schema';
 
 export type MaterializedUserViewDocument =
   HydratedDocument<MaterializedUserView>;
 
 @Schema({
   timestamps: true,
+  toJSON: { virtuals: true, getters: true },
+  toObject: { virtuals: true, getters: true },
 })
-export class MaterializedUserView extends Document<Types.ObjectId> {
+export class MaterializedUserView {
   @Prop({
     unique: true,
     index: true,
@@ -76,13 +79,6 @@ export class MaterializedUserView extends Document<Types.ObjectId> {
     email: string;
     image: string;
   }>;
-
-  @Prop({
-    required: false,
-    _id: false,
-    type: [Number],
-  })
-  chatrooms: Array<number>;
 
   @Prop()
   createdAt: Date;

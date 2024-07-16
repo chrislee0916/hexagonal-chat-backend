@@ -29,17 +29,6 @@ export class UserEntity {
   @Column()
   image: string;
 
-  // @ManyToMany(() => UserEntity, (user) => user.askedFriends)
-  // @JoinTable({
-  //   name: 'user_friend',
-  //   joinColumn: { name: 'user_id', referencedColumnName: 'id' },
-  //   inverseJoinColumn: { name: 'friend_id', referencedColumnName: 'id' },
-  // })
-  // askFriends: UserEntity[];
-
-  // @ManyToMany(() => UserEntity, (user) => user.askFriends)
-  // askedFriends: UserEntity[];
-
   askFriends: Pick<UserEntity, 'id' | 'name' | 'email' | 'image'>[];
 
   friends: Pick<UserEntity, 'id' | 'name' | 'email' | 'image'>[];
@@ -50,7 +39,7 @@ export class UserEntity {
     joinColumn: { name: 'user_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'chatroom_id', referencedColumnName: 'id' },
   })
-  chatrooms: Pick<ChatroomEntity, 'id' | 'name'>[];
+  chatrooms: Pick<ChatroomEntity, 'id' | 'name' | 'image'>[];
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })
   createdAt: Date;

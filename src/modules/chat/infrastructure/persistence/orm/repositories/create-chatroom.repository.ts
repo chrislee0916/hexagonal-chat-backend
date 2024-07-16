@@ -38,21 +38,21 @@ export class OrmCreateChatroomRepository implements CreateChatroomRepository {
       const persistenceModel = ChatroomMapper.toPersistence(chatroom);
       const newEntity = await queryRunner.manager.save(persistenceModel);
 
-      await queryRunner.manager.save<ChatroomUserEntity>(
-        chatroom.users.map((user) => {
-          let val = new ChatroomUserEntity();
-          val.chatroomId = newEntity.id;
-          val.userId = user.id;
-          return val;
-        }),
-      );
-
+      const chatroomUserEntities =
+        await queryRunner.manager.save<ChatroomUserEntity>(
+          chatroom.users.map((user) => {
+            let val = new ChatroomUserEntity();
+            val.chatroomId = newEntity.id;
+            val.userId = user.id;
+            return val;
+          }),
+        );
       await queryRunner.commitTransaction();
 
       chatroom.id = newEntity.id;
-      chatroom.users = userModels.map(({ id, name, email, image }) => {
-        return { id, name, email, image };
-      });
+      chatroom.users = chatroomUserEntities.map((entity) =>
+        ChatroomUserMapper.toDomain(entity),
+      );
       return chatroom;
     } catch (err) {
       await queryRunner.rollbackTransaction();

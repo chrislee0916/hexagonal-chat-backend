@@ -15,6 +15,9 @@ export class ChatroomUserEntity {
   @PrimaryColumn({ name: 'user_id' })
   userId: number;
 
+  @Column({ name: 'last_ack_id' })
+  lastAckId: number;
+
   @CreateDateColumn({ name: 'joined_at', type: 'timestamptz' })
   joinedAt?: Date;
 
