@@ -14,12 +14,13 @@ export class ChatroomUserMapper {
   }
 
   static toPersistence(chatroomUser: ChatroomUser): ChatroomUserEntity {
-    const { chatroomId, id, joinedAt, leftAt } = chatroomUser;
+    const { chatroomId, userId, joinedAt, leftAt, lastAckId } = chatroomUser;
     const chatroomUserEntity = new ChatroomUserEntity();
     chatroomUserEntity.chatroomId = chatroomId;
-    chatroomUserEntity.userId = id;
+    chatroomUserEntity.userId = userId;
     chatroomUserEntity.joinedAt = joinedAt;
     chatroomUserEntity.leftAt = leftAt;
+    chatroomUserEntity.lastAckId = lastAckId;
     return chatroomUserEntity;
   }
 }

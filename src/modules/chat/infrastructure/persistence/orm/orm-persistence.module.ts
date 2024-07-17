@@ -33,6 +33,8 @@ import {
   ChatroomUser,
   ChatroomUserSchema,
 } from './schemas/chatroom-user.schema';
+import { UpdateChatroomUserRepository } from 'src/modules/chat/application/ports/update-chatroom-user';
+import { OrmUpdateChatroomUserRepository } from './repositories/update-chatroom-user.repository';
 
 @Module({
   imports: [
@@ -75,6 +77,10 @@ import {
       useClass: OrmFindMessageRepository,
     },
     {
+      provide: UpdateChatroomUserRepository,
+      useClass: OrmUpdateChatroomUserRepository,
+    },
+    {
       provide: UpsertMaterializedChatroomRespository,
       useClass: OrmUpsertMaterializedChatroomRepository,
     },
@@ -88,6 +94,7 @@ import {
     CreateMessageRepository,
     FindMaterializedChatroomRepository,
     FindMessageRepository,
+    UpdateChatroomUserRepository,
     UpsertMaterializedChatroomRespository,
     UpsertMaterializedMessageRespository,
   ],

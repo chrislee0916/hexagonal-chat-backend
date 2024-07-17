@@ -22,7 +22,7 @@ export class CreatedChatroomEventHandler
 
   async handle(event: CreatedChatroomEvent): Promise<void> {
     this.logger.log(`Created chatroom event: ${JSON.stringify(event)}`);
-    const userIds = event.chatroom.users.flatMap((user) => user.id);
+    const userIds = event.chatroom.users.flatMap((user) => user.userId);
     // * 同步資料到 read db
     await this.upsertMaterializedChatroomRepository.upsert(event.chatroom);
     // await this.upsertMaterializedUserRepository.upsertChatrooms(userIds);

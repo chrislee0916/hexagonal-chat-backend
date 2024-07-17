@@ -8,8 +8,8 @@ export abstract class WebSocketService {
   abstract brocastToChatroom<T = any>(
     event: BrocastType,
     chatroomId: number,
-    data: T,
-  ): Promise<void>;
+    data: any,
+  ): Promise<T[]>;
   abstract sendToPerson<T = any>(
     event: 'newAskFriend' | 'newFriend',
     userId: number,

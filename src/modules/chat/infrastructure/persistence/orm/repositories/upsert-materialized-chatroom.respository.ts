@@ -41,10 +41,10 @@ export class OrmUpsertMaterializedChatroomRepository
       await this.chatroomUserModel.bulkWrite(
         chatroom.users.map((user) => ({
           updateOne: {
-            filter: { chatroomId: chatroom.id, userId: user.id },
+            filter: { chatroomId: chatroom.id, userId: user.userId },
             update: {
               chatroomId: chatroom.id,
-              userId: user.id,
+              userId: user.userId,
               lastAckId: user.lastAckId,
               joinedAt: user.joinedAt,
               leftAt: user.leftAt,

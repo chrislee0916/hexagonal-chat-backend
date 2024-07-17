@@ -23,7 +23,7 @@ export class OrmCreateChatroomRepository implements CreateChatroomRepository {
     // * 檢查 users 是否都存在
     const userModels = await this.userRepository.find({
       where: {
-        id: In(chatroom.users.flatMap((val) => val.id)),
+        id: In(chatroom.users.flatMap((val) => val.userId)),
       },
     });
     if (userModels.length !== chatroom.users.length) {
@@ -43,7 +43,7 @@ export class OrmCreateChatroomRepository implements CreateChatroomRepository {
           chatroom.users.map((user) => {
             let val = new ChatroomUserEntity();
             val.chatroomId = newEntity.id;
-            val.userId = user.id;
+            val.userId = user.userId;
             return val;
           }),
         );

@@ -3,5 +3,5 @@ export class ChatroomUser {
   public lastAckId: number;
   public joinedAt: Date;
   public leftAt: Date;
-  constructor(public id: number) {}
+  constructor(public userId: number) {}
 }

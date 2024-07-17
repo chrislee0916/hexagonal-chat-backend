@@ -8,6 +8,8 @@ import { UpsertMaterializedMessageRespository } from '../ports/upsert-materializ
 import { Server } from 'socket.io';
 import { WebSocketServer } from '@nestjs/websockets';
 import { WebSocketService } from '../ports/websocket.service';
+import { UpdateChatroomUserRepository } from '../ports/update-chatroom-user';
+import { ChatroomUser } from '../../domain/chatroom-user';
 
 @EventsHandler(SentMessageEvent)
 export class SentMessageEventHandler
@@ -18,6 +20,7 @@ export class SentMessageEventHandler
   constructor(
     private readonly upsertMaterializedChatroomRepository: UpsertMaterializedChatroomRespository,
     private readonly upsertMaterializedMessageRepository: UpsertMaterializedMessageRespository,
+    private readonly updateChatroomUserRepository: UpdateChatroomUserRepository,
     private readonly webSocketService: WebSocketService,
   ) {}
 
@@ -35,24 +38,19 @@ export class SentMessageEventHandler
 
     // * websocket 通知給有在線的人
     const { chatroomId, senderId, content, id, createdAt } = event.message;
-    await this.webSocketService.brocastToChatroom('message', chatroomId, {
-      id,
+    let acks = await this.webSocketService.brocastToChatroom<ChatroomUser>(
+      'message',
       chatroomId,
-      senderId,
-      content,
-      createdAt,
-    });
-    // await this.webSocketService.brocastToChatroom(
-    //   'chatroomNewMessage',
-    //   chatroomId,
-    //   {
-    //     id: id,
-    //     chatroomId,
-    //     senderId,
-    //     content,
-    //     createdAt,
-    //   },
-    // );
+      {
+        id,
+        chatroomId,
+        senderId,
+        content,
+        createdAt,
+      },
+    );
+    // TODO: 發送 mq 處理已讀狀態
+    await this.updateChatroomUserRepository.update(acks);
 
     // * 不在線額外處理
   }
