@@ -21,24 +21,33 @@ export class OrmUpdateChatroomUserRepository
     @InjectRepository(ChatroomUserEntity)
     private readonly userRepository: Repository<ChatroomUserEntity>,
   ) {}
-  async update(chatroomUsers: DomainChatroomUser[]): Promise<void> {
+  async update(chatroomUser: DomainChatroomUser): Promise<void> {
+    const { chatroomId, lastAckId, joinedAt, leftAt, userId } = chatroomUser;
+
     await this.userRepository.save(
-      chatroomUsers.map((val) => ChatroomUserMapper.toPersistence(val)),
+      ChatroomUserMapper.toPersistence(chatroomUser),
+    );
+    await this.chatroomUserModel.findOneAndUpdate(
+      { chatroomId, userId },
+      {
+        lastAckId,
+        joinedAt,
+        leftAt,
+      },
     );
 
-    // return entities.map((val) => ChatroomUserMapper.toDomain(val));
-    await this.chatroomUserModel.bulkWrite(
-      chatroomUsers.map((val) => {
-        return {
-          updateOne: {
-            filter: { chatroomId: val.chatroomId, userId: val.userId },
-            update: {
-              lastAckId: val.lastAckId,
-            },
-            upsert: true,
-          },
-        };
-      }),
-    );
+    //   await this.chatroomUserModel.bulkWrite(
+    //     chatroomUsers.map((val) => {
+    //       return {
+    //         updateOne: {
+    //           filter: { chatroomId: val.chatroomId, userId: val.userId },
+    //           update: {
+    //             lastAckId: val.lastAckId,
+    //           },
+    //           upsert: true,
+    //         },
+    //       };
+    //     }),
+    //   );
   }
 }

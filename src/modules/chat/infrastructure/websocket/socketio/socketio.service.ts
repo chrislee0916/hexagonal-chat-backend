@@ -1,7 +1,10 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { WebSocketService } from 'src/modules/chat/application/ports/websocket.service';
+import {
+  BrocastType,
+  WebSocketService,
+} from 'src/modules/chat/application/ports/websocket.service';
 import { ChatroomUserEntity } from '../../persistence/orm/entities/chatroom_user.entity';
 import { Repository } from 'typeorm';
 import { Redis } from 'ioredis';
@@ -44,21 +47,12 @@ export class SocketIOService implements WebSocketService {
     }
   }
 
-  async brocastToChatroom<T = any>(
-    event: 'createChatroom' | 'message',
-    chatroomId: number,
-    data: any,
-  ): Promise<T[]> {
+  brocastToChatroom(event: BrocastType, chatroomId: number, data: any): void {
     // const res = this.server.in(this.getKey(chatroomId)).emit(event, data);
-    const res = await this.server
+    this.server
       .in(this.getKey(chatroomId))
-      .timeout(1000)
-      .emitWithAck(event, data);
-
-    return res;
-    // TODO: 之後可以改良成批量更新 eventually consistency
-    // * 需要去更新 chatroomuser 資料
-    console.log('is success: ', res);
+      // .timeout(1000)
+      .emit(event, data);
   }
 
   async sendToPerson<T = any>(

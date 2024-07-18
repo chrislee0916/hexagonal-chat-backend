@@ -15,6 +15,8 @@ import { CreatedChatroomEventHandler } from './event-handlers/created-chatroom.e
 import { FindOneChatroomQueryHandler } from './querys/handlers/find-one-chatroom.query-handler';
 import { IamModule } from 'src/modules/iam/application/iam.module';
 import { FindListMessageQueryHandler } from './querys/handlers/find-list-message.query-handler';
+import { MessageSeenCommandHandler } from './commands/handlers/message-seen.command.handler';
+import { MessageSeenEventHandler } from './event-handlers/message-seen.event-handler';
 
 @Module({
   controllers: [ChatController],
@@ -27,10 +29,12 @@ import { FindListMessageQueryHandler } from './querys/handlers/find-list-message
     SendMessageCommandHandler,
     FindOneChatroomQueryHandler,
     FindListMessageQueryHandler,
+    MessageSeenCommandHandler,
     ChatroomFactory,
     JwtService,
     SentMessageEventHandler,
     CreatedChatroomEventHandler,
+    MessageSeenEventHandler,
   ],
 })
 export class ChatModule {

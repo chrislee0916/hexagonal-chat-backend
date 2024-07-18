@@ -1,5 +1,8 @@
 import { ChatroomUser } from '../../domain/chatroom-user';
 
 export abstract class UpdateChatroomUserRepository {
-  abstract update(chatroomUser: ChatroomUser[]): Promise<void>;
+  abstract update(
+    chatroomUser: Pick<ChatroomUser, 'userId' | 'chatroomId'> &
+      Partial<ChatroomUser>,
+  ): Promise<void>;
 }

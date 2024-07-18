@@ -37,6 +37,8 @@ import { SendMessageDto } from './dto/request/send-message.dto';
 import { MessageBodyPipe } from 'src/common/pipes/message-body.pipe';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { SignInDto } from './dto/request/sign-in.dto';
+import { MessageSeenDto } from './dto/request/message-seen.dto';
+import { MessageSeenCommand } from '../../application/commands/impl/message-seen.command';
 
 @WebSocketGateway({ cors: true })
 @UseFilters(WsExceptionFilter)
@@ -61,6 +63,14 @@ export class ChatGateway implements OnGatewayDisconnect {
     const { chatroomId, content } = body;
     await this.chatService.sendMessage(
       new SendMessageCommand(chatroomId, socket, content),
+    );
+  }
+
+  @SubscribeMessage('messageSeen')
+  async messageSeen(@MessageBody() body: MessageSeenDto) {
+    const { userId, chatroomId, lastAckId } = body;
+    await this.chatService.messageSeen(
+      new MessageSeenCommand(userId, chatroomId, lastAckId),
     );
   }
 

@@ -28,7 +28,7 @@ export class OrmFindChatroomRepository
       .find({ chatroomId: id })
       .populate('user')
       .exec();
-
+    // console.log('chatroomUsers: ', chatroomUsers);
     return {
       ...chatroom.toJSON(),
       users: chatroomUsers.map(({ user, joinedAt, lastAckId }) => ({

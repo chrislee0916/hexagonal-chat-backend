@@ -1,15 +1,19 @@
 import { Socket } from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
-type BrocastType = 'createChatroom' | 'message' | 'chatroomNewMessage';
+export type BrocastType =
+  | 'createChatroom'
+  | 'message'
+  | 'messageSeen'
+  | 'chatroomNewMessage';
 export abstract class WebSocketService {
   abstract loadChatrooms(userId: number, userSocket: Socket): Promise<void>;
   abstract joinChatroom(chatroomId: number, userIds: number[]): Promise<void>;
-  abstract brocastToChatroom<T = any>(
+  abstract brocastToChatroom(
     event: BrocastType,
     chatroomId: number,
     data: any,
-  ): Promise<T[]>;
+  ): void;
   abstract sendToPerson<T = any>(
     event: 'newAskFriend' | 'newFriend',
     userId: number,

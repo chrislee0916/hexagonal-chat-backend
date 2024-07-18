@@ -38,19 +38,26 @@ export class SentMessageEventHandler
 
     // * websocket 通知給有在線的人
     const { chatroomId, senderId, content, id, createdAt } = event.message;
-    let acks = await this.webSocketService.brocastToChatroom<ChatroomUser>(
-      'message',
+    this.webSocketService.brocastToChatroom('message', chatroomId, {
+      id,
       chatroomId,
-      {
-        id,
-        chatroomId,
-        senderId,
-        content,
-        createdAt,
-      },
-    );
-    // TODO: 發送 mq 處理已讀狀態
-    await this.updateChatroomUserRepository.update(acks);
+      senderId,
+      content,
+      createdAt,
+    });
+    this.webSocketService.brocastToChatroom('chatroomNewMessage', chatroomId, {
+      id,
+      chatroomId,
+      senderId,
+      content,
+      createdAt,
+    });
+    // await this.webSocketService.brocastToChatroom('messageSeen', chatroomId, {
+    //   chatroomId,
+    //   data: acks,
+    // });
+    // // TODO: 發送 mq 處理已讀狀態，之後可以改良成批量更新 eventually consistency
+    // await this.updateChatroomUserRepository.update(acks);
 
     // * 不在線額外處理
   }

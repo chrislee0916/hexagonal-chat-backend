@@ -11,6 +11,7 @@ import { WebSocketServer, WsException } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { FindOneChatroomQuery } from './querys/impl/find-one-chatroom.query';
 import { FindListMessageQuery } from './querys/impl/find-list-message.query';
+import { MessageSeenCommand } from './commands/impl/message-seen.command';
 
 @Injectable()
 export class ChatService {
@@ -45,6 +46,10 @@ export class ChatService {
 
   async sendMessage(sendMessageCommand: SendMessageCommand) {
     return this.commandBus.execute(sendMessageCommand);
+  }
+
+  async messageSeen(messageSeenCommand: MessageSeenCommand) {
+    return this.commandBus.execute(messageSeenCommand);
   }
 
   async signOut(signOutCommand: SignOutCommand) {
