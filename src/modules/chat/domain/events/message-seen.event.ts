@@ -4,6 +4,6 @@ export class MessageSeenEvent {
   constructor(
     public readonly userId: number,
     public readonly chatroomId: number,
-    public readonly lackAckId: number,
+    public readonly lastAckId: number,
   ) {}
 }
