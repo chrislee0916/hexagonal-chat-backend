@@ -17,6 +17,7 @@ import { IamModule } from 'src/modules/iam/application/iam.module';
 import { FindListMessageQueryHandler } from './querys/handlers/find-list-message.query-handler';
 import { MessageSeenCommandHandler } from './commands/handlers/message-seen.command.handler';
 import { MessageSeenEventHandler } from './event-handlers/message-seen.event-handler';
+import { CreateImageCommandHandler } from './commands/handlers/create-image.command-handler';
 
 @Module({
   controllers: [ChatController],
@@ -35,6 +36,7 @@ import { MessageSeenEventHandler } from './event-handlers/message-seen.event-han
     SentMessageEventHandler,
     CreatedChatroomEventHandler,
     MessageSeenEventHandler,
+    CreateImageCommandHandler,
   ],
 })
 export class ChatModule {

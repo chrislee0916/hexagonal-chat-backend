@@ -7,10 +7,13 @@ import {
   Post,
   Query,
   Req,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiOperation,
   ApiResponse,
@@ -37,67 +40,19 @@ import { FindOneChatroomQuery } from '../../application/querys/impl/find-one-cha
 import { Request } from 'express';
 import { DefaultListQueryDto } from 'src/common/dtos/request.dto';
 import { FindListMessageQuery } from '../../application/querys/impl/find-list-message.query';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CreateImageDto } from './dto/request/create-image.dto';
+import { writeFile } from 'fs/promises';
+import { extname, join } from 'path';
+import { extension } from 'mime-types';
+import { randomUUID } from 'crypto';
+import { CreateImageCommand } from '../../application/commands/impl/create-image.command';
 
 @Auth(AuthType.Bearer)
 @ApiTags('CHAT - 即時通訊服務')
 @ApiBearerAuth()
 @Controller('chat')
 export class ChatController {
-  private user1 = {
-    id: '1',
-    name: 'ChrisLee',
-    email: 'hsinda456@gmail.com',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-
-  private user2 = {
-    id: '2',
-    name: 'username2',
-    email: 'user2@email.com',
-    image: '/images/logo.png',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-
-  private user3 = {
-    id: '3',
-    name: 'username3',
-    email: 'user3@email.com',
-    image: '/images/logo.png',
-    createdAt: new Date(),
-    updatedAt: new Date(),
-  };
-
-  private chats = [
-    {
-      id: '1',
-      createdAt: new Date(),
-      lastMessageAt: new Date(),
-      name: 'chatname1',
-      isGroup: false,
-      messagesIds: ['1', '2'],
-      messages: [
-        {
-          id: '1',
-          body: 'hello, world1',
-          createdAt: new Date(),
-          seen: [],
-          sender: this.user2,
-        },
-        {
-          id: '2',
-          body: 'hello, world2',
-          image: '/images/logo.png',
-          createdAt: new Date(),
-          seen: [],
-          sender: this.user2,
-        },
-      ],
-      userIds: ['1', '2', '3'],
-      users: [this.user1, this.user2, this.user3],
-    },
-  ];
   constructor(private readonly chatService: ChatService) {}
 
   @ApiOperation({
@@ -120,6 +75,18 @@ export class ChatController {
         ...createGroupChatroomDto.userIds,
       ]),
     );
+  }
+
+  @Post('image')
+  @Auth(AuthType.None)
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    description: '上傳檔案',
+    type: CreateImageDto,
+  })
+  @UseInterceptors(FileInterceptor('image'))
+  async createImage(@UploadedFile() image: Express.Multer.File) {
+    return this.chatService.createImage(new CreateImageCommand(image));
   }
 
   // @Post('single-chatroom')
@@ -150,10 +117,10 @@ export class ChatController {
     return this.chatService.findOneChatroom(new FindOneChatroomQuery(id));
   }
 
-  @Delete('chatroom/:id')
-  async remove(@Param('id') id: string) {
-    this.chats = this.chats.filter((chat) => chat.id !== id);
-  }
+  // @Delete('chatroom/:id')
+  // async remove(@Param('id') id: string) {
+  //   this.chats = this.chats.filter((chat) => chat.id !== id);
+  // }
 
   @Get('chatroom/:id/messages')
   @Auth(AuthType.None)

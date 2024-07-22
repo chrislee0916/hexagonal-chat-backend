@@ -12,6 +12,7 @@ import { Server } from 'socket.io';
 import { FindOneChatroomQuery } from './querys/impl/find-one-chatroom.query';
 import { FindListMessageQuery } from './querys/impl/find-list-message.query';
 import { MessageSeenCommand } from './commands/impl/message-seen.command';
+import { CreateImageCommand } from './commands/impl/create-image.command';
 
 @Injectable()
 export class ChatService {
@@ -24,6 +25,10 @@ export class ChatService {
     createGroupChatroomCommand: CreateGroupChatroomCommand,
   ) {
     return this.commandBus.execute(createGroupChatroomCommand);
+  }
+
+  async createImage(createImageCommand: CreateImageCommand) {
+    return this.commandBus.execute(createImageCommand);
   }
 
   async createSingleChatroom(
