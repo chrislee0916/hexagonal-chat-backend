@@ -25,8 +25,8 @@ export class Chatroom extends AggregateRoot {
     this.users.push(new ChatroomUser(id));
   }
 
-  addNewMessage(senderId: number, content: string) {
-    this.newMessage = new Message(this.id, senderId, content);
+  addNewMessage(senderId: number, image?: string, content?: string) {
+    this.newMessage = new Message(this.id, senderId, image, content);
   }
 
   created() {

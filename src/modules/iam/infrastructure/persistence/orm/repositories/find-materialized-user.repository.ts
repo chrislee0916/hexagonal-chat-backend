@@ -46,7 +46,7 @@ export class OrmFindUserRepository implements FindUserRepository {
       .find({ userId: id })
       .populate('chatroom')
       .exec();
-
+    console.log('chatroomUsers: ', chatroomUsers);
     return {
       ...user.toJSON(),
       chatrooms: chatroomUsers.map((val) => ({

@@ -4,6 +4,7 @@ export class Message {
   constructor(
     public chatroomId: number,
     public senderId: number,
-    public content: string,
+    public image?: string,
+    public content?: string,
   ) {}
 }

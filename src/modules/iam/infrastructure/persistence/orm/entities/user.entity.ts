@@ -29,9 +29,12 @@ export class UserEntity {
   @Column()
   image: string;
 
-  askFriends: Pick<UserEntity, 'id' | 'name' | 'email' | 'image'>[];
+  askFriends: Pick<
+    UserEntity,
+    'id' | 'name' | 'email' | 'image' | 'updatedAt'
+  >[];
 
-  friends: Pick<UserEntity, 'id' | 'name' | 'email' | 'image'>[];
+  friends: Pick<UserEntity, 'id' | 'name' | 'email' | 'image' | 'updatedAt'>[];
 
   @ManyToMany(() => ChatroomEntity)
   @JoinTable({

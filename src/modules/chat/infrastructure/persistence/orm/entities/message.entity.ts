@@ -17,6 +17,9 @@ export class MessageEntity {
   senderId: number;
 
   @Column()
+  image: string;
+
+  @Column()
   content: string;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamptz' })

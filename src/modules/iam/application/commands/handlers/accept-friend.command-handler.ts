@@ -26,7 +26,8 @@ export class AcceptFriendCommandHandler implements ICommandHandler {
     const { userId, friendId } = command;
     const { shouldUpdate, socketEvents } =
       await this.createUserRepository.acceptFriend(userId, friendId);
-
+    console.log('shouldUpdate: ', shouldUpdate);
+    console.log('socketEvents: ', socketEvents);
     // * 同步資料到 read-db
     await this.eventBus.publish(
       new UserAcceptedFriendEvent(shouldUpdate, socketEvents),

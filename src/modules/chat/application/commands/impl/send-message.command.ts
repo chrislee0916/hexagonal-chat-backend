@@ -4,6 +4,7 @@ export class SendMessageCommand {
   constructor(
     public readonly chatroomId: number,
     public readonly socket: Socket,
-    public readonly content: string,
+    public readonly image?: string,
+    public readonly content?: string,
   ) {}
 }

@@ -60,9 +60,9 @@ export class ChatGateway implements OnGatewayDisconnect {
     @ConnectedSocket() socket: Socket,
     @MessageBody() body: SendMessageDto,
   ) {
-    const { chatroomId, content } = body;
+    const { chatroomId, image, content } = body;
     await this.chatService.sendMessage(
-      new SendMessageCommand(chatroomId, socket, content),
+      new SendMessageCommand(chatroomId, socket, image, content),
     );
   }
 

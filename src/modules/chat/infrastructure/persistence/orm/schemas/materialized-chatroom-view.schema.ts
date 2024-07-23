@@ -38,6 +38,7 @@ export class MaterializedChatroomView {
       id: Number,
       chatroomId: Number,
       senderId: Number,
+      image: String,
       content: String,
       createdAt: Date,
     },
@@ -46,6 +47,7 @@ export class MaterializedChatroomView {
     id: number;
     chatroomId: number;
     senderId: number;
+    image: string;
     content: string;
     createdAt: Date;
   };

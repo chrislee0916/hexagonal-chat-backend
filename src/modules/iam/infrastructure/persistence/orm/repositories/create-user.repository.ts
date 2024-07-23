@@ -177,6 +177,7 @@ export class OrmCreateUserRepository implements CreateUserRepository {
             name: userModel.name,
             email: userModel.email,
             image: userModel.image,
+            updatedAt: userModel.updatedAt,
           },
         },
         {
@@ -187,6 +188,7 @@ export class OrmCreateUserRepository implements CreateUserRepository {
             name: askedUser.name,
             email: askedUser.email,
             image: askedUser.image,
+            updatedAt: userModel.updatedAt,
           },
         },
       ],
@@ -221,12 +223,14 @@ export class OrmCreateUserRepository implements CreateUserRepository {
       const res = await this.userRepository
         .createQueryBuilder('user')
         .innerJoinAndSelect(UserFriendEntity, 'uf', 'uf.friend_id = user.id')
-        .select('user.id, user.name, user.email, user.image, uf.status')
+        .select(
+          'user.id, user.name, user.email, user.image, uf.status, uf.updated_at',
+        )
         .where('uf.user_id = :userId', { userId: userModel.id })
         .orderBy('uf.created_at', 'DESC')
         .getRawMany<
           Pick<UserEntity, 'id' | 'name' | 'email' | 'image'> &
-            Pick<UserFriendEntity, 'status'>
+            Pick<UserFriendEntity, 'status' | 'updatedAt'>
         >();
       // * 篩選
       return UserMapper.toDomain({

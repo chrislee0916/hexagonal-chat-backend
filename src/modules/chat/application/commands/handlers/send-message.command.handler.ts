@@ -26,7 +26,7 @@ export class SendMessageCommandHandler implements ICommandHandler {
       `Processing "${SendMessageCommand.name}": ${JSON.stringify({ ...command, socket: '' })}`,
     );
 
-    const { chatroomId, socket, content } = command;
+    const { chatroomId, socket, content, image } = command;
     // * 確認發訊息的是否在線
     const userId = await this.socketOnlineIdsStorage.getUserId(socket.id);
     if (!userId) {
@@ -48,11 +48,9 @@ export class SendMessageCommandHandler implements ICommandHandler {
     // * 以 chatroom aggregate root 操作
     let chatroom = new Chatroom();
     chatroom.id = chatroomId;
-    chatroom.addNewMessage(+userId, content);
-
+    chatroom.addNewMessage(+userId, image, content);
     await this.messageRepository.save(chatroom);
 
-    console.log('chatroom chatroom: ', chatroom);
     // * 需要檢查chatroom底下的user有哪些不在線上，使用離線訊息
     chatroom.sentMessage(socket);
     this.eventPublisher.mergeObjectContext(chatroom);

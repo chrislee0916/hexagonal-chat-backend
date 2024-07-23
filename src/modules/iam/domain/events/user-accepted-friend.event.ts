@@ -3,7 +3,7 @@ import { User } from '../user';
 export class UserAcceptedFriendSocketEvent {
   event: 'newFriend';
   userId: number;
-  data: Pick<User, 'id' | 'name' | 'email' | 'image'>;
+  data: Pick<User, 'id' | 'name' | 'email' | 'image' | 'updatedAt'>;
 }
 
 export class UserAcceptedFriendEvent {

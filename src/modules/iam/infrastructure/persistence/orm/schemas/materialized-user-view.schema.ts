@@ -51,6 +51,7 @@ export class MaterializedUserView {
         name: String,
         email: String,
         image: String,
+        updatedAt: Date,
       },
     ],
   })
@@ -59,6 +60,7 @@ export class MaterializedUserView {
     name: string;
     email: string;
     image: string;
+    updatedAt: Date;
   }>;
 
   @Prop({
@@ -70,6 +72,7 @@ export class MaterializedUserView {
         name: String,
         email: String,
         image: String,
+        updatedAt: Date,
       },
     ],
   })
@@ -78,6 +81,7 @@ export class MaterializedUserView {
     name: string;
     email: string;
     image: string;
+    updatedAt: Date;
   }>;
 
   @Prop()

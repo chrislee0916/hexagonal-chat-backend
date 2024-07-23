@@ -8,8 +8,14 @@ export class UserReadModel {
   email: string;
   password: string;
   image: string;
-  friends?: Pick<UserReadModel, 'id' | 'name' | 'email' | 'image'>[];
-  askFriends?: Pick<UserReadModel, 'id' | 'name' | 'email' | 'image'>[];
+  friends?: Pick<
+    UserReadModel,
+    'id' | 'name' | 'email' | 'image' | 'updatedAt'
+  >[];
+  askFriends?: Pick<
+    UserReadModel,
+    'id' | 'name' | 'email' | 'image' | 'updatedAt'
+  >[];
   chatrooms?: Pick<
     ChatroomReadModel,
     'id' | 'name' | 'image' | 'newMessage' | 'lastAckId'

@@ -5,6 +5,7 @@ export class MessageReadModel {
   id: number;
   chatroomId: number;
   senderId: number;
+  image: string;
   content: string;
   createdAt: Date;
 }

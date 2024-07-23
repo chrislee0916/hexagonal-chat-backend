@@ -61,7 +61,9 @@ export class SocketIOService implements WebSocketService {
     data: T,
   ): Promise<void> {
     const socketId = await this.socketOnlineIdsStorage.getSocketId(userId);
-    this.server.sockets.sockets.get(socketId).emit(event, data);
+    if (socketId) {
+      this.server.sockets.sockets.get(socketId)?.emit(event, data);
+    }
   }
 
   private getKey(chatroomId: number): string {

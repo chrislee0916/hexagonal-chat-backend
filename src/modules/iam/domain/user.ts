@@ -13,9 +13,11 @@ export class User extends AggregateRoot {
   public password: string;
   public image: string;
   public askFriends = new Array<
-    Pick<User, 'id' | 'name' | 'email' | 'image'>
+    Pick<User, 'id' | 'name' | 'email' | 'image' | 'updatedAt'>
   >();
-  public friends = new Array<Pick<User, 'id' | 'name' | 'email' | 'image'>>();
+  public friends = new Array<
+    Pick<User, 'id' | 'name' | 'email' | 'image' | 'updatedAt'>
+  >();
   public chatrooms = new Array<Chatroom>();
   public createdAt: Date;
   public updatedAt: Date;
