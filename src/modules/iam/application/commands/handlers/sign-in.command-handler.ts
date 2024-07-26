@@ -17,7 +17,7 @@ export class SignInCommandHandler implements ICommandHandler {
   private readonly logger = new Logger(SignInCommandHandler.name);
 
   constructor(
-    private readonly userRepository: FindUserRepository,
+    private readonly findUserRepository: FindUserRepository,
     private readonly hashingService: HashingService,
     private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
   ) {}
@@ -27,7 +27,7 @@ export class SignInCommandHandler implements ICommandHandler {
       `Processing "${SignInCommand.name}": ${JSON.stringify(command)}`,
     );
     const { email, password } = command;
-    const user = await this.userRepository.findOneByEmail(email);
+    const user = await this.findUserRepository.findOneByEmail(email);
     if (!user) {
       throw new UnauthorizedException(ErrorMsg.ERR_AUTH_SIGNIN_NOT_EXIST);
     }

@@ -2,7 +2,6 @@ import { Types } from 'mongoose';
 import { ChatroomReadModel } from 'src/modules/chat/domain/read-models/chatroom.read-model';
 
 export class UserReadModel {
-  // _id: Types.ObjectId;
   id: number;
   name: string;
   email: string;
@@ -20,7 +19,6 @@ export class UserReadModel {
     ChatroomReadModel,
     'id' | 'name' | 'image' | 'newMessage' | 'lastAckId'
   >[];
-  // chatrooms?: number[];
   createdAt: Date;
   updatedAt: Date;
 }

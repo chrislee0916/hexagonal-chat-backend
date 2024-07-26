@@ -162,7 +162,7 @@ export class IamController {
     @ActiveUser() user: ActiveUserData,
   ): Promise<GetUserResponseDto> {
     const res = await this.iamService.getUser(new GetUserQuery(user.sub));
-    console.log('show user res: ', res.chatrooms[0]);
+    console.log('show user res: ', res);
     return res;
   }
 

@@ -17,6 +17,7 @@ import { SignUpResponseDto } from 'src/modules/iam/presenters/http/dto/response/
 import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 import { UserSignedUpEvent } from 'src/modules/iam/domain/events/user-signed-up.event';
 import { User } from 'src/modules/iam/domain/user';
+import { FindUserRepository } from '../../ports/find-user.repository';
 
 @CommandHandler(SignUpCommand)
 export class SignUpCommandHandler implements ICommandHandler<SignUpCommand> {
@@ -24,8 +25,8 @@ export class SignUpCommandHandler implements ICommandHandler<SignUpCommand> {
 
   constructor(
     private readonly userFactory: UserFactory,
-    // private readonly eventBus: EventBus,
-    private readonly userRepository: CreateUserRepository,
+    private readonly createUserRepository: CreateUserRepository,
+    private readonly findUserRepository: FindUserRepository,
     private readonly hashingService: HashingService,
     private eventPublisher: EventPublisher,
   ) {}
@@ -34,23 +35,26 @@ export class SignUpCommandHandler implements ICommandHandler<SignUpCommand> {
     this.logger.debug(
       `Processing "${SignUpCommand.name}": ${JSON.stringify(command)}`,
     );
-    const hashedPassword = await this.hashingService.hash(command.password);
 
-    try {
-      // * 在 write db 新增 user
-      let user = await this.userRepository.save(
-        this.userFactory.create(command.name, command.email, hashedPassword),
-      );
-      // * write db 新增成功後，同步到 read db
-      user.signedUp();
-      this.eventPublisher.mergeObjectContext(user);
-      user.commit();
-      return { id: user.id, name: user.name, email: user.email };
-    } catch (err) {
-      if (err.code === '23505') {
-        throw new ConflictException(ErrorMsg.ERR_AUTH_SIGNUP_USER_CONFLICT);
-      }
-      throw new InternalServerErrorException(ErrorMsg.ERR_CORE_UNKNOWN_ERROR);
+    // * check user is already exist or not
+    const userReadModel = await this.findUserRepository.findOneByEmail(
+      command.email,
+    );
+    if (userReadModel) {
+      throw new ConflictException(ErrorMsg.ERR_AUTH_SIGNUP_USER_CONFLICT);
     }
+
+    const hashedPassword = await this.hashingService.hash(command.password);
+    // * create new user to write-db
+    let user = await this.createUserRepository.save(
+      this.userFactory.create(command.name, command.email, hashedPassword),
+    );
+
+    // * sync to read-db
+    user.signedUp();
+    this.eventPublisher.mergeObjectContext(user);
+    user.commit();
+
+    return { id: user.id, name: user.name, email: user.email };
   }
 }
