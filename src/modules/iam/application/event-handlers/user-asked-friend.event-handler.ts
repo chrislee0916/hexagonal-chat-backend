@@ -20,28 +20,20 @@ export class UserAskedFriendEventHandler
   async handle(event: UserAskedFriendEvent) {
     this.logger.log(`User asked friend event: ${JSON.stringify(event)}`);
 
-    const { shouldUpdate, socketEvents } = event;
+    const { shouldUpdate, socketEvent } = event;
     // TODO: 後續改用 CDC
     // * 同步資料到 read db
-    await Promise.all(
-      shouldUpdate.map((user) => {
-        return this.upsertMaterializedUserRepository.upsert({
-          id: user.id,
-          askFriends: user.askFriends,
-          friends: user.friends,
-        });
-      }),
-    );
+    this.upsertMaterializedUserRepository.upsert({
+      id: shouldUpdate.id,
+      askFriends: shouldUpdate.askFriends,
+      friends: shouldUpdate.friends,
+    });
 
     // TODO: 對方在線用 socket.io 通知有好友邀請，不在線則用離線訊息
-    await Promise.all(
-      socketEvents.map((socketEvent) => {
-        this.webSocketService.sendToPerson(
-          socketEvent.event,
-          socketEvent.userId,
-          socketEvent.data,
-        );
-      }),
+    this.webSocketService.sendToPerson(
+      socketEvent.event,
+      socketEvent.userId,
+      socketEvent.data,
     );
   }
 }

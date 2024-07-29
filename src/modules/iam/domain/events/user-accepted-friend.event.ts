@@ -1,3 +1,4 @@
+import { UserReadModel } from '../read-models/user.read-model';
 import { User } from '../user';
 
 export class UserAcceptedFriendSocketEvent {
@@ -8,7 +9,8 @@ export class UserAcceptedFriendSocketEvent {
 
 export class UserAcceptedFriendEvent {
   constructor(
-    public readonly shouldUpdate: User[],
+    public readonly shouldUpdates: (Pick<UserReadModel, 'id'> &
+      Partial<UserReadModel>)[],
     public readonly socketEvents: UserAcceptedFriendSocketEvent[],
   ) {}
 }

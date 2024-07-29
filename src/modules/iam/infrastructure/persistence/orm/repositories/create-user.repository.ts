@@ -15,6 +15,14 @@ import {
 import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 import { UserAskedFriendEvent } from 'src/modules/iam/domain/events/user-asked-friend.event';
 import { UserAcceptedFriendEvent } from 'src/modules/iam/domain/events/user-accepted-friend.event';
+import { InjectModel } from '@nestjs/mongoose';
+import {
+  MaterializedUserView,
+  MaterializedUserViewDocument,
+} from '../schemas/materialized-user-view.schema';
+import { Model } from 'mongoose';
+import { UserReadModel } from 'src/modules/iam/domain/read-models/user.read-model';
+import { find } from 'lodash';
 
 export class OrmCreateUserRepository implements CreateUserRepository {
   constructor(
@@ -32,184 +40,134 @@ export class OrmCreateUserRepository implements CreateUserRepository {
   }
 
   async askFriend(
-    userId: number,
-    askedEmail: string,
-  ): Promise<UserAskedFriendEvent> {
-    // * 判斷要加入的 friend 是否存在
-    const askedUser = await this.userRepository.findOneBy({
-      email: askedEmail,
-    });
-    if (!askedUser) {
-      throw new NotFoundException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
-    }
-    // * 是否為同個人
-    if (userId === askedUser.id) {
-      throw new BadRequestException(ErrorMsg.ERR_AUTH_ASK_FRIEND_TO_MYSELF);
-    }
-
-    // * 判斷 user 是否存在
-    const userModel = await this.userRepository.findOneBy({
-      id: userId,
-    });
-    if (!userModel) {
-      throw new UnauthorizedException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
-    }
-
+    userModel: UserReadModel,
+    askedUserModel: UserReadModel,
+  ): Promise<UserAskedFriendEvent | UserAcceptedFriendEvent> {
     // * 是否已經是好友狀態
-    const alreadyExist = await this.userFriendRepository.findOneBy({
-      userId,
-      friendId: askedUser.id,
-      status: 'accepted',
-    });
-    if (alreadyExist) {
+    const existIdx = userModel.friends.findIndex(
+      (val) => val.id === askedUserModel.id,
+    );
+    if (existIdx !== -1) {
       throw new ConflictException(ErrorMsg.ERR_AUTH_USER_ALREADY_FRIEND);
+    }
+    // * check is already asked before
+    const alreadyAsk = askedUserModel.askFriends.findIndex(
+      (val) => val.id === userModel.id,
+    );
+    if (alreadyAsk !== -1) {
+      throw new ConflictException(ErrorMsg.ERR_AUTH_ALREADY_ASK_FRIEND);
     }
 
     // * 如果對方也發送邀請 直接成為好友
-    let friendAsked = await this.userFriendRepository.findOneBy({
-      userId,
-      friendId: askedUser.id,
-      status: 'pending',
-    });
-
-    if (friendAsked) {
-      await this.beingFriends(userId, askedUser.id);
-      return {
-        // * 如果成為好友則兩個都需更新
-        shouldUpdate: [
-          await this.getAskFriendAndFriend(userModel),
-          await this.getAskFriendAndFriend(askedUser),
-        ],
-        socketEvents: [
-          {
-            event: 'newFriend',
-            userId: askedUser.id,
-            data: {
-              id: userModel.id,
-              name: userModel.name,
-              email: userModel.email,
-              image: userModel.image,
-            },
-          },
-          {
-            event: 'newFriend',
-            userId,
-            data: {
-              id: askedUser.id,
-              name: askedUser.name,
-              email: askedUser.email,
-              image: askedUser.image,
-            },
-          },
-        ],
-      };
+    const askedIdx = userModel.askFriends.findIndex(
+      (val) => val.id === askedUserModel.id,
+    );
+    if (askedIdx !== -1) {
+      return this.acceptFriend(userModel, askedUserModel);
     }
 
     try {
-      await this.userFriendRepository.insert({
-        userId: askedUser.id,
-        friendId: userId,
+      const { generatedMaps } = await this.userFriendRepository.insert({
+        userId: askedUserModel.id,
+        friendId: userModel.id,
       });
-      // return [await this.getAskFriendAndFriend(friendModel), null];
-      return {
-        // * 如果只有發送好友邀請則更新被邀請的部分
-        shouldUpdate: [await this.getAskFriendAndFriend(askedUser)],
-        socketEvents: [
-          {
-            event: 'newAskFriend',
-            userId: askedUser.id,
-            data: {
-              id: userModel.id,
-              name: userModel.name,
-              email: userModel.email,
-              image: userModel.image,
-            },
-          },
-        ],
+
+      const newAsk = {
+        id: userModel.id,
+        name: userModel.name,
+        email: userModel.email,
+        image: userModel.image,
+        updatedAt: generatedMaps[0].updatedAt,
       };
+
+      // * 如果只有發送好友邀請則更新被邀請的部分
+      return new UserAskedFriendEvent(
+        {
+          id: askedUserModel.id,
+          askFriends: [...askedUserModel.askFriends, newAsk],
+        },
+        {
+          event: 'newAskFriend',
+          userId: askedUserModel.id,
+          data: newAsk,
+        },
+      );
     } catch (err) {
       if (err.code === '23505') {
         throw new ConflictException(ErrorMsg.ERR_AUTH_ALREADY_ASK_FRIEND);
       }
+
       throw new InternalServerErrorException(ErrorMsg.ERR_CORE_UNKNOWN_ERROR);
     }
   }
 
   async acceptFriend(
-    userId: number,
-    friendId: number,
+    userModel: UserReadModel,
+    askedUserModel: UserReadModel,
   ): Promise<UserAcceptedFriendEvent> {
-    const askFriend = await this.userFriendRepository.findOneBy({
-      userId,
-      friendId,
-      status: 'pending',
-    });
-    if (!askFriend) {
-      throw new NotFoundException(ErrorMsg.ERR_AUTH_ASK_FRIEND_NOT_FOUND);
-    }
-    // * 判斷要加入的 friend 是否存在
-    const askedUser = await this.userRepository.findOneBy({
-      id: friendId,
-    });
-    if (!askedUser) {
-      throw new NotFoundException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
-    }
-    // * 判斷 user 是否存在
-    const userModel = await this.userRepository.findOneBy({
-      id: userId,
-    });
-    if (!userModel) {
-      throw new UnauthorizedException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
-    }
-
-    await this.beingFriends(userId, friendId);
-    return {
-      // * 如果成為好友則兩個都需更新
-      shouldUpdate: [
-        await this.getAskFriendAndFriend(userModel),
-        await this.getAskFriendAndFriend(askedUser),
-      ],
-      socketEvents: [
-        {
-          event: 'newFriend',
-          userId: askedUser.id,
-          data: {
-            id: userModel.id,
-            name: userModel.name,
-            email: userModel.email,
-            image: userModel.image,
-            updatedAt: userModel.updatedAt,
-          },
-        },
-        {
-          event: 'newFriend',
-          userId,
-          data: {
-            id: askedUser.id,
-            name: askedUser.name,
-            email: askedUser.email,
-            image: askedUser.image,
-            updatedAt: userModel.updatedAt,
-          },
-        },
-      ],
+    // * being friends
+    let relations = await this.userFriendRepository.save([
+      {
+        userId: userModel.id,
+        friendId: askedUserModel.id,
+        status: 'accepted',
+      },
+      {
+        userId: askedUserModel.id,
+        friendId: userModel.id,
+        status: 'accepted',
+      },
+    ]);
+    const user = {
+      id: userModel.id,
+      name: userModel.name,
+      email: userModel.email,
+      image: userModel.image,
+      updatedAt: relations[0].updatedAt,
     };
+    const friend = {
+      id: askedUserModel.id,
+      name: askedUserModel.name,
+      email: askedUserModel.email,
+      image: askedUserModel.image,
+      updatedAt: relations[0].updatedAt,
+    };
+
+    // * 如果成為好友則兩個都需更新
+    return new UserAcceptedFriendEvent(
+      [
+        {
+          id: userModel.id,
+          askFriends: userModel.askFriends.filter(
+            (val) => val.id !== friend.id,
+          ),
+          friends: [...userModel.friends, friend],
+        },
+        {
+          id: askedUserModel.id,
+          askFriends: askedUserModel.askFriends.filter(
+            (val) => val.id !== userModel.id,
+          ),
+          friends: [...askedUserModel.friends, user],
+        },
+      ],
+      [
+        {
+          event: 'newFriend',
+          userId: askedUserModel.id,
+          data: user,
+        },
+        {
+          event: 'newFriend',
+          userId: userModel.id,
+          data: friend,
+        },
+      ],
+    );
   }
 
   private async beingFriends(userId: number, friendId: number): Promise<void> {
     try {
-      await this.userFriendRepository.save([
-        {
-          userId,
-          friendId,
-          status: 'accepted',
-        },
-        {
-          userId: friendId,
-          friendId: userId,
-          status: 'accepted',
-        },
-      ]);
     } catch (err) {
       if (err.code === '23505') {
         throw new ConflictException(ErrorMsg.ERR_AUTH_USER_ALREADY_FRIEND);
@@ -218,29 +176,29 @@ export class OrmCreateUserRepository implements CreateUserRepository {
     }
   }
 
-  private async getAskFriendAndFriend(userModel: UserEntity): Promise<User> {
-    // * 取得所有的好友關係資料
-    try {
-      const res = await this.userRepository
-        .createQueryBuilder('user')
-        .innerJoinAndSelect(UserFriendEntity, 'uf', 'uf.friend_id = user.id')
-        .select(
-          'user.id, user.name, user.email, user.image, uf.status, uf.updated_at',
-        )
-        .where('uf.user_id = :userId', { userId: userModel.id })
-        .orderBy('uf.created_at', 'DESC')
-        .getRawMany<
-          Pick<UserEntity, 'id' | 'name' | 'email' | 'image'> &
-            Pick<UserFriendEntity, 'status' | 'updatedAt'>
-        >();
-      // * 篩選
-      return UserMapper.toDomain({
-        ...userModel,
-        askFriends: res.filter((val) => val.status === 'pending'),
-        friends: res.filter((val) => val.status === 'accepted'),
-      });
-    } catch (error) {
-      throw error;
-    }
-  }
+  // private async getAskFriendAndFriend(userModel: UserEntity): Promise<User> {
+  //   // * 取得所有的好友關係資料
+  //   try {
+  //     const res = await this.userRepository
+  //       .createQueryBuilder('user')
+  //       .innerJoinAndSelect(UserFriendEntity, 'uf', 'uf.friend_id = user.id')
+  //       .select(
+  //         'user.id, user.name, user.email, user.image, uf.status, uf.updated_at',
+  //       )
+  //       .where('uf.user_id = :userId', { userId: userModel.id })
+  //       .orderBy('uf.created_at', 'DESC')
+  //       .getRawMany<
+  //         Pick<UserEntity, 'id' | 'name' | 'email' | 'image'> &
+  //           Pick<UserFriendEntity, 'status' | 'updatedAt'>
+  //       >();
+  //     // * 篩選
+  //     return UserMapper.toDomain({
+  //       ...userModel,
+  //       askFriends: res.filter((val) => val.status === 'pending'),
+  //       friends: res.filter((val) => val.status === 'accepted'),
+  //     });
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 }

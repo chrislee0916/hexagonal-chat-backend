@@ -9,7 +9,7 @@ import { ChatroomUserEntity } from '../infrastructure/persistence/orm/entities/c
 export class Chatroom extends AggregateRoot {
   public id: number;
   public name: string;
-  public image: string; // * 為file的外鍵
+  public image: string;
   public users = new Array<ChatroomUser>();
   // public messages = new Array<Message>();
   public newMessage?: Message;

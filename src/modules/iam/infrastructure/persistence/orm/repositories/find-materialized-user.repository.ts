@@ -31,22 +31,20 @@ export class OrmFindUserRepository implements FindUserRepository {
   ) {}
 
   async findOneByEmail(email: string): Promise<UserReadModel> {
-    // const userEntity = await this.userRepository.findOneBy({ email });
     const user = await this.userModel.findOne<UserReadModel>({ email }).exec();
-    // if (!user) {
-    //   throw new UnauthorizedException(ErrorMsg.ERR_AUTH_SIGNIN_NOT_EXIST);
-    // }
     return user;
-    // return UserMapper.toDomain(user);
   }
 
   async findOneById(id: number): Promise<UserReadModel> {
     const user = await this.userModel.findOne({ id }).exec();
+    if (!user) {
+      throw new UnauthorizedException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
+    }
     const chatroomUsers = await this.chatroomUserModel
       .find({ userId: id })
       .populate('chatroom')
       .exec();
-    console.log('chatroomUsers: ', chatroomUsers);
+
     return {
       ...user.toJSON(),
       chatrooms: chatroomUsers.map((val) => ({
@@ -57,13 +55,5 @@ export class OrmFindUserRepository implements FindUserRepository {
         lastAckId: val.lastAckId,
       })),
     };
-  }
-
-  async findOneByObjectId(id: string): Promise<UserReadModel> {
-    const user = await this.userModel.findById<UserReadModel>(id);
-    // if (!user) {
-    //   throw new NotFoundException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
-    // }
-    return user;
   }
 }

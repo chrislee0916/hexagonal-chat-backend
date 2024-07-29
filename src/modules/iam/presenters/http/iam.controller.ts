@@ -178,9 +178,7 @@ export class IamController {
     @ActiveUser() user: ActiveUserData,
     @Param('friendEmail', new IsEmailPipe()) friendEmail: string,
   ) {
-    return this.iamService.askFriend(
-      new AskFriendCommand(user.sub, friendEmail),
-    );
+    return this.iamService.askFriend(new AskFriendCommand(user, friendEmail));
   }
 
   @ApiOperation({

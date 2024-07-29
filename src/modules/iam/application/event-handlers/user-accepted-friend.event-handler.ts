@@ -21,11 +21,11 @@ export class UserAcceptedFriendEventHandler
   async handle(event: UserAcceptedFriendEvent) {
     this.logger.log(`User accepted friend event: ${JSON.stringify(event)}`);
 
-    const { shouldUpdate, socketEvents } = event;
+    const { shouldUpdates, socketEvents } = event;
     // TODO: 後續改用 CDC
     // * 同步資料到 read db
     await Promise.all(
-      shouldUpdate.map((user) => {
+      shouldUpdates.map((user) => {
         return this.upsertMaterializedUserRepository.upsert({
           id: user.id,
           askFriends: user.askFriends,

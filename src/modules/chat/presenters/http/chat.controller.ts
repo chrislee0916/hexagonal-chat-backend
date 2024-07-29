@@ -89,38 +89,10 @@ export class ChatController {
     return this.chatService.createImage(new CreateImageCommand(image));
   }
 
-  // @Post('single-chatroom')
-  // @ApiOperation({
-  //   summary: '建立一對一聊天室',
-  // })
-  // @ApiBody({
-  //   type: CreateSingleChatroomDto,
-  // })
-  // @ApiCreatedResponse({
-  //   type: SuccessCreateChatroomResponseDto,
-  // })
-  // async createSingleChatroom(
-  //   @ActiveUser() user: ActiveUserData,
-  //   @Body() createSingleChatroomDto: CreateSingleChatroomDto,
-  // ) {
-  //   return this.chatService.createSingleChatroom(
-  //     new CreateSingleChatroomCommand(
-  //       createSingleChatroomDto.name,
-  //       user.sub,
-  //       createSingleChatroomDto.userId,
-  //     ),
-  //   );
-  // }
-
   @Get('chatroom/:id')
   async findOne(@Param('id') id: number) {
     return this.chatService.findOneChatroom(new FindOneChatroomQuery(id));
   }
-
-  // @Delete('chatroom/:id')
-  // async remove(@Param('id') id: string) {
-  //   this.chats = this.chats.filter((chat) => chat.id !== id);
-  // }
 
   @Get('chatroom/:id/messages')
   @Auth(AuthType.None)

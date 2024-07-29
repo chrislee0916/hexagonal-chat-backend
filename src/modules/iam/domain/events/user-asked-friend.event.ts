@@ -9,7 +9,8 @@ export class UserAskedFriendSocketEvent {
 
 export class UserAskedFriendEvent {
   constructor(
-    public readonly shouldUpdate: User[],
-    public readonly socketEvents: UserAskedFriendSocketEvent[],
+    public readonly shouldUpdate: Pick<UserReadModel, 'id'> &
+      Partial<UserReadModel>,
+    public readonly socketEvent: UserAskedFriendSocketEvent,
   ) {}
 }

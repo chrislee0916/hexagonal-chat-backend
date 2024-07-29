@@ -11,6 +11,12 @@ import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 import { ChatroomUserMapper } from '../mappers/chatroom-user.mapper';
 import { UserEntity } from 'src/modules/iam/infrastructure/persistence/orm/entities/user.entity';
 import { ChatroomUserEntity } from '../entities/chatroom_user.entity';
+import { InjectModel } from '@nestjs/mongoose';
+import {
+  MaterializedUserView,
+  MaterializedUserViewDocument,
+} from 'src/modules/iam/infrastructure/persistence/orm/schemas/materialized-user-view.schema';
+import { Model } from 'mongoose';
 
 export class OrmCreateChatroomRepository implements CreateChatroomRepository {
   constructor(

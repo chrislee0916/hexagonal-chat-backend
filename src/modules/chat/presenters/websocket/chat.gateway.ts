@@ -44,9 +44,6 @@ import { MessageSeenCommand } from '../../application/commands/impl/message-seen
 @UseFilters(WsExceptionFilter)
 @UsePipes(new MessageBodyPipe())
 export class ChatGateway implements OnGatewayDisconnect {
-  @WebSocketServer()
-  private server: Server;
-
   constructor(private readonly chatService: ChatService) {}
 
   @UseGuards(AuthenticationWebsocketGuard)
