@@ -5,11 +5,19 @@ import { WebSocketService } from 'src/modules/chat/application/ports/websocket.s
 import { ChatroomUserEntity } from '../../persistence/orm/entities/chatroom_user.entity';
 import { SocketOnlineIdsStorage } from 'src/modules/chat/application/ports/socket-online-ids.storage';
 import { RedisSocketOnlineIdsStorageModule } from '../../socket-online-ids-storage/redis/redis-socket-online-ids-storage.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { ChatroomUser } from 'src/modules/chat/domain/chatroom-user';
+import { ChatroomUserSchema } from '../../persistence/orm/schemas/chatroom-user.schema';
 
 @Module({
   imports: [
     RedisSocketOnlineIdsStorageModule,
-    TypeOrmModule.forFeature([ChatroomUserEntity]),
+    MongooseModule.forFeature([
+      {
+        name: ChatroomUser.name,
+        schema: ChatroomUserSchema,
+      },
+    ]),
   ],
   providers: [
     {

@@ -21,11 +21,8 @@ export class OrmUpsertMaterializedChatroomRepository
   ) {}
 
   async upsert(
-    // chatroom: Pick<ChatroomReadModel, 'id'> & Partial<ChatroomReadModel>,
     chatroom: Pick<Chatroom, 'id'> & Partial<Chatroom>,
   ): Promise<void> {
-    console.log('chatroom: ', chatroom);
-    console.log('chatroom.newMessage: ', chatroom.newMessage);
     await this.chatroomModel.findOneAndUpdate(
       { id: chatroom.id },
       {

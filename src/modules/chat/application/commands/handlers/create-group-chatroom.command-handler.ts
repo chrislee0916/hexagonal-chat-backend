@@ -23,14 +23,15 @@ export class CreateChatroomCommandHandler implements ICommandHandler {
     this.logger.debug(
       `Processing "${CreateGroupChatroomCommand.name}": ${JSON.stringify(command)}`,
     );
-    // ! 應該要去確認 userIds 是否存在
-    // TODO: 應該需要發一個 ChatroomCreated 事件到 iam bounded context 確認 userIds 是否存在
-    // TODO: 並在 chat bounded context 監聽 UserAddedToChatroom 事件確保使用者都存在或是有其他做法?
-
+    /**
+     * insert chatroom & chatroomUser into write-db.
+     */
     let chatroom = await this.createChatroomRepository.save(
       this.chatroomFactory.create(command.name, command.userIds),
     );
-    // TODO: 建立還需使用 socket.io 去通知對方訊息
+    /**
+     * sync data from write-db to read-db and use socket.io to inform online user.
+     */
     chatroom.created();
     this.eventPublisher.mergeObjectContext(chatroom);
     chatroom.commit();

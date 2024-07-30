@@ -27,7 +27,7 @@ export class OrmFindUserRepository implements FindUserRepository {
     @InjectModel(MaterializedUserView.name)
     private readonly userModel: Model<MaterializedUserViewDocument>,
     @InjectModel(ChatroomUser.name)
-    private readonly chatroomUserModel: Model<ChatroomUser>,
+    private readonly chatroomUserModel: Model<ChatroomUserDocument>,
   ) {}
 
   async findOneByEmail(email: string): Promise<UserReadModel> {

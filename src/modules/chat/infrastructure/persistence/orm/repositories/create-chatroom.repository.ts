@@ -20,18 +20,20 @@ import { Model } from 'mongoose';
 
 export class OrmCreateChatroomRepository implements CreateChatroomRepository {
   constructor(
-    @InjectRepository(UserEntity)
-    private readonly userRepository: Repository<UserEntity>,
+    // @InjectRepository(UserEntity)
+    // private readonly userRepository: Repository<UserEntity>,
+    @InjectModel(MaterializedUserView.name)
+    private readonly userModel: Model<MaterializedUserViewDocument>,
     private dataSource: DataSource,
   ) {}
 
   async save(chatroom: Chatroom): Promise<Chatroom> {
     // * 檢查 users 是否都存在
-    const userModels = await this.userRepository.find({
-      where: {
-        id: In(chatroom.users.flatMap((val) => val.userId)),
-      },
-    });
+    const userModels = await this.userModel
+      .find({
+        id: { $in: chatroom.users.flatMap((val) => val.userId) },
+      })
+      .exec();
     if (userModels.length !== chatroom.users.length) {
       throw new NotFoundException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
     }

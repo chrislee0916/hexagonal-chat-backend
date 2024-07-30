@@ -57,6 +57,10 @@ import { OrmUpdateChatroomUserRepository } from './repositories/update-chatroom-
         name: MaterializedMessageView.name,
         schema: MaterializedMessageViewSchema,
       },
+      {
+        name: MaterializedUserView.name,
+        schema: MaterializedUserViewSchema,
+      },
     ]),
   ],
   providers: [

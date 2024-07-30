@@ -42,8 +42,6 @@ export class SendMessageCommandHandler implements ICommandHandler {
         message: ErrorMsg.ERR_CHAT_ROOM_NOT_FOUND,
       });
     }
-    // * ack訊息給發送者
-    // socket.emit('message', content);
 
     // * 以 chatroom aggregate root 操作
     let chatroom = new Chatroom();
