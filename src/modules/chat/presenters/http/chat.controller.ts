@@ -15,6 +15,8 @@ import {
   ApiBody,
   ApiConsumes,
   ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -34,6 +36,7 @@ import { ActiveUser } from 'src/common/decorators/active-user.decorator';
 import { ActiveUserData } from 'src/modules/iam/domain/interfaces/active-user-data.interface';
 import {
   CreateChatroomResponseDto,
+  ErrorUserNotFoundResponseDto,
   SuccessCreateChatroomResponseDto,
 } from './dto/response/create-chatroom.response.dto';
 import { FindOneChatroomQuery } from '../../application/querys/impl/find-one-chatroom.query';
@@ -47,6 +50,12 @@ import { extname, join } from 'path';
 import { extension } from 'mime-types';
 import { randomUUID } from 'crypto';
 import { CreateImageCommand } from '../../application/commands/impl/create-image.command';
+import { SuccessCreateImageResponseDto } from './dto/response/create-image.response.dto';
+import {
+  ErrorChatroomNotFoundResponseDto,
+  ShowChatroomResponseDto,
+} from './dto/response/find-one-chatroom.response.dto';
+import { FindListMessageResponseDto } from './dto/response/find-list-message.response.dto';
 
 @Auth(AuthType.Bearer)
 @ApiTags('CHAT - 即時通訊服務')
@@ -63,6 +72,9 @@ export class ChatController {
   })
   @ApiCreatedResponse({
     type: SuccessCreateChatroomResponseDto,
+  })
+  @ApiNotFoundResponse({
+    type: ErrorUserNotFoundResponseDto,
   })
   @Post('group-chatroom')
   async createGroupChatroom(
@@ -84,18 +96,30 @@ export class ChatController {
     description: '上傳檔案',
     type: CreateImageDto,
   })
+  @ApiCreatedResponse({
+    type: SuccessCreateImageResponseDto,
+  })
   @UseInterceptors(FileInterceptor('image'))
   async createImage(@UploadedFile() image: Express.Multer.File) {
     return this.chatService.createImage(new CreateImageCommand(image));
   }
 
   @Get('chatroom/:id')
+  @ApiOkResponse({
+    type: ShowChatroomResponseDto,
+  })
+  @ApiNotFoundResponse({
+    type: ErrorChatroomNotFoundResponseDto,
+  })
   async findOne(@Param('id') id: number) {
     return this.chatService.findOneChatroom(new FindOneChatroomQuery(id));
   }
 
   @Get('chatroom/:id/messages')
   @Auth(AuthType.None)
+  @ApiOkResponse({
+    type: FindListMessageResponseDto,
+  })
   async findAllMessages(
     @Param('id') id: number,
     @Query() query: DefaultListQueryDto,

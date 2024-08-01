@@ -1,5 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { SuccessResponseDto } from 'src/common/dtos/response.dto';
+import {
+  ErrorDetailResponseDto,
+  ErrorResponseDto,
+  SuccessResponseDto,
+} from 'src/common/dtos/response.dto';
 
 // * 成功建立聊天室返回結果
 export class CreateChatroomResponseDto {
@@ -22,4 +26,29 @@ export class SuccessCreateChatroomResponseDto extends SuccessResponseDto {
     example: CreateChatroomResponseDto,
   })
   readonly data: CreateChatroomResponseDto;
+}
+
+// * 找不到用戶
+class ErrorUserNotFoundDetailResponseDto extends ErrorDetailResponseDto {
+  @ApiProperty({
+    example: '11007 找不到使用者',
+  })
+  readonly message: string;
+
+  @ApiProperty({
+    example: 'Not Found',
+  })
+  readonly error?: string;
+
+  @ApiProperty({
+    example: 404,
+  })
+  readonly statusCode?: number;
+}
+
+export class ErrorUserNotFoundResponseDto extends ErrorResponseDto {
+  @ApiProperty({
+    type: ErrorUserNotFoundDetailResponseDto,
+  })
+  readonly detail: ErrorUserNotFoundDetailResponseDto;
 }

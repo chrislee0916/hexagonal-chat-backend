@@ -1,7 +1,8 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { FindOneChatroomQuery } from '../impl/find-one-chatroom.query';
-import { Logger } from '@nestjs/common';
+import { Logger, NotFoundException } from '@nestjs/common';
 import { FindMaterializedChatroomRepository } from '../../ports/find-materialized-chatroom.repository';
+import { ErrorMsg } from 'src/common/enums/err-msg.enum';
 
 @QueryHandler(FindOneChatroomQuery)
 export class FindOneChatroomQueryHandler implements IQueryHandler {
@@ -16,6 +17,9 @@ export class FindOneChatroomQueryHandler implements IQueryHandler {
       `Processing "${FindOneChatroomQuery.name}": ${JSON.stringify(query)}`,
     );
     const res = await this.findChatroomRepository.findOne(query.id);
+    if (!res) {
+      throw new NotFoundException(ErrorMsg.ERR_CHAT_ROOM_NOT_FOUND);
+    }
     return res;
   }
 }

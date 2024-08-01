@@ -2,7 +2,7 @@ import { Logger } from '@nestjs/common';
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs';
 import { GetUserQuery } from '../impl/get-user.query';
 import { FindUserRepository } from '../../ports/find-user.repository';
-import { GetUserResponseDto } from 'src/modules/iam/presenters/http/dto/response/get-friends.response.dto';
+import { GetUserResponseDto } from 'src/modules/iam/presenters/http/dto/response/get-user.response.dto';
 
 @QueryHandler(GetUserQuery)
 export class GetFriendsQueryHandler implements IQueryHandler {

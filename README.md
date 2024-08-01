@@ -10,10 +10,12 @@
 
 - DDD (Domain-Driven-Design)
   解構複雜的業務需求，提高系統的維護性
+
 - CQRS (Command Query Responsibility Segregation)
   通過將讀取與寫入操作分離，提高性能與可擴展性
-- Event-Driven:
-  有效處理複雜的任務，提高系統性能與可擴展性
+
+- Event-Driven
+有效處理複雜的任務，提高系統性能與可擴展性
 
 ## 主要功能
 - 登入功能

@@ -15,6 +15,7 @@ import {
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiExtraModels,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -66,7 +67,13 @@ import { ObjectId } from 'mongodb';
 import {
   GetUserResponseDto,
   SuccessGetUserResponseDto,
-} from './dto/response/get-friends.response.dto';
+} from './dto/response/get-user.response.dto';
+import {
+  ErrorAddToYouselfResponseDto,
+  ErrorEmailInvalidResponseDto,
+  ErrorUserNotFoundResponseDto,
+} from './dto/response/ask-friend.response.dto';
+import { ErrorAskNotFoundResponseDto } from './dto/response/accept-friend.response.dto';
 
 @ApiTags('IAM - 身分識別與存取管理')
 @Auth(AuthType.None)
@@ -172,6 +179,15 @@ export class IamController {
   @ApiOkResponse({
     type: SuccessResponseDto,
   })
+  @ApiExtraModels(ErrorEmailInvalidResponseDto, ErrorAddToYouselfResponseDto)
+  @ApiBadRequestResponse({
+    schema: {
+      anyOf: refs(ErrorEmailInvalidResponseDto, ErrorAddToYouselfResponseDto),
+    },
+  })
+  @ApiNotFoundResponse({
+    type: ErrorUserNotFoundResponseDto,
+  })
   @Auth(AuthType.Bearer)
   @Get('ask-friend/:friendEmail')
   askFriend(
@@ -186,6 +202,9 @@ export class IamController {
   })
   @ApiOkResponse({
     type: SuccessResponseDto,
+  })
+  @ApiNotFoundResponse({
+    type: ErrorAskNotFoundResponseDto,
   })
   @Auth(AuthType.Bearer)
   @Get('accept-friend/:friendId')
