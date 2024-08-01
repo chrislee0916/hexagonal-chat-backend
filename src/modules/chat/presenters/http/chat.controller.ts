@@ -55,7 +55,10 @@ import {
   ErrorChatroomNotFoundResponseDto,
   ShowChatroomResponseDto,
 } from './dto/response/find-one-chatroom.response.dto';
-import { FindListMessageResponseDto } from './dto/response/find-list-message.response.dto';
+import {
+  FindListMessageResponseDto,
+  SuccessFindListMessageResponseDto,
+} from './dto/response/find-list-message.response.dto';
 
 @Auth(AuthType.Bearer)
 @ApiTags('CHAT - 即時通訊服務')
@@ -118,7 +121,7 @@ export class ChatController {
   @Get('chatroom/:id/messages')
   @Auth(AuthType.None)
   @ApiOkResponse({
-    type: FindListMessageResponseDto,
+    type: SuccessFindListMessageResponseDto,
   })
   async findAllMessages(
     @Param('id') id: number,

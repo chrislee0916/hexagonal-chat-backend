@@ -29,9 +29,7 @@ export class SocketIOService implements WebSocketService {
     private readonly socketOnlineIdsStorage: SocketOnlineIdsStorage,
   ) {}
 
-  /**
-   * if sign-up to server, then load their rooms.
-   */
+  // * 登入後需加載現有的room
   async loadChatrooms(userId: number, socket: Socket): Promise<void> {
     const chatrooms = await this.chatroomUserModel.find({ userId }).exec();
     const chatroomIds = chatrooms.map((chatroom) =>
@@ -40,20 +38,18 @@ export class SocketIOService implements WebSocketService {
     await socket.join(chatroomIds);
   }
 
-  /**
-   * join users to room after room created.
-   */
+  // * 將被邀請的user 加入新的room
   async joinChatroom(chatroomId: number, userIds: number[]): Promise<void> {
     for (let id of userIds) {
       const socketId = await this.socketOnlineIdsStorage.getSocketId(id);
-      const socket = this.server.sockets.sockets.get(socketId);
-      await socket.join(this.getKey(chatroomId));
+      if (socketId) {
+        const socket = this.server.sockets.sockets.get(socketId);
+        await socket.join(this.getKey(chatroomId));
+      }
     }
   }
 
-  /**
-   * brocast event to room.
-   */
+  // * 廣播 event 到指定的room
   brocastToChatroom(event: BrocastType, chatroomId: number, data: any): void {
     // const res = this.server.in(this.getKey(chatroomId)).emit(event, data);
     this.server
@@ -62,9 +58,7 @@ export class SocketIOService implements WebSocketService {
       .emit(event, data);
   }
 
-  /**
-   * send event to specific online person.
-   */
+  // * 只發送event給特定的user
   async sendToPerson<T = any>(
     event: 'newAskFriend' | 'newFriend',
     userId: number,

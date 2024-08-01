@@ -34,17 +34,17 @@ export class AcceptFriendCommandHandler implements ICommandHandler {
     );
     const { userId, friendId } = command;
 
-    // * user is exist or not
+    // * 檢查user是否存在
     const userModel = await this.findUserRepository.findOneById(userId);
     if (!userModel) {
       throw new NotFoundException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
     }
-    // * askedUser is exist or not
+    // * 檢查被接受的user是否存在
     const friendModel = await this.findUserRepository.findOneById(friendId);
     if (!friendModel) {
       throw new NotFoundException(ErrorMsg.ERR_AUTH_USER_NOT_FOUND);
     }
-    // * askRequest is exist or not
+    // * 檢查好友邀請是否存在
     const askingIdx = userModel.askFriends.findIndex(
       (val) => val.id === friendModel.id,
     );

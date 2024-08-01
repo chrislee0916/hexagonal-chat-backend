@@ -1,4 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { IsArray } from 'class-validator';
 import { SuccessResponseDto } from 'src/common/dtos/response.dto';
 
 // * 取得聊天室詳細資料
@@ -46,10 +48,10 @@ export class FindListMessageResponseDto {
   updatedAt: Date;
 }
 
-export class SuccessShowChatroomResponseDto extends SuccessResponseDto {
+export class SuccessFindListMessageResponseDto extends SuccessResponseDto {
   @ApiProperty({
     type: [FindListMessageResponseDto],
-    example: [FindListMessageResponseDto],
+    example: FindListMessageResponseDto,
   })
   readonly data: FindListMessageResponseDto[];
 }

@@ -23,15 +23,12 @@ export class CreateChatroomCommandHandler implements ICommandHandler {
     this.logger.debug(
       `Processing "${CreateGroupChatroomCommand.name}": ${JSON.stringify(command)}`,
     );
-    /**
-     * insert chatroom & chatroomUser into write-db.
-     */
+    // * 在 write-db 新增 chatroom & chatroomUser
     let chatroom = await this.createChatroomRepository.save(
       this.chatroomFactory.create(command.name, command.userIds),
     );
-    /**
-     * sync data from write-db to read-db and use socket.io to inform online user.
-     */
+
+    // * 從write-db同步資料到 read-db 並使用 socket.io 通知有在線的user
     chatroom.created();
     this.eventPublisher.mergeObjectContext(chatroom);
     chatroom.commit();
@@ -40,7 +37,5 @@ export class CreateChatroomCommandHandler implements ICommandHandler {
       id: chatroom.id,
       name: chatroom.name,
     };
-    // await this.createChatroomRepository.addUsers(chatroom.id, command.userIds);
-    // return chatroom;
   }
 }

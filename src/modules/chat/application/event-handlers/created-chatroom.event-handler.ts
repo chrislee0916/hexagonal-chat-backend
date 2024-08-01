@@ -23,14 +23,11 @@ export class CreatedChatroomEventHandler
   async handle(event: CreatedChatroomEvent): Promise<void> {
     this.logger.log(`Created chatroom event: ${JSON.stringify(event)}`);
     const userIds = event.chatroom.users.flatMap((user) => user.userId);
-    /**
-     * upsert chatroom & chatroomUser to read-db
-     */
+
+    // * upsert read-db 的資料
     await this.upsertMaterializedChatroomRepository.upsert(event.chatroom);
 
-    /**
-     * join online socket in room & brocast event inform them.
-     */
+    // * 把在線的user加入到room裡面並對room廣播createChatroom event
     await this.webSocketService.joinChatroom(event.chatroom.id, userIds);
     this.webSocketService.brocastToChatroom(
       'createChatroom',
