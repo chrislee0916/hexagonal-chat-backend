@@ -13,8 +13,6 @@ services:
       - write-db
       - refresh-token-ids-storage
       - read-db
-
-
   write-db:
     container_name: write-db
     image: postgres

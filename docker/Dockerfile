@@ -6,4 +6,6 @@ COPY . .
 
 RUN yarn && yarn run build
 
-CMD [ "node", "dist/src/main.js" ]
+COPY docker/scripts/docker-entrypoint.sh /usr/local/bin
+
+ENTRYPOINT [ "docker-entrypoint.sh" ]
